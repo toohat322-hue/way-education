@@ -7,6 +7,7 @@ import { resolveIcon, ICON_NAMES } from "./iconRegistry";
 import { uniqueSlugId } from "./slugify";
 import { Field, Label, TextInput, TextArea, Select, PrimaryButton, GhostButton, AdminModal, Toggle } from "./ui";
 import ImageUploadField from "./ImageUploadField";
+import GalleryUploadField from "./GalleryUploadField";
 
 const COUNTRY_OPTIONS = [
   { en: "Türkiye", ar: "تركيا" },
@@ -24,6 +25,7 @@ function initFromUni(uni) {
       name: uni.name,
       image: uni.image || "",
       logo: uni.logo || "",
+      gallery: uni.gallery || [],
       cityEn: uni.city.en,
       cityAr: uni.city.ar,
       countryEn: uni.country.en,
@@ -56,7 +58,7 @@ function initFromUni(uni) {
     };
   }
   return {
-    name: "", image: "", logo: "",
+    name: "", image: "", logo: "", gallery: [],
     cityEn: "", cityAr: "", countryEn: "Türkiye", typeEn: "Private",
     tuition: 2000, rating: 4.5, reviews: 0, ranking: 50, founded: String(new Date().getFullYear()),
     studentsCount: "", intl: "", languageEn: "English", languageAr: "إنجليزي",
@@ -114,7 +116,7 @@ export default function UniversityFormModal({ uni, initial, onClose, onSaved }) 
       name: form.name,
       image: form.image || undefined,
       logo: form.logo || undefined,
-      gallery: uni?.gallery || [],
+      gallery: form.gallery,
       city: { en: form.cityEn, ar: form.cityAr },
       country,
       type,
@@ -188,6 +190,8 @@ export default function UniversityFormModal({ uni, initial, onClose, onSaved }) 
           <ImageUploadField label="Cover / hero image" value={form.image} onChange={setValue("image")} shape="wide" maxDim={1600} />
           <ImageUploadField label="Logo" value={form.logo} onChange={setValue("logo")} shape="square" maxDim={400} format="image/png" />
         </div>
+
+        <GalleryUploadField value={form.gallery} onChange={setValue("gallery")} />
 
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <Field label="Tuition ($/yr)"><TextInput type="number" value={form.tuition} onChange={set("tuition")} /></Field>

@@ -1,3 +1,20 @@
+// Allowed types + max size for the gallery uploader (see GalleryUploadField.jsx).
+// CUSTOMIZE: add/remove MIME types here, or change ALLOWED_MAX_SIZE_MB to
+// raise/lower the per-photo limit -- both are read from this one place.
+export const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+export const ALLOWED_MAX_SIZE_MB = 5;
+
+// Returns an error string if `file` fails the type/size check, or null if it's fine.
+export function validateImageFile(file, { types = ALLOWED_IMAGE_TYPES, maxSizeMB = ALLOWED_MAX_SIZE_MB } = {}) {
+  if (!types.includes(file.type)) {
+    return `${file.name}: unsupported file type (use JPG, PNG, or WEBP).`;
+  }
+  if (file.size > maxSizeMB * 1024 * 1024) {
+    return `${file.name}: file is too large (max ${maxSizeMB}MB).`;
+  }
+  return null;
+}
+
 // Turns a user-selected <input type="file"> image into a downscaled data URL
 // so it can be stored directly in the university object (and therefore in
 // localStorage, alongside every other field -- see src/admin/storage.js).

@@ -3,8 +3,10 @@
 This app has **no backend today** — the admin dashboard persists everything
 (universities, programs, majors, FAQs) to the browser's `localStorage` via
 `src/admin/DataContext.jsx` / `src/admin/storage.js`. Image "uploads" in
-`src/admin/ImageUploadField.jsx` just resize the file client-side and inline
-it as a data URL (see `src/admin/imageUpload.js`).
+`src/admin/ImageUploadField.jsx` (single cover/logo image) and
+`src/admin/GalleryUploadField.jsx` (multi-photo gallery, with drag & drop,
+per-photo replace/delete, and client-side type/size validation) just resize
+the file and inline it as a data URL (see `src/admin/imageUpload.js`).
 
 This document is a **reference** for when/if a real backend gets built. None
 of the code below is imported or run by this repo — it's a starting point to
@@ -366,6 +368,152 @@ Route::get('public/universities', function () {
 });
 ```
 
+## 6. Gallery images (dedicated table + real file storage)
+
+`src/admin/GalleryUploadField.jsx` manages a whole gallery of photos with its
+own add/replace/delete actions, so on the backend it deserves the same
+treatment as `programs` above: a real table with its own rows and IDs (not a
+JSON array column on `universities`), and files that land in
+`storage/app/public` instead of being inlined as data URLs.
+
+```php
+// database/migrations/2026_01_01_000002_create_gallery_images_table.php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    public function up(): void
+    {
+        Schema::create('gallery_images', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('university_id')->constrained()->cascadeOnDelete();
+            $table->string('disk')->default('public');
+            $table->string('path'); // e.g. "universities/3/gallery/xyz123.jpg"
+            $table->unsignedInteger('sort_order')->default(0);
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('gallery_images');
+    }
+};
+```
+
+```php
+// app/Models/GalleryImage.php
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+
+class GalleryImage extends Model
+{
+    protected $fillable = ['disk', 'path', 'sort_order'];
+
+    // Lets API responses include a ready-to-use <img src> without the
+    // frontend having to know the storage disk/URL scheme.
+    protected $appends = ['url'];
+
+    public function getUrlAttribute(): string
+    {
+        return Storage::disk($this->disk)->url($this->path);
+    }
+
+    public function university()
+    {
+        return $this->belongsTo(University::class);
+    }
+}
+```
+
+Add `public function galleryImages() { return $this->hasMany(GalleryImage::class)->orderBy('sort_order'); }`
+to `University` (alongside the existing `programs()` relation from section 2).
+
+```php
+// app/Http/Controllers/Api/GalleryImageController.php
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\GalleryImage;
+use App\Models\University;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+
+// Nested under a university: /api/universities/{university}/gallery-images
+// CUSTOMIZE:
+//   - Storage path: change the `store()` call's first argument
+//     ("universities/{$university->id}/gallery") to reorganize files on disk.
+//   - Validation rules: `mimes:jpg,jpeg,png,webp` and `max:5120` (KB) mirror
+//     ALLOWED_IMAGE_TYPES / ALLOWED_MAX_SIZE_MB in src/admin/imageUpload.js --
+//     keep both sides in sync if you change the limit.
+//   - Disk: swap 'public' for 's3' (with the S3 filesystem configured in
+//     config/filesystems.php) to serve images from cloud storage instead of
+//     the app server's local disk.
+class GalleryImageController extends Controller
+{
+    // Supports uploading several files in one request (matches
+    // GalleryUploadField's drag-and-drop-many-at-once UX): send as
+    // multipart/form-data with repeated "images[]" fields.
+    public function store(Request $request, University $university)
+    {
+        $request->validate([
+            'images' => ['required', 'array'],
+            'images.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+        ]);
+
+        $created = collect($request->file('images'))->map(function ($file) use ($university) {
+            $path = $file->store("universities/{$university->id}/gallery", 'public');
+            return $university->galleryImages()->create(['disk' => 'public', 'path' => $path]);
+        });
+
+        return response()->json($created, 201);
+    }
+
+    // "Edit" = replace the file behind an existing gallery entry, keeping its
+    // id/sort_order -- mirrors the per-thumbnail "Replace" button in
+    // GalleryUploadField.jsx, which is the same interaction, not a separate
+    // add + delete.
+    public function update(Request $request, University $university, GalleryImage $galleryImage)
+    {
+        $request->validate([
+            'image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
+        ]);
+
+        Storage::disk($galleryImage->disk)->delete($galleryImage->path);
+        $path = $request->file('image')->store("universities/{$university->id}/gallery", 'public');
+        $galleryImage->update(['path' => $path]);
+
+        return $galleryImage;
+    }
+
+    public function destroy(University $university, GalleryImage $galleryImage)
+    {
+        Storage::disk($galleryImage->disk)->delete($galleryImage->path);
+        $galleryImage->delete();
+        return response()->noContent();
+    }
+}
+```
+
+```php
+// routes/api.php (add alongside the group from section 5)
+use App\Http\Controllers\Api\GalleryImageController;
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('universities/{university}/gallery-images', [GalleryImageController::class, 'store']);
+    Route::post('gallery-images/{galleryImage}', [GalleryImageController::class, 'update']); // POST not PATCH: multipart file uploads
+    Route::delete('gallery-images/{galleryImage}', [GalleryImageController::class, 'destroy']);
+});
+```
+
+Don't forget `php artisan storage:link` (once, per environment) so
+`storage/app/public` is actually reachable at `/storage/...` URLs -- without
+it, the `url` accessor on `GalleryImage` points at files the web server
+can't serve.
+
 ## Frontend integration (what would actually need to change here)
 
 This repo's admin already has the right shape for this swap — `useData()`
@@ -391,3 +539,13 @@ through. To go from localStorage to this API:
    `useCollection` is synchronous (reads localStorage instantly), a real API
    introduces network latency and failure modes the current code doesn't
    have to handle.
+5. In `src/admin/GalleryUploadField.jsx`, `processFiles`/`handleReplaceInputChange`
+   currently call `fileToResizedDataUrl` directly and push the result straight
+   into local form state. With this backend, `processFiles` would instead
+   `POST` a `FormData` of the accepted files to
+   `/api/universities/{id}/gallery-images`, `removeAt` would `DELETE
+   /api/gallery-images/{id}`, and the "Replace" flow would `POST` to
+   `/api/gallery-images/{id}`. The component's client-side `validateImageFile`
+   check can stay as an instant UX check -- keep the server-side validation
+   in `GalleryImageController` too, since client-side checks are trivially
+   bypassable.

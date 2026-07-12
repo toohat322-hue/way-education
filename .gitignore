@@ -5,3 +5,5 @@ dist
 coverage
 playwright-report
 test-results
+.dev-out.log
+.dev-err.log
