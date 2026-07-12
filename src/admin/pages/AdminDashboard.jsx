@@ -1,0 +1,111 @@
+import React, { useRef } from "react";
+import { Link } from "react-router-dom";
+import { Building2, ListTree, BookOpen, HelpCircle, Type, Download, Upload } from "lucide-react";
+import { C, grad } from "../../theme/tokens";
+import GlassCard from "../../components/GlassCard";
+import { PageHeader, StatTile, GhostButton, PrimaryButton } from "../ui";
+import { useData } from "../useData";
+import { useLanguage } from "../../context/useLanguage";
+import { useToast } from "../useToast";
+
+const SECTIONS = [
+  { to: "/admin/universities", label: "Partner Universities", icon: Building2, desc: "Full detail pages: tuition, majors, scholarships, documents, reviews." },
+  { to: "/admin/directory", label: "Directory", icon: ListTree, desc: "The full public directory of universities shown on /universities." },
+  { to: "/admin/majors", label: "Majors", icon: BookOpen, desc: "The popular-majors grid on the homepage." },
+  { to: "/admin/faqs", label: "FAQs", icon: HelpCircle, desc: "Frequently asked questions section." },
+  { to: "/admin/content", label: "Site Copy", icon: Type, desc: "Every EN/AR string used across the site." },
+];
+
+export default function AdminDashboard() {
+  const { universities, directory, majors, faqs, restoreUniversities, restoreDirectory, restoreMajors, restoreFaqs } = useData();
+  const { strings, restoreStrings } = useLanguage();
+  const showToast = useToast();
+  const fileInputRef = useRef(null);
+
+  const handleExport = () => {
+    const payload = { exportedAt: new Date().toISOString(), universities, directory, majors, faqs, strings };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `wayeducation-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    showToast("Backup exported");
+  };
+
+  const handleImportClick = () => fileInputRef.current?.click();
+
+  const handleImportFile = (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-selecting the same file later
+    if (!file) return;
+    if (!window.confirm("Importing will replace all current data in this browser with the backup file. Continue?")) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(String(reader.result));
+        if (Array.isArray(data.universities)) restoreUniversities(data.universities);
+        if (Array.isArray(data.directory)) restoreDirectory(data.directory);
+        if (Array.isArray(data.majors)) restoreMajors(data.majors);
+        if (Array.isArray(data.faqs)) restoreFaqs(data.faqs);
+        if (data.strings) restoreStrings(data.strings);
+        showToast("Backup imported");
+      } catch {
+        showToast("Import failed — not a valid backup file", "error");
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  return (
+    <div>
+      <PageHeader title="Dashboard" sub="Manage everything shown on Way Education — changes save to this browser instantly." />
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <StatTile icon={Building2} label="Partner Universities" value={universities.length} />
+        <StatTile icon={ListTree} label="Directory Entries" value={directory.length} />
+        <StatTile icon={BookOpen} label="Majors" value={majors.length} />
+        <StatTile icon={HelpCircle} label="FAQs" value={faqs.length} />
+      </div>
+
+      <GlassCard className="p-5 mb-8 flex flex-wrap items-center justify-between gap-4" style={{ background: "#fff" }}>
+        <div>
+          <div className="font-semibold text-sm mb-1" style={{ color: C.ink }}>Backup & Restore</div>
+          <div className="text-xs max-w-md" style={{ color: C.muted }}>
+            All edits live only in this browser's storage. Export a backup file to keep your changes safe, and import it to restore them here or in another browser.
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <GhostButton onClick={handleExport} className="flex items-center gap-1.5">
+            <Download size={14} /> Export
+          </GhostButton>
+          <PrimaryButton onClick={handleImportClick} className="flex items-center gap-1.5">
+            <Upload size={14} /> Import
+          </PrimaryButton>
+          <input ref={fileInputRef} type="file" accept="application/json" className="hidden" onChange={handleImportFile} />
+        </div>
+      </GlassCard>
+
+      <div className="grid sm:grid-cols-2 gap-4">
+        {SECTIONS.map((s) => (
+          <Link
+            key={s.to}
+            to={s.to}
+            className="p-5 rounded-2xl bg-white transition-all duration-300 hover:-translate-y-1"
+            style={{ border: `1px solid ${C.border}` }}
+          >
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style={{ background: grad.primarySoft }}>
+              <s.icon size={20} color={C.blue} />
+            </div>
+            <div className="font-semibold text-sm mb-1" style={{ color: C.ink }}>{s.label}</div>
+            <div className="text-xs" style={{ color: C.muted }}>{s.desc}</div>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}

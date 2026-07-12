@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap');
+@import "tailwindcss";
+
+:root {
+  --bg: #F6F8FF;
+  --bg-alt: #F0F5FF;
+  --ink: #0B1230;
+  --ink-soft: #3A4166;
+  --muted: #6B7280;
+  --border: rgba(15, 23, 60, 0.08);
+  --glass: rgba(255, 255, 255, 0.66);
+  --glass-border: rgba(255, 255, 255, 0.55);
+  --blue: #2952E3;
+  --blue-dark: #152B7A;
+  --cyan: #17C3E0;
+  --orange: #FF6A2B;
+  --orange-dark: #E8501A;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+}
+
+@keyframes floaty {
+  0%, 100% { transform: translateY(0px) rotate(var(--r, 0deg)); }
+  50% { transform: translateY(-14px) rotate(var(--r, 0deg)); }
+}
+.float-card { animation: floaty 5s ease-in-out infinite; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fadeUp 0.6s ease both; }
+
+@keyframes dashmove {
+  to { stroke-dashoffset: -200; }
+}
+.route-dash {
+  stroke-dasharray: 6 8;
+  animation: dashmove 6s linear infinite;
+}
+
+.hide-scroll::-webkit-scrollbar { display: none; }
+.hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+/* --- StudentAnimation keyframes (see src/components/StudentAnimation.jsx) --- */
+@keyframes saBounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-10px) scale(1.03); }
+}
+.sa-bounce { animation: saBounce calc(1.8s / var(--sa-speed, 1)) cubic-bezier(0.45, 0, 0.55, 1) infinite; }
+
+@keyframes saRingPulse {
+  0% { transform: scale(0.9); opacity: 0.55; }
+  70% { transform: scale(1.35); opacity: 0; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+.sa-ring { animation: saRingPulse calc(2.2s / var(--sa-speed, 1)) ease-out infinite; }
+
+@keyframes saConfettiBurst {
+  0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(1) rotate(var(--rot)); opacity: 0; }
+}
+.sa-confetti {
+  animation: saConfettiBurst calc(0.9s / var(--sa-speed, 1)) ease-out forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .float-card, .fade-up, .route-dash { animation: none !important; }
+  .sa-bounce { animation: none !important; }
+  .sa-ring, .sa-confetti { animation: none !important; opacity: 0 !important; }
+}
