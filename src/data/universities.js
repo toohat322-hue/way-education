@@ -16,6 +16,10 @@ import { grad } from "../theme/tokens";
 //     (see `publicUniversities` in src/admin/DataContext.jsx).
 //   - `active: boolean` -- set false to hide a university from every public
 //     listing and its own detail page (admins can still see/edit it).
+//   - `photoCredit: { text, url }` -- shown as a small caption over the hero
+//     image on the detail page. Only needed for images whose license requires
+//     attribution (e.g. Wikimedia Commons CC BY) -- public-domain or
+//     purpose-shot photos can skip it.
 export const UNIVERSITIES = [
   {
     id: "iau", grad: grad.card1, initial: "A", image: "/universities/heroes/iau-real.jpg", logo: "/universities/logos/iau.webp",
@@ -51,7 +55,8 @@ export const UNIVERSITIES = [
     ],
   },
   {
-    id: "ihu", grad: grad.card2, initial: "H", image: "/universities/heroes/ihu.svg", logo: "/universities/logos/ihu.svg", gallery: [],
+    id: "ihu", grad: grad.card2, initial: "H", image: "/universities/heroes/ihu-real.jpg", logo: "/universities/logos/ihu.svg", gallery: [],
+    photoCredit: { text: "Photo: YG01 / Wikimedia Commons (CC BY 4.0)", url: "https://commons.wikimedia.org/wiki/File:Istanbul_Health_and_Technology_University.jpg" },
     name: "Istanbul Health & Tech University", city: { en: "Istanbul", ar: "إسطنبول" },
     country: { en: "Türkiye", ar: "تركيا" }, type: { en: "Private", ar: "خاصة" },
     tuition: 4000, rating: 4.6, reviews: 198, ranking: 18, founded: 2018,
@@ -128,7 +133,7 @@ export const UNIVERSITIES = [
     ],
   },
   {
-    id: "gau", grad: grad.card1, initial: "G", image: "/universities/heroes/gau.svg", logo: "/universities/logos/gau.svg", gallery: [],
+    id: "gau", grad: grad.card1, initial: "G", image: "/universities/heroes/gau-real.jpg", logo: "/universities/logos/gau.svg", gallery: [],
     name: "Girne American University", city: { en: "Kyrenia", ar: "كيرينيا" },
     country: { en: "N. Cyprus", ar: "قبرص الشمالية" }, type: { en: "Private", ar: "خاصة" },
     tuition: 3000, rating: 4.4, reviews: 175, ranking: 6, founded: 1985,

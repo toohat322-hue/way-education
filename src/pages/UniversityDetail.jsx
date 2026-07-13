@@ -137,6 +137,17 @@ export default function UniversityDetail() {
           <div className="absolute inset-0 opacity-15" style={{ backgroundImage: "radial-gradient(circle at 20% 20%, #fff 1px, transparent 1px)", backgroundSize: "18px 18px" }} />
         )}
         <div className="absolute inset-0" style={{ background: uni.image ? "rgba(11,18,48,0.35)" : "transparent" }} />
+        {uni.photoCredit && (
+          <a
+            href={uni.photoCredit.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute bottom-2 end-2 text-[10px] text-white/70 hover:text-white px-2 py-0.5 rounded-full"
+            style={{ background: "rgba(11,18,48,0.4)" }}
+          >
+            {uni.photoCredit.text}
+          </a>
+        )}
         <div className="max-w-6xl mx-auto px-5 sm:px-8 h-full flex flex-col justify-between py-5 relative">
           <div className="flex items-center justify-between">
             <button onClick={() => navigate("/")} className="flex items-center gap-1.5 text-sm font-medium text-white/90 w-fit">
