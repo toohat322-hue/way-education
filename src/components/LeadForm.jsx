@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { Send, MessageCircle } from "lucide-react";
 import { C, grad } from "../theme/tokens";
+import { useData } from "../admin/useData";
 
 // A single source of truth for the "get a consultation" form. Used by:
 // - ApplySidebar (full detail page for partner universities)
 // - RequestInfoModal (directory universities without full data yet)
 export default function LeadForm({ t, majors = [], onSubmitted }) {
+  const { settings } = useData();
   const [form, setForm] = useState({ name: "", phone: "", email: "", major: "" });
   const [submitted, setSubmitted] = useState(false);
   const nameId = "lead-name";
@@ -90,7 +92,7 @@ export default function LeadForm({ t, majors = [], onSubmitted }) {
         <Send size={15} /> {t.sidebarSubmit}
       </button>
       <a
-        href="https://wa.me/905000000000"
+        href={`https://wa.me/${settings.whatsapp}`}
         target="_blank"
         rel="noreferrer"
         className="w-full py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2"

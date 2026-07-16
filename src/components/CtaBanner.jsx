@@ -2,9 +2,11 @@ import React from "react";
 import { MessageCircle } from "lucide-react";
 import { grad } from "../theme/tokens";
 import { useLanguage } from "../context/useLanguage";
+import { useData } from "../admin/useData";
 
 export default function CtaBanner() {
   const { t } = useLanguage();
+  const { settings } = useData();
   return (
     <section className="px-5 sm:px-8 py-4">
       <div className="max-w-6xl mx-auto rounded-3xl p-8 md:p-14 text-center relative overflow-hidden" style={{ background: grad.primary }}>
@@ -17,7 +19,7 @@ export default function CtaBanner() {
             {t.ctaApply}
           </button>
           <a
-            href="https://wa.me/905000000000"
+            href={`https://wa.me/${settings.whatsapp}`}
             target="_blank"
             rel="noreferrer"
             className="w-full sm:w-auto px-8 py-3.5 rounded-full text-sm font-semibold flex items-center justify-center gap-2 transition-transform hover:scale-105 active:scale-95"

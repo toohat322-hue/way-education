@@ -7,6 +7,7 @@ import { ToastProvider } from "./admin/Toast";
 import { C, grad } from "./theme/tokens";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import FloatingWhatsApp from "./components/FloatingWhatsApp";
 import Home from "./pages/Home";
 import Universities from "./pages/Universities";
 import UniversityDetail from "./pages/UniversityDetail";
@@ -51,6 +52,7 @@ function AppShell() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       {!isAdmin && <Footer />}
+      {!isAdmin && <FloatingWhatsApp />}
     </div>
   );
 }

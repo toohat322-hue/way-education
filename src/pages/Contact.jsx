@@ -4,9 +4,11 @@ import { C, grad } from "../theme/tokens";
 import GlassCard from "../components/GlassCard";
 import LeadForm from "../components/LeadForm";
 import { useLanguage } from "../context/useLanguage";
+import { useData } from "../admin/useData";
 
 export default function Contact() {
   const { t } = useLanguage();
+  const { settings } = useData();
   return (
     <div className="max-w-4xl mx-auto px-5 sm:px-8 py-16 md:py-24">
       <h1 className="text-3xl md:text-5xl font-bold mb-4" style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}>
@@ -34,7 +36,7 @@ export default function Contact() {
             </GlassCard>
           ))}
           <a
-            href="https://wa.me/905000000000"
+            href={`https://wa.me/${settings.whatsapp}`}
             target="_blank"
             rel="noreferrer"
             className="flex items-center justify-center gap-2 p-5 rounded-3xl text-sm font-semibold"

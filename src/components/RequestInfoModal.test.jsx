@@ -4,6 +4,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import RequestInfoModal from "./RequestInfoModal";
 import { STRINGS } from "../data/translations";
+import { DataProvider } from "../admin/DataContext";
 
 describe("RequestInfoModal", () => {
   const uni = {
@@ -17,7 +18,11 @@ describe("RequestInfoModal", () => {
     const user = userEvent.setup();
     const onClose = vi.fn();
 
-    render(<RequestInfoModal uni={uni} t={STRINGS.en} onClose={onClose} />);
+    render(
+      <DataProvider>
+        <RequestInfoModal uni={uni} t={STRINGS.en} onClose={onClose} />
+      </DataProvider>
+    );
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     await user.keyboard("{Escape}");

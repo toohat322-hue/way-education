@@ -1,9 +1,9 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Building2, ListTree, BookOpen, HelpCircle, Type, Download, Upload } from "lucide-react";
+import { Building2, ListTree, BookOpen, HelpCircle, Type, Download, Upload, MessageCircle } from "lucide-react";
 import { C, grad } from "../../theme/tokens";
 import GlassCard from "../../components/GlassCard";
-import { PageHeader, StatTile, GhostButton, PrimaryButton } from "../ui";
+import { PageHeader, StatTile, GhostButton, PrimaryButton, TextInput, Label } from "../ui";
 import { useData } from "../useData";
 import { useLanguage } from "../../context/useLanguage";
 import { useToast } from "../useToast";
@@ -17,13 +17,21 @@ const SECTIONS = [
 ];
 
 export default function AdminDashboard() {
-  const { universities, directory, majors, faqs, restoreUniversities, restoreDirectory, restoreMajors, restoreFaqs } = useData();
+  const { universities, directory, majors, faqs, settings, updateSettings, restoreUniversities, restoreDirectory, restoreMajors, restoreFaqs } = useData();
   const { strings, restoreStrings } = useLanguage();
   const showToast = useToast();
   const fileInputRef = useRef(null);
+  const [whatsapp, setWhatsapp] = useState(settings.whatsapp);
+
+  const handleSaveWhatsapp = () => {
+    const digits = whatsapp.replace(/\D/g, "");
+    setWhatsapp(digits);
+    updateSettings({ whatsapp: digits });
+    showToast("WhatsApp number saved");
+  };
 
   const handleExport = () => {
-    const payload = { exportedAt: new Date().toISOString(), universities, directory, majors, faqs, strings };
+    const payload = { exportedAt: new Date().toISOString(), universities, directory, majors, faqs, strings, settings };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -53,6 +61,10 @@ export default function AdminDashboard() {
         if (Array.isArray(data.majors)) restoreMajors(data.majors);
         if (Array.isArray(data.faqs)) restoreFaqs(data.faqs);
         if (data.strings) restoreStrings(data.strings);
+        if (data.settings) {
+          updateSettings(data.settings);
+          setWhatsapp(data.settings.whatsapp ?? whatsapp);
+        }
         showToast("Backup imported");
       } catch {
         showToast("Import failed — not a valid backup file", "error");
@@ -71,6 +83,23 @@ export default function AdminDashboard() {
         <StatTile icon={BookOpen} label="Majors" value={majors.length} />
         <StatTile icon={HelpCircle} label="FAQs" value={faqs.length} />
       </div>
+
+      <GlassCard className="p-5 mb-8" style={{ background: "#fff" }}>
+        <div className="flex items-center gap-2 mb-1">
+          <MessageCircle size={16} color="#25D366" />
+          <div className="font-semibold text-sm" style={{ color: C.ink }}>WhatsApp Number</div>
+        </div>
+        <div className="text-xs mb-4 max-w-md" style={{ color: C.muted }}>
+          Controls the floating WhatsApp button and every "Chat on WhatsApp" link across the site.
+        </div>
+        <div className="flex flex-wrap items-end gap-3 max-w-md">
+          <div className="flex-1 min-w-[180px]">
+            <Label>Number (country code + number, digits only)</Label>
+            <TextInput value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="905000000000" />
+          </div>
+          <PrimaryButton onClick={handleSaveWhatsapp}>Save</PrimaryButton>
+        </div>
+      </GlassCard>
 
       <GlassCard className="p-5 mb-8 flex flex-wrap items-center justify-between gap-4" style={{ background: "#fff" }}>
         <div>

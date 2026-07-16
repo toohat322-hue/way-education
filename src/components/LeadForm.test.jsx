@@ -4,6 +4,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import LeadForm from "./LeadForm";
 import { STRINGS } from "../data/translations";
+import { DataProvider } from "../admin/DataContext";
 
 describe("LeadForm", () => {
   it("submits and shows success message", async () => {
@@ -11,7 +12,11 @@ describe("LeadForm", () => {
     const onSubmitted = vi.fn();
     const t = STRINGS.en;
 
-    render(<LeadForm t={t} onSubmitted={onSubmitted} majors={["Medicine"]} />);
+    render(
+      <DataProvider>
+        <LeadForm t={t} onSubmitted={onSubmitted} majors={["Medicine"]} />
+      </DataProvider>
+    );
 
     await user.type(screen.getByLabelText(t.sidebarName), "John Doe");
     await user.type(screen.getByLabelText(t.sidebarPhone), "+905551112233");

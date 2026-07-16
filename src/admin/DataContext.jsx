@@ -3,6 +3,7 @@ import { UNIVERSITIES as BASE_UNIVERSITIES } from "../data/universities";
 import { DIRECTORY as BASE_DIRECTORY } from "../data/directory";
 import { MAJORS as BASE_MAJORS } from "../data/majors";
 import { FAQS as BASE_FAQS } from "../data/faqs";
+import { SETTINGS as BASE_SETTINGS } from "../data/settings";
 import { loadOverride, saveOverride, clearOverride } from "./storage";
 import { DataContext } from "./useData";
 
@@ -46,12 +47,23 @@ export function DataProvider({ children }) {
   const [directory, setDirectory, resetDirectory] = useCollection("directory", BASE_DIRECTORY, "dir");
   const [majors, setMajors, resetMajors] = useCollection("majors", BASE_MAJORS, "major");
   const [faqs, setFaqs, resetFaqs] = useCollection("faqs", BASE_FAQS, "faq");
+  const [settings, setSettingsState] = useState(() => loadOverride("settings", null) || BASE_SETTINGS);
+
+  const updateSettings = useCallback((patch) => {
+    setSettingsState((prev) => {
+      const next = { ...prev, ...patch };
+      saveOverride("settings", next);
+      return next;
+    });
+  }, []);
 
   const value = {
     universities,
     directory,
     majors,
     faqs,
+    settings,
+    updateSettings,
 
     getUniversityById: useCallback((id) => universities.find((u) => u.id === id), [universities]),
 
