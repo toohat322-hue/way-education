@@ -98,14 +98,6 @@ export function DataProvider({ children }) {
       setUniversities((prev) => prev.filter((u) => u.id !== id));
       return true;
     },
-    resetUniversities: async () => {
-      setUniversities(BASE_UNIVERSITIES);
-      return true;
-    },
-    restoreUniversities: async (list) => {
-      setUniversities(list);
-      return true;
-    },
 
     addDirectoryEntry: async (u) => {
       const created = await apiFetch("/api/cms/directory", { method: "POST", body: JSON.stringify(u) });
@@ -120,14 +112,6 @@ export function DataProvider({ children }) {
     removeDirectoryEntry: async (id) => {
       await apiFetch(`/api/cms/directory/${id}`, { method: "DELETE" });
       setDirectory((prev) => prev.filter((u) => u.id !== id));
-      return true;
-    },
-    resetDirectory: async () => {
-      setDirectory(BASE_DIRECTORY);
-      return true;
-    },
-    restoreDirectory: async (list) => {
-      setDirectory(list);
       return true;
     },
 
@@ -146,14 +130,6 @@ export function DataProvider({ children }) {
       setMajors((prev) => prev.filter((m) => m.id !== id));
       return true;
     },
-    resetMajors: async () => {
-      setMajors(BASE_MAJORS.map((major) => ({ ...major, id: major.id || major.name.en.toLowerCase().replace(/\s+/g, "-") })));
-      return true;
-    },
-    restoreMajors: async (list) => {
-      setMajors(list);
-      return true;
-    },
 
     addFaq: async (f) => {
       const created = await apiFetch("/api/cms/faqs", { method: "POST", body: JSON.stringify(f) });
@@ -168,14 +144,6 @@ export function DataProvider({ children }) {
     removeFaq: async (id) => {
       await apiFetch(`/api/cms/faqs/${id}`, { method: "DELETE" });
       setFaqs((prev) => prev.filter((f) => f.id !== id));
-      return true;
-    },
-    resetFaqs: async () => {
-      setFaqs(BASE_FAQS.map((faq, index) => ({ ...faq, id: faq.id || `faq-${index + 1}` })));
-      return true;
-    },
-    restoreFaqs: async (list) => {
-      setFaqs(list);
       return true;
     },
   };

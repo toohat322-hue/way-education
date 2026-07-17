@@ -10,6 +10,8 @@ import AdminMajors from "./pages/AdminMajors";
 import AdminFaqs from "./pages/AdminFaqs";
 import AdminContent from "./pages/AdminContent";
 import AdminLeads from "./pages/AdminLeads";
+import AdminBlog from "./pages/AdminBlog";
+import AdminSeo from "./pages/AdminSeo";
 
 export default function AdminApp() {
   const { unlocked, booting } = useAdminAuth();
@@ -34,6 +36,8 @@ export default function AdminApp() {
         <Route path="faqs" element={<AdminFaqs />} />
         <Route path="content" element={<AdminContent />} />
         <Route path="leads" element={<AdminLeads />} />
+        <Route path="blog" element={<AdminBlog />} />
+        <Route path="seo" element={<AdminSeo />} />
       </Routes>
     </AdminLayout>
   );

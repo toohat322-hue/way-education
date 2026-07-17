@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { UploadCloud, RefreshCw, Trash2, X, Loader2 } from "lucide-react";
 import { C } from "../theme/tokens";
 import { Label } from "./ui";
-import { fileToResizedDataUrl, validateImageFile, ALLOWED_IMAGE_TYPES, ALLOWED_MAX_SIZE_MB } from "./imageUpload";
+import { uploadImageFile, validateImageFile, ALLOWED_IMAGE_TYPES, ALLOWED_MAX_SIZE_MB } from "./imageUpload";
 
 const ACCEPT = ALLOWED_IMAGE_TYPES.join(",");
 
@@ -44,7 +44,7 @@ export default function GalleryUploadField({ value = [], onChange, maxDim = 1600
         continue;
       }
       try {
-        accepted.push(await fileToResizedDataUrl(file, { maxDim, format: "image/jpeg" }));
+        accepted.push(await uploadImageFile(file));
       } catch (e) {
         nextErrors.push(`${file.name}: ${e.message || "upload failed"}.`);
       }
@@ -83,7 +83,7 @@ export default function GalleryUploadField({ value = [], onChange, maxDim = 1600
     }
     setBusy(true);
     try {
-      const dataUrl = await fileToResizedDataUrl(file, { maxDim, format: "image/jpeg" });
+      const dataUrl = await uploadImageFile(file);
       onChange(value.map((v, i) => (i === index ? dataUrl : v)));
       setErrors([]);
     } catch (e2) {

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:api": "npm --prefix backend run start:dev",
-    "dev:full": "npm run dev:api & vite",
+    "dev:full": "concurrently \"npm run dev:api\" \"vite\"",
     "build": "vite build",
     "build:backend": "npm --prefix backend run build",
     "lint": "oxlint",
@@ -41,6 +41,7 @@
     "@vitejs/plugin-react": "^6.0.3",
     "@vitest/coverage-v8": "^3.2.7",
     "autoprefixer": "^10.5.2",
+    "concurrently": "^9.1.2",
     "jsdom": "^27.0.0",
     "oxlint": "^1.71.0",
     "postcss": "^8.5.16",

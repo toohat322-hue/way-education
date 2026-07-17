@@ -6,7 +6,7 @@ type AuditInput = {
   action: string;
   entityType: string;
   entityId?: string | null;
-  meta?: Record<string, unknown> | null;
+  meta?: Record<string, any> | null;
   ipAddress?: string | null;
   userAgent?: string | null;
 };

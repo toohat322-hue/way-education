@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { BadRequestException, Injectable, LockedException, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import * as argon2 from "argon2";
@@ -120,7 +120,7 @@ export class AuthService {
       throw new UnauthorizedException("Invalid credentials");
     }
     if (user.lockedUntil && user.lockedUntil > new Date()) {
-      throw new LockedException("Account temporarily locked due to repeated failed login attempts");
+      throw new UnauthorizedException("Account temporarily locked due to repeated failed login attempts");
     }
 
     const ok = await argon2.verify(user.passwordHash, dto.password);

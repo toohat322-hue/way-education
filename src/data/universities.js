@@ -1,4 +1,4 @@
-import { grad } from "../theme/tokens";
+import { grad } from "../theme/tokens.js";
 
 // Replace this with a real API call (e.g. fetch("/api/universities")) once
 // there's a backend. Every component reads from here, so swapping the data

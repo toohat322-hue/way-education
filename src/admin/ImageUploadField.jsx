@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Image as ImageIcon, Upload, X, Loader2 } from "lucide-react";
 import { C } from "../theme/tokens";
 import { TextInput, Label } from "./ui";
-import { fileToResizedDataUrl } from "./imageUpload";
+import { uploadImageFile } from "./imageUpload";
 
 // Reusable logo/cover image field: shows a live preview, an "Upload" button
 // (file picker -> resized data URL, see imageUpload.js), and -- unless the
@@ -27,7 +27,7 @@ export default function ImageUploadField({ label, value, onChange, shape = "wide
     setError("");
     setBusy(true);
     try {
-      const dataUrl = await fileToResizedDataUrl(file, { maxDim, format });
+      const dataUrl = await uploadImageFile(file);
       onChange(dataUrl);
     } catch (err) {
       setError(err.message || "Upload failed.");

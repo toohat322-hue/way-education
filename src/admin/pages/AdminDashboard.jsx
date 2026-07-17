@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Building2, ListTree, BookOpen, HelpCircle, Type, Download, Upload, MessageCircle, Inbox } from "lucide-react";
+import { Building2, ListTree, BookOpen, HelpCircle, Type, Download, Upload, MessageCircle, Inbox, FileText, Search } from "lucide-react";
 import { C, grad } from "../../theme/tokens";
 import GlassCard from "../../components/GlassCard";
 import { PageHeader, StatTile, GhostButton, PrimaryButton, TextInput, Label } from "../ui";
@@ -15,12 +15,14 @@ const SECTIONS = [
   { to: "/admin/majors", label: "Majors", icon: BookOpen, desc: "The popular-majors grid on the homepage." },
   { to: "/admin/faqs", label: "FAQs", icon: HelpCircle, desc: "Frequently asked questions section." },
   { to: "/admin/content", label: "Site Copy", icon: Type, desc: "Every EN/AR string used across the site." },
+  { to: "/admin/blog", label: "Blog", icon: FileText, desc: "Manage articles, news, and guides." },
+  { to: "/admin/seo", label: "SEO", icon: Search, desc: "Manage page metadata, OpenGraph tags, and schema." },
   { to: "/admin/leads", label: "Leads", icon: Inbox, desc: "CRM pipeline for incoming consultations and applications." },
 ];
 
 export default function AdminDashboard() {
-  const { universities, directory, majors, faqs, settings, updateSettings, restoreUniversities, restoreDirectory, restoreMajors, restoreFaqs } = useData();
-  const { strings, restoreStrings } = useLanguage();
+  const { universities, directory, majors, faqs, settings, updateSettings, refresh } = useData();
+  const { strings } = useLanguage();
   const showToast = useToast();
   const fileInputRef = useRef(null);
   const [whatsapp, setWhatsapp] = useState(settings.whatsapp);
@@ -36,18 +38,22 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleExport = () => {
-    const payload = { exportedAt: new Date().toISOString(), universities, directory, majors, faqs, strings, settings };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `wayeducation-backup-${new Date().toISOString().slice(0, 10)}.json`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-    showToast("Backup exported");
+  const handleExport = async () => {
+    try {
+      const payload = await apiFetch("/api/cms/snapshot/export");
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `wayeducation-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast("Backup exported");
+    } catch (err) {
+      showToast("Export failed: " + err.message, "error");
+    }
   };
 
   const handleImportClick = () => fileInputRef.current?.click();
@@ -56,10 +62,10 @@ export default function AdminDashboard() {
     const file = e.target.files?.[0];
     e.target.value = ""; // allow re-selecting the same file later
     if (!file) return;
-    if (!window.confirm("Importing will replace all current data in this browser with the backup file. Continue?")) return;
+    if (!window.confirm("Importing will replace all live backend data with the backup file. Continue?")) return;
 
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
       try {
         const raw = JSON.parse(String(reader.result));
         const validated = validateBackupPayload(raw);
@@ -68,19 +74,16 @@ export default function AdminDashboard() {
           return;
         }
 
-        const data = validated.value;
-        if (Array.isArray(data.universities)) restoreUniversities(data.universities);
-        if (Array.isArray(data.directory)) restoreDirectory(data.directory);
-        if (Array.isArray(data.majors)) restoreMajors(data.majors);
-        if (Array.isArray(data.faqs)) restoreFaqs(data.faqs);
-        if (data.strings) restoreStrings(data.strings);
-        if (data.settings) {
-          updateSettings(data.settings);
-          setWhatsapp(data.settings.whatsapp ?? "");
-        }
-        showToast("Backup imported");
-      } catch {
-        showToast("Import failed — not a valid backup file", "error");
+        await apiFetch("/api/cms/snapshot/import", {
+          method: "POST",
+          body: JSON.stringify({ snapshot: validated.value }),
+        });
+
+        await refresh();
+        setWhatsapp(validated.value.settings?.whatsapp ?? "");
+        showToast("Backup imported successfully");
+      } catch (err) {
+        showToast(`Import failed — ${err.message || "Unknown error"}`, "error");
       }
     };
     reader.readAsText(file);
@@ -118,7 +121,7 @@ export default function AdminDashboard() {
         <div>
           <div className="font-semibold text-sm mb-1" style={{ color: C.ink }}>Backup & Restore</div>
           <div className="text-xs max-w-md" style={{ color: C.muted }}>
-            Export the current CMS snapshot for safekeeping or migration. Import will replace the live backend content once the snapshot importer is wired in.
+            Export the current CMS snapshot for safekeeping or migration. Import will replace the live backend content with the snapshot.
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">

@@ -519,6 +519,42 @@ export class CmsRepository {
 
   async importSnapshot(dto: ImportSnapshotDto) {
     const snapshot = (dto.snapshot || {}) as Record<string, any>;
+    
+    // Clear relations and core entities to allow clean insert
+    await this.prisma.universityVersion.deleteMany();
+    await this.prisma.universityProgram.deleteMany();
+    await this.prisma.universityAdmission.deleteMany();
+    await this.prisma.universityReview.deleteMany();
+    await this.prisma.universityScholarship.deleteMany();
+    await this.prisma.universityGallery.deleteMany();
+    await this.prisma.university.deleteMany();
+    await this.prisma.directoryEntry.deleteMany();
+    await this.prisma.city.deleteMany();
+    await this.prisma.country.deleteMany();
+    await this.prisma.major.deleteMany();
+    await this.prisma.faq.deleteMany();
+
+    if (Array.isArray(snapshot.majors)) {
+      for (const major of snapshot.majors) {
+        await this.createMajor(major as unknown as CreateMajorDto);
+      }
+    }
+    if (Array.isArray(snapshot.faqs)) {
+      for (const faq of snapshot.faqs) {
+        await this.createFaq(faq as unknown as CreateFaqDto);
+      }
+    }
+    if (Array.isArray(snapshot.directory)) {
+      for (const entry of snapshot.directory) {
+        await this.createDirectoryEntry(entry as unknown as CreateDirectoryEntryDto);
+      }
+    }
+    if (Array.isArray(snapshot.universities)) {
+      for (const uni of snapshot.universities) {
+        await this.createUniversity(uni as unknown as CreateUniversityDto);
+      }
+    }
+
     await this.prisma.$transaction(async (tx) => {
       if (snapshot.settings) {
         await tx.siteSettings.upsert({ where: { id: snapshot.settings.id || "site-settings" }, update: snapshot.settings as Prisma.SiteSettingsUpdateInput, create: snapshot.settings as Prisma.SiteSettingsCreateInput });

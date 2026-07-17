@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink, Link } from "react-router-dom";
 import {
   LayoutDashboard, Building2, ListTree, BookOpen, HelpCircle, Type, Inbox,
-  LogOut, ExternalLink, GraduationCap,
+  LogOut, ExternalLink, GraduationCap, FileText, Search
 } from "lucide-react";
 import { C, grad } from "../theme/tokens";
 import { useAdminAuth } from "./useAdminAuth";
@@ -14,6 +14,8 @@ const NAV = [
   { to: "/admin/majors", label: "Majors", icon: BookOpen },
   { to: "/admin/faqs", label: "FAQs", icon: HelpCircle },
   { to: "/admin/content", label: "Site Copy", icon: Type },
+  { to: "/admin/blog", label: "Blog", icon: FileText },
+  { to: "/admin/seo", label: "SEO", icon: Search },
   { to: "/admin/leads", label: "Leads", icon: Inbox },
 ];
 
