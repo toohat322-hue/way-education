@@ -7,3 +7,7 @@ playwright-report
 test-results
 .dev-out.log
 .dev-err.log
+.env
+.env.*
+!.env.example
+!.env.server.example

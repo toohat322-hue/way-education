@@ -2,6 +2,7 @@ import React from "react";
 import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { MemoryRouter } from "react-router-dom";
 import LeadForm from "./LeadForm";
 import { STRINGS } from "../data/translations";
 import { DataProvider } from "../admin/DataContext";
@@ -13,9 +14,11 @@ describe("LeadForm", () => {
     const t = STRINGS.en;
 
     render(
-      <DataProvider>
-        <LeadForm t={t} onSubmitted={onSubmitted} majors={["Medicine"]} />
-      </DataProvider>
+      <MemoryRouter>
+        <DataProvider>
+          <LeadForm t={t} onSubmitted={onSubmitted} majors={["Medicine"]} />
+        </DataProvider>
+      </MemoryRouter>
     );
 
     await user.type(screen.getByLabelText(t.sidebarName), "John Doe");

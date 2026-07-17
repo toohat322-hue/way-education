@@ -1,0 +1,467 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  EDITOR
+  STAFF
+}
+
+enum UniversityStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+  HIDDEN
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  INTERESTED
+  DOCUMENTS_PENDING
+  APPLIED
+  ACCEPTED
+  REJECTED
+  ARCHIVED
+}
+
+enum MediaType {
+  IMAGE
+  PDF
+  VIDEO
+  DOCUMENT
+  LOGO
+}
+
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model User {
+  id                  String                  @id @default(cuid())
+  email               String                  @unique
+  firstName           String?
+  lastName            String?
+  passwordHash        String
+  role                UserRole                @default(ADMIN)
+  permissions         Json?
+  emailVerifiedAt     DateTime?
+  sessionVersion      Int                     @default(1)
+  failedLoginAttempts Int                     @default(0)
+  lockedUntil         DateTime?
+  lastLoginAt         DateTime?
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+  refreshTokens       RefreshToken[]
+  passwordResetTokens PasswordResetToken[]
+  emailTokens         EmailVerificationToken[]
+  auditLogs           AuditLog[]
+  assignedLeads       Lead[]                  @relation("LeadAssignee")
+  leadNotes           LeadNote[]
+}
+
+model RefreshToken {
+  id               String    @id @default(cuid())
+  userId           String
+  tokenHash        String
+  userAgent        String?
+  ipAddress        String?
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  replacedByToken  String?
+  createdAt        DateTime  @default(now())
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model PasswordResetToken {
+  id         String    @id @default(cuid())
+  userId     String
+  tokenHash  String
+  expiresAt  DateTime
+  usedAt     DateTime?
+  createdAt  DateTime  @default(now())
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model EmailVerificationToken {
+  id         String    @id @default(cuid())
+  userId     String
+  tokenHash  String
+  expiresAt  DateTime
+  usedAt     DateTime?
+  createdAt  DateTime  @default(now())
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  action     String
+  entityType String
+  entityId   String?
+  meta       Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
+
+model Country {
+  id               String           @id @default(cuid())
+  code             String           @unique
+  nameEn           String
+  nameAr           String
+  isActive         Boolean          @default(true)
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  cities           City[]
+  universities     University[]
+  directoryEntries DirectoryEntry[]
+  leadsPreferred   Lead[]           @relation("LeadPreferredCountry")
+  leadsOrigin      Lead[]           @relation("LeadOriginCountry")
+}
+
+model City {
+  id               String           @id @default(cuid())
+  countryId        String
+  nameEn           String
+  nameAr           String
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+  country          Country          @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  universities     University[]
+  directoryEntries DirectoryEntry[]
+
+  @@unique([countryId, nameEn])
+}
+
+model Major {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  iconName  String
+  nameEn    String
+  nameAr    String
+  count     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Faq {
+  id        String   @id @default(cuid())
+  scope     String   @default("homepage")
+  questionEn String
+  questionAr String
+  answerEn  String
+  answerAr  String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SiteSettings {
+  id              String   @id @default("site-settings")
+  websiteName     String
+  logoUrl         String?
+  primaryColor    String?
+  whatsapp        String
+  supportEmail    String
+  supportPhone    String
+  addressEn       String
+  addressAr       String
+  seoTitle        String
+  seoDescription  String
+  socialLinks     Json
+  analytics       Json
+  featureFlags    Json
+  languages       Json
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model SiteCopy {
+  id         String   @id @default("site-copy")
+  data       Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model ContentBlock {
+  id         String           @id @default(cuid())
+  key        String           @unique
+  title      String
+  status     UniversityStatus @default(PUBLISHED)
+  payload    Json
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+}
+
+model SeoPage {
+  id               String   @id @default(cuid())
+  key              String   @unique
+  title            String
+  description      String
+  canonicalUrl     String?
+  robots           String?
+  openGraphTitle   String?
+  openGraphDescription String?
+  openGraphImage   String?
+  schemaMarkup     Json?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model BlogPost {
+  id               String     @id @default(cuid())
+  slug             String     @unique
+  titleEn          String
+  titleAr          String
+  excerptEn        String?
+  excerptAr        String?
+  contentEn        String
+  contentAr        String
+  coverImage       String?
+  authorName       String?
+  tags             Json?
+  status           BlogStatus @default(DRAFT)
+  publishedAt      DateTime?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+}
+
+model DirectoryEntry {
+  id         String    @id @default(cuid())
+  slug       String    @unique
+  name       String
+  type       String
+  founded    String?
+  isActive   Boolean   @default(true)
+  cityId     String?
+  countryId  String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  city       City?     @relation(fields: [cityId], references: [id], onDelete: SetNull)
+  country    Country   @relation(fields: [countryId], references: [id], onDelete: Restrict)
+
+  @@index([countryId])
+}
+
+model University {
+  id             String               @id @default(cuid())
+  slug           String               @unique
+  name           String
+  initial        String
+  grad           String
+  image          String?
+  logo           String?
+  photoCreditText String?
+  photoCreditUrl String?
+  typeEn         String
+  typeAr         String
+  languageEn     String
+  languageAr     String
+  tuition        Int
+  rating         Float                @default(0)
+  reviewsCount   Int                  @default(0)
+  ranking        Int?
+  founded        String?
+  studentsCount  String?
+  intlStudents   String?
+  scholarship    Int                  @default(0)
+  gpaRequirement String?
+  aboutEn        String
+  aboutAr        String
+  featured       Boolean              @default(false)
+  active         Boolean              @default(true)
+  status         UniversityStatus     @default(PUBLISHED)
+  currentVersion Int                  @default(1)
+  cityId         String
+  countryId      String
+  contactPhone   String?
+  contactEmail   String?
+  contactWebsite String?
+  socialFacebook String?
+  socialInstagram String?
+  socialLinkedin String?
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  deletedAt      DateTime?
+  city           City                 @relation(fields: [cityId], references: [id], onDelete: Restrict)
+  country        Country              @relation(fields: [countryId], references: [id], onDelete: Restrict)
+  programs       UniversityProgram[]
+  admissions     UniversityAdmission[]
+  scholarships   UniversityScholarship[]
+  reviews        UniversityReview[]
+  gallery        UniversityGallery[]
+  versions       UniversityVersion[]
+  leads          Lead[]
+
+  @@index([cityId])
+  @@index([countryId])
+  @@index([status, active, featured])
+}
+
+model UniversityProgram {
+  id           String      @id @default(cuid())
+  universityId String
+  nameEn       String
+  nameAr       String
+  fee          Int
+  iconName     String
+  degree       String?
+  sortOrder    Int         @default(0)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  university   University  @relation(fields: [universityId], references: [id], onDelete: Cascade)
+
+  @@index([universityId])
+}
+
+model UniversityAdmission {
+  id            String      @id @default(cuid())
+  universityId  String
+  documentsEn   Json
+  documentsAr   Json
+  notesEn       String?
+  notesAr       String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  university    University  @relation(fields: [universityId], references: [id], onDelete: Cascade)
+
+  @@index([universityId])
+}
+
+model UniversityScholarship {
+  id            String      @id @default(cuid())
+  universityId  String
+  titleEn       String
+  titleAr       String
+  percentage    Int
+  descriptionEn String?
+  descriptionAr String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  university    University  @relation(fields: [universityId], references: [id], onDelete: Cascade)
+
+  @@index([universityId])
+}
+
+model UniversityReview {
+  id            String      @id @default(cuid())
+  universityId  String
+  studentName   String
+  studentCountry String?
+  rating        Int
+  textEn        String
+  textAr        String
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  university    University  @relation(fields: [universityId], references: [id], onDelete: Cascade)
+
+  @@index([universityId])
+}
+
+model UniversityGallery {
+  id            String      @id @default(cuid())
+  universityId  String
+  url           String
+  sortOrder     Int         @default(0)
+  createdAt     DateTime    @default(now())
+  university    University  @relation(fields: [universityId], references: [id], onDelete: Cascade)
+
+  @@index([universityId])
+}
+
+model UniversityVersion {
+  id            String      @id @default(cuid())
+  universityId  String
+  version       Int
+  snapshot      Json
+  createdAt     DateTime    @default(now())
+  university    University  @relation(fields: [universityId], references: [id], onDelete: Cascade)
+
+  @@unique([universityId, version])
+}
+
+model MediaAsset {
+  id          String    @id @default(cuid())
+  folder      String
+  originalName String
+  filename    String
+  mimeType    String
+  size        Int
+  width       Int?
+  height      Int?
+  type        MediaType
+  altText     String?
+  metadata    Json?
+  url         String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Lead {
+  id                   String      @id @default(cuid())
+  status               LeadStatus  @default(NEW)
+  name                 String
+  phone                String
+  whatsapp             String?
+  email                String
+  program              String?
+  degree               String?
+  language             String?
+  message              String?
+  referralSource       String?
+  utmSource            String?
+  utmMedium            String?
+  utmCampaign          String?
+  utmTerm              String?
+  utmContent           String?
+  ipAddress            String?
+  userAgent            String?
+  metadata             Json?
+  countryId            String?
+  preferredCountryId   String?
+  preferredUniversityId String?
+  assignedToId         String?
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+  country              Country?    @relation("LeadOriginCountry", fields: [countryId], references: [id], onDelete: SetNull)
+  preferredCountry     Country?    @relation("LeadPreferredCountry", fields: [preferredCountryId], references: [id], onDelete: SetNull)
+  preferredUniversity  University? @relation(fields: [preferredUniversityId], references: [id], onDelete: SetNull)
+  assignedTo           User?       @relation("LeadAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+  notes                LeadNote[]
+
+  @@index([status, createdAt])
+  @@index([assignedToId])
+}
+
+model LeadNote {
+  id         String   @id @default(cuid())
+  leadId     String
+  userId     String?
+  note       String
+  type       String   @default("note")
+  createdAt  DateTime @default(now())
+  lead       Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([leadId, createdAt])
+}

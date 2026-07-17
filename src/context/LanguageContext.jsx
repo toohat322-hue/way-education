@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { STRINGS as BASE_STRINGS } from "../data/translations";
 import { LanguageContext } from "./useLanguage";
-import { loadOverride, saveOverride, clearOverride } from "../admin/storage";
+import { apiFetch } from "../lib/api";
 
 function mergeStrings(base, override) {
   if (!override) return base;
@@ -14,7 +14,8 @@ function mergeStrings(base, override) {
 
 export function LanguageProvider({ children }) {
   const [lang, setLang] = useState(() => localStorage.getItem("st_lang") || "en");
-  const [override, setOverride] = useState(() => loadOverride("strings", null));
+  const [override, setOverride] = useState(null);
+  const saveTimerRef = useRef(undefined);
 
   useEffect(() => {
     localStorage.setItem("st_lang", lang);
@@ -27,16 +28,55 @@ export function LanguageProvider({ children }) {
   const t = strings[lang];
   const isRtl = lang === "ar";
 
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadSiteCopy = async () => {
+      try {
+        const data = await apiFetch("/api/cms/site-copy");
+        if (!cancelled && data && Object.keys(data).length > 0) {
+          setOverride(data);
+        }
+      } catch {
+        if (!cancelled) {
+          setOverride(null);
+        }
+      }
+    };
+
+    loadSiteCopy();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const queueSave = (next) => {
+    window.clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = window.setTimeout(() => {
+      apiFetch("/api/cms/site-copy", {
+        method: "PATCH",
+        body: JSON.stringify({ data: next }),
+      }).catch(() => {
+        // Keep local edits visible; a failed save can be retried by the next edit.
+      });
+    }, 250);
+  };
+
   const updateString = (langKey, key, value) => {
     setOverride((prev) => {
-      const next = { ...(prev || {}), [langKey]: { ...((prev && prev[langKey]) || {}), [key]: value } };
-      saveOverride("strings", next);
+      const next = { ...mergeStrings(BASE_STRINGS, prev), [langKey]: { ...(((prev && prev[langKey]) || BASE_STRINGS[langKey]) ?? {}), [key]: value } };
+      queueSave(next);
       return next;
     });
   };
 
   const resetStrings = () => {
-    clearOverride("strings");
+    apiFetch("/api/cms/site-copy", {
+      method: "PATCH",
+      body: JSON.stringify({ data: BASE_STRINGS }),
+    }).catch(() => {
+      // Leave the local reset visible even if the server call fails.
+    });
     setOverride(null);
   };
 
@@ -44,7 +84,7 @@ export function LanguageProvider({ children }) {
   // complete merged { en, ar } string set, so it replaces the override wholesale.
   const restoreStrings = (fullStrings) => {
     setOverride(fullStrings);
-    saveOverride("strings", fullStrings);
+    queueSave(fullStrings);
   };
 
   return (

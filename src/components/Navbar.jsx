@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { GraduationCap, Globe, Menu, X } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Globe, Menu, X } from "lucide-react";
 import { C, grad } from "../theme/tokens";
 import { useLanguage } from "../context/useLanguage";
 
@@ -9,6 +9,7 @@ const NAV_ROUTES = ["/universities", "/#programs", "/universities?country=N.%20C
 
 export default function Navbar() {
   const { t, lang, toggleLang } = useLanguage();
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -18,8 +19,8 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-5 sm:px-8 h-16 md:h-20 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2 shrink-0">
-          <div className="w-9 h-9 md:w-10 md:h-10 rounded-2xl flex items-center justify-center" style={{ background: grad.primary }}>
-            <GraduationCap size={20} color="#fff" />
+          <div className="w-9 h-9 md:w-10 md:h-10 rounded-2xl overflow-hidden" style={{ border: `1px solid ${C.border}` }}>
+            <img src="/brand/logo.jpeg" alt="Way Education logo" className="w-full h-full object-cover" />
           </div>
           <span className="text-lg md:text-xl font-bold" style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}>
             Way <span style={{ color: C.blue }}>Education</span>
@@ -50,6 +51,7 @@ export default function Navbar() {
             <Globe size={15} /> {lang === "en" ? "العربية" : "English"}
           </button>
           <button
+            onClick={() => navigate("/contact?source=navbar-apply")}
             className="px-5 py-2.5 rounded-full text-sm font-semibold text-white transition-transform hover:scale-105 active:scale-95"
             style={{ background: grad.cta, boxShadow: "0 8px 20px rgba(255,106,43,0.35)" }}
           >
@@ -77,7 +79,7 @@ export default function Navbar() {
             >
               <Globe size={15} /> {lang === "en" ? "العربية" : "English"}
             </button>
-            <button className="flex-1 px-5 py-2.5 rounded-full text-sm font-semibold text-white" style={{ background: grad.cta }}>
+            <button onClick={() => navigate("/contact?source=mobile-navbar-apply")} className="flex-1 px-5 py-2.5 rounded-full text-sm font-semibold text-white" style={{ background: grad.cta }}>
               {t.navApply}
             </button>
           </div>

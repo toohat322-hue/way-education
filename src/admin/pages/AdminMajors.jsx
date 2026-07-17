@@ -27,17 +27,21 @@ function MajorFormModal({ major, onClose }) {
     onClose();
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = { name: { en: form.nameEn, ar: form.nameAr }, count: Number(form.count) || 0, iconName: form.iconName };
-    if (major) {
-      updateMajor(major.id, payload);
-      showToast(`Saved changes to ${payload.name.en}`);
-    } else {
-      addMajor(payload);
-      showToast(`${payload.name.en} added`);
+    try {
+      if (major) {
+        await updateMajor(major.id, payload);
+        showToast(`Saved changes to ${payload.name.en}`);
+      } else {
+        await addMajor(payload);
+        showToast(`${payload.name.en} added`);
+      }
+      onClose();
+    } catch (err) {
+      showToast(err.message || "Unable to save major", "error");
     }
-    onClose();
   };
 
   return (
@@ -88,7 +92,7 @@ export default function AdminMajors() {
         sub={`${majors.length} majors shown in the homepage grid.`}
         action={
           <div className="flex items-center gap-2">
-            <GhostButton onClick={() => { if (window.confirm("Reset majors to defaults? This discards your edits.")) { resetMajors(); showToast("Majors reset to defaults"); } }}>
+            <GhostButton onClick={async () => { if (window.confirm("Reset majors to defaults? This discards your edits.")) { try { await resetMajors(); showToast("Majors reset to defaults"); } catch (err) { showToast(err.message || "Unable to reset majors", "error"); } } }}>
               Reset
             </GhostButton>
             <PrimaryButton onClick={() => setEditing(null)}>
@@ -112,7 +116,7 @@ export default function AdminMajors() {
                 <GhostButton onClick={() => setEditing(m)} className="flex-1 flex items-center justify-center gap-1.5">
                   <Pencil size={13} /> Edit
                 </GhostButton>
-                <DangerButton onClick={() => { if (window.confirm(`Remove ${m.name.en}?`)) { removeMajor(m.id); showToast(`${m.name.en} removed`); } }}>
+                <DangerButton onClick={async () => { if (window.confirm(`Remove ${m.name.en}?`)) { try { await removeMajor(m.id); showToast(`${m.name.en} removed`); } catch (err) { showToast(err.message || `Unable to remove ${m.name.en}`, "error"); } } }}>
                   <Trash2 size={13} />
                 </DangerButton>
               </div>

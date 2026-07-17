@@ -1,4 +1,5 @@
 import React from "react";
+import { useSearchParams } from "react-router-dom";
 import { Phone, Mail, MapPin, MessageCircle } from "lucide-react";
 import { C, grad } from "../theme/tokens";
 import GlassCard from "../components/GlassCard";
@@ -9,6 +10,7 @@ import { useData } from "../admin/useData";
 export default function Contact() {
   const { t } = useLanguage();
   const { settings } = useData();
+  const [searchParams] = useSearchParams();
   return (
     <div className="max-w-4xl mx-auto px-5 sm:px-8 py-16 md:py-24">
       <h1 className="text-3xl md:text-5xl font-bold mb-4" style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}>
@@ -20,7 +22,16 @@ export default function Contact() {
           <h3 className="font-semibold text-base mb-5" style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}>
             {t.sidebarApplyTitle}
           </h3>
-          <LeadForm t={t} />
+          <LeadForm
+            t={t}
+            context={{
+              preferredCountry: searchParams.get("country") || undefined,
+              preferredUniversity: searchParams.get("university") || undefined,
+              program: searchParams.get("program") || undefined,
+              language: searchParams.get("language") || undefined,
+              referralSource: searchParams.get("source") || "contact-page",
+            }}
+          />
         </GlassCard>
         <div className="space-y-4">
           {[

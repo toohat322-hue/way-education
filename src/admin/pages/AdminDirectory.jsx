@@ -44,17 +44,20 @@ function DirectoryFormModal({ entry, onClose }) {
     onClose();
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (entry) {
-      updateDirectoryEntry(entry.id, form);
-      showToast(`Saved changes to ${form.name}`);
-    } else {
-      const id = uniqueSlugId(form.name, directory.map((d) => d.id), "dir-");
-      addDirectoryEntry({ id, ...form });
-      showToast(`${form.name} added to directory`);
+    try {
+      if (entry) {
+        await updateDirectoryEntry(entry.id, form);
+        showToast(`Saved changes to ${form.name}`);
+      } else {
+        await addDirectoryEntry(form);
+        showToast(`${form.name} added to directory`);
+      }
+      onClose();
+    } catch (err) {
+      showToast(err.message || "Unable to save directory entry", "error");
     }
-    onClose();
   };
 
   return (
@@ -105,7 +108,7 @@ export default function AdminDirectory() {
         sub={`${directory.length} universities in the public directory.`}
         action={
           <div className="flex items-center gap-2">
-            <GhostButton onClick={() => { if (window.confirm("Reset the directory to its original entries? This discards your edits.")) { resetDirectory(); showToast("Directory reset to defaults"); } }}>
+            <GhostButton onClick={async () => { if (window.confirm("Reset the directory to its original entries? This discards your edits.")) { try { await resetDirectory(); showToast("Directory reset to defaults"); } catch (err) { showToast(err.message || "Unable to reset directory", "error"); } } }}>
               Reset
             </GhostButton>
             <PrimaryButton onClick={() => setEditing(null)}>
@@ -160,7 +163,7 @@ export default function AdminDirectory() {
                         <Pencil size={14} />
                       </button>
                       <button
-                        onClick={() => { if (window.confirm(`Remove ${d.name}?`)) { removeDirectoryEntry(d.id); showToast(`${d.name} removed`); } }}
+                        onClick={async () => { if (window.confirm(`Remove ${d.name}?`)) { try { await removeDirectoryEntry(d.id); showToast(`${d.name} removed`); } catch (err) { showToast(err.message || `Unable to remove ${d.name}`, "error"); } } }}
                         className="p-1.5 rounded-lg"
                         style={{ color: C.orangeDark }}
                         aria-label={`Remove ${d.name}`}

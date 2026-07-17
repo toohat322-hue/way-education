@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:api": "npm --prefix backend run start:dev",
+    "dev:full": "npm run dev:api & vite",
     "build": "vite build",
+    "build:backend": "npm --prefix backend run build",
     "lint": "oxlint",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -16,6 +19,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
     "lucide-react": "^1.23.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",

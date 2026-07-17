@@ -40,6 +40,15 @@ export default function UniversityCard({ u }) {
   const { t, lang } = useLanguage();
   const navigate = useNavigate();
   const goDetail = () => navigate(`/university/${u.id}`);
+  const goApply = () => {
+    const params = new URLSearchParams({
+      source: "university-card",
+      university: u.name,
+      country: u.country.en,
+      language: u.language.en,
+    });
+    navigate(`/contact?${params.toString()}`);
+  };
 
   return (
     <GlassCard className="p-4 min-w-[280px] sm:min-w-0 transition-transform hover:-translate-y-1.5 duration-300" style={{ background: "#fff" }}>
@@ -69,7 +78,7 @@ export default function UniversityCard({ u }) {
           </button>
         </div>
         <button
-          onClick={goDetail}
+          onClick={goApply}
           className="w-full py-2.5 rounded-xl text-sm font-semibold text-white transition-transform hover:scale-[1.02] active:scale-95"
           style={{ background: grad.cta }}
         >

@@ -9,9 +9,18 @@ import AdminDirectory from "./pages/AdminDirectory";
 import AdminMajors from "./pages/AdminMajors";
 import AdminFaqs from "./pages/AdminFaqs";
 import AdminContent from "./pages/AdminContent";
+import AdminLeads from "./pages/AdminLeads";
 
 export default function AdminApp() {
-  const { unlocked } = useAdminAuth();
+  const { unlocked, booting } = useAdminAuth();
+
+  if (booting) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-5">
+        <p className="text-sm" style={{ color: "#64748B" }}>Checking admin session…</p>
+      </div>
+    );
+  }
 
   if (!unlocked) return <AdminLogin />;
 
@@ -24,6 +33,7 @@ export default function AdminApp() {
         <Route path="majors" element={<AdminMajors />} />
         <Route path="faqs" element={<AdminFaqs />} />
         <Route path="content" element={<AdminContent />} />
+        <Route path="leads" element={<AdminLeads />} />
       </Routes>
     </AdminLayout>
   );

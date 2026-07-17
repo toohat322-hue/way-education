@@ -2,8 +2,23 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
+export default defineConfig(({ command }) => {
+  const connectSrc =
+    command === "serve"
+      ? "'self' http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*"
+      : "'self'";
+
+  return {
+    plugins: [
+      react(),
+      tailwindcss(),
+      {
+        name: "inject-csp-connect-src",
+        transformIndexHtml(html) {
+          return html.replace("__CSP_CONNECT_SRC__", connectSrc);
+        },
+      },
+    ],
   build: {
     sourcemap: false,
     rollupOptions: {
@@ -35,4 +50,5 @@ export default defineConfig({
       exclude: ["src/main.jsx", "src/data/directory.js"],
     },
   },
+  };
 });

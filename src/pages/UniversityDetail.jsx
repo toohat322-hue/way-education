@@ -33,7 +33,17 @@ function ApplySidebar({ uni, t, lang }) {
     <GlassCard className="p-6" style={{ background: "#fff" }}>
       <h3 className="font-semibold text-base mb-1" style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}>{t.sidebarApplyTitle}</h3>
       <p className="text-xs mb-5" style={{ color: C.muted }}>{t.sidebarNote}</p>
-      <LeadForm t={t} majors={uni.majors.map((m) => m.name[lang])} />
+      <LeadForm
+        t={t}
+        majors={uni.majors.map((m) => m.name[lang])}
+        context={{
+          preferredCountry: uni.country.en,
+          preferredUniversity: uni.name,
+          language: uni.language.en,
+          degree: uni.type.en,
+          referralSource: "university-detail",
+        }}
+      />
     </GlassCard>
   );
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import { NavLink, Link } from "react-router-dom";
 import {
-  LayoutDashboard, Building2, ListTree, BookOpen, HelpCircle, Type,
+  LayoutDashboard, Building2, ListTree, BookOpen, HelpCircle, Type, Inbox,
   LogOut, ExternalLink, GraduationCap,
 } from "lucide-react";
 import { C, grad } from "../theme/tokens";
@@ -14,6 +14,7 @@ const NAV = [
   { to: "/admin/majors", label: "Majors", icon: BookOpen },
   { to: "/admin/faqs", label: "FAQs", icon: HelpCircle },
   { to: "/admin/content", label: "Site Copy", icon: Type },
+  { to: "/admin/leads", label: "Leads", icon: Inbox },
 ];
 
 function NavItem({ item, compact }) {

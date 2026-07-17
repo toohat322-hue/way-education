@@ -1,30 +1,66 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AdminAuthContext } from "./useAdminAuth";
-
-const SESSION_KEY = "st_admin_unlocked";
-// Client-side gate only -- this site has no backend to verify a password
-// against, so this keeps casual visitors out but isn't real security.
-const ADMIN_PASSWORD = "wayeducation2026";
+import { apiFetch } from "../lib/api";
 
 export function AdminAuthProvider({ children }) {
-  const [unlocked, setUnlocked] = useState(() => sessionStorage.getItem(SESSION_KEY) === "1");
+  const [unlocked, setUnlocked] = useState(false);
+  const [booting, setBooting] = useState(true);
+  const [user, setUser] = useState(null);
 
-  const login = (password) => {
-    if (password === ADMIN_PASSWORD) {
-      sessionStorage.setItem(SESSION_KEY, "1");
-      setUnlocked(true);
-      return true;
+  useEffect(() => {
+    let cancelled = false;
+
+    const bootstrap = async () => {
+      try {
+        const data = await apiFetch("/api/auth/me");
+        if (!cancelled) {
+          setUnlocked(Boolean(data.authenticated));
+          setUser(data.user || null);
+        }
+      } catch {
+        if (!cancelled) {
+          setUnlocked(false);
+          setUser(null);
+        }
+      } finally {
+        if (!cancelled) setBooting(false);
+      }
+    };
+
+    bootstrap();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const login = async ({ email, password }) => {
+    try {
+      const data = await apiFetch("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      });
+      setUnlocked(Boolean(data.authenticated));
+      setUser(data.user || null);
+      return Boolean(data.authenticated);
+    } catch {
+      setUnlocked(false);
+      setUser(null);
+      return false;
     }
-    return false;
   };
 
-  const logout = () => {
-    sessionStorage.removeItem(SESSION_KEY);
+  const logout = async () => {
+    try {
+      await apiFetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // Best-effort logout; local UI state is always cleared below.
+    }
     setUnlocked(false);
+    setUser(null);
   };
 
   return (
-    <AdminAuthContext.Provider value={{ unlocked, login, logout }}>
+    <AdminAuthContext.Provider value={{ unlocked, booting, user, login, logout }}>
       {children}
     </AdminAuthContext.Provider>
   );

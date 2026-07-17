@@ -23,13 +23,6 @@ export default function Hero() {
 
   return (
     <section className="relative overflow-hidden pt-10 md:pt-16 pb-16 md:pb-24" style={{ background: grad.hero }}>
-      {/* route-map signature graphic: MENA -> Türkiye flight path */}
-      <svg className="absolute inset-0 w-full h-full opacity-40 pointer-events-none" viewBox="0 0 1000 600" preserveAspectRatio="none">
-        <path className="route-dash" d="M60,480 C 250,420 380,300 520,220 S 800,120 930,90" fill="none" stroke="#2952E3" strokeWidth="2" />
-        <circle cx="60" cy="480" r="5" fill="#FF6A2B" />
-        <circle cx="930" cy="90" r="5" fill="#17C3E0" />
-      </svg>
-
       <div className="max-w-7xl mx-auto px-5 sm:px-8 relative">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="fade-up">
@@ -63,6 +56,7 @@ export default function Hero() {
                 {t.exploreBtn}
               </button>
               <button
+                onClick={() => navigate("/contact?source=hero-apply")}
                 className="px-6 py-3 rounded-full text-sm font-semibold text-white flex items-center gap-2 transition-transform hover:scale-105 active:scale-95"
                 style={{ background: grad.cta, boxShadow: "0 10px 24px rgba(255,106,43,0.35)" }}
               >
@@ -84,7 +78,14 @@ export default function Hero() {
           </div>
 
           <div className="relative h-[420px] md:h-[520px] hidden sm:block">
-            <div className="absolute inset-6 rounded-[32px]" style={{ background: grad.primary, opacity: 0.12 }} />
+            <div
+              className="absolute inset-6 rounded-[32px]"
+              style={{
+                backgroundImage: "url('/brand/background2.jpeg')",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-56 h-56 md:w-72 md:h-72 rounded-full flex items-center justify-center" style={{ background: grad.primary, opacity: 0.15 }}>
                 <div className="w-40 h-40 md:w-52 md:h-52 rounded-full flex items-center justify-center" style={{ background: "#fff", boxShadow: "0 20px 60px rgba(41,82,227,0.25)" }}>

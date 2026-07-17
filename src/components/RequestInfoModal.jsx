@@ -40,7 +40,14 @@ export default function RequestInfoModal({ uni, t, onClose }) {
           <MapPin size={12} /> {uni.city} · {uni.country} · {uni.type}
         </div>
         <p className="text-xs mb-5" style={{ color: C.muted }}>{t.sidebarNote}</p>
-        <LeadForm t={t} />
+        <LeadForm
+          t={t}
+          context={{
+            preferredCountry: uni.country,
+            preferredUniversity: uni.name,
+            referralSource: "directory-request-info",
+          }}
+        />
       </div>
     </div>
   );

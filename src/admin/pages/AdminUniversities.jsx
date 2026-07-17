@@ -19,7 +19,7 @@ export default function AdminUniversities() {
         sub={`${universities.length} universities with full detail pages.`}
         action={
           <div className="flex items-center gap-2">
-            <GhostButton onClick={() => { if (window.confirm("Reset partner universities to defaults? This discards your edits.")) { resetUniversities(); showToast("Partner universities reset to defaults"); } }}>
+            <GhostButton onClick={async () => { if (window.confirm("Reset partner universities to defaults? This discards your edits.")) { try { await resetUniversities(); showToast("Partner universities reset to defaults"); } catch (err) { showToast(err.message || "Unable to reset universities", "error"); } } }}>
               Reset
             </GhostButton>
             <PrimaryButton onClick={() => setEditing(null)}>
@@ -54,7 +54,7 @@ export default function AdminUniversities() {
               <GhostButton onClick={() => setEditing(u)} className="flex-1 flex items-center justify-center gap-1.5">
                 <Pencil size={13} /> Edit
               </GhostButton>
-              <DangerButton onClick={() => { if (window.confirm(`Remove ${u.name}?`)) { removeUniversity(u.id); showToast(`${u.name} removed`); } }}>
+                <DangerButton onClick={async () => { if (window.confirm(`Remove ${u.name}?`)) { try { await removeUniversity(u.id); showToast(`${u.name} removed`); } catch (err) { showToast(err.message || `Unable to remove ${u.name}`, "error"); } } }}>
                 <Trash2 size={13} />
               </DangerButton>
             </div>

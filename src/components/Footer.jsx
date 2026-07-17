@@ -45,8 +45,8 @@ export default function Footer() {
           </nav>
 
           <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-            <span className="flex items-center gap-2 text-sm whitespace-nowrap" style={{ color: "rgba(255,255,255,0.65)" }}><Phone size={14} /> +90 500 000 00 00</span>
-            <span className="flex items-center gap-2 text-sm whitespace-nowrap" style={{ color: "rgba(255,255,255,0.65)" }}><Mail size={14} /> hello@wayeducation.com</span>
+            <span className="flex items-center gap-2 text-sm whitespace-nowrap" style={{ color: "rgba(255,255,255,0.65)" }}><Phone size={14} /> +90 501 600 00 33</span>
+            <span className="flex items-center gap-2 text-sm whitespace-nowrap" style={{ color: "rgba(255,255,255,0.65)" }}><Mail size={14} /> support@wayeducation.com</span>
             <span className="flex items-center gap-2 text-sm whitespace-nowrap" style={{ color: "rgba(255,255,255,0.65)" }}><MapPin size={14} /> Istanbul, Türkiye</span>
           </div>
         </div>
@@ -54,9 +54,9 @@ export default function Footer() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
           <span className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>© 2026 Way Education. {t.rights}</span>
           <div className="flex items-center gap-4">
-            {["Instagram", "TikTok", "YouTube"].map((s, i) => (
-              <span key={i} className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>{s}</span>
-            ))}
+            <a href="https://www.instagram.com/way.education.tr/" target="_blank" rel="noopener noreferrer" className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>
+              Instagram
+            </a>
             <Link to="/admin" className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>Admin</Link>
           </div>
         </div>

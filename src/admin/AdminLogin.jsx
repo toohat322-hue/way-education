@@ -1,18 +1,26 @@
 import React, { useState } from "react";
-import { Lock, GraduationCap } from "lucide-react";
+import { Lock, GraduationCap, Mail } from "lucide-react";
 import { C, grad } from "../theme/tokens";
 import GlassCard from "../components/GlassCard";
 import { useAdminAuth } from "./useAdminAuth";
 
 export default function AdminLogin() {
   const { login } = useAdminAuth();
+  const [email, setEmail] = useState("admin@wayeducation.com");
   const [pwd, setPwd] = useState("");
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const ok = login(pwd);
-    setError(!ok);
+    setBusy(true);
+    const ok = await login({ email, password: pwd });
+    setBusy(false);
+    if (ok) {
+      setError("");
+      return;
+    }
+    setError("Login failed. Check backend credentials or auth endpoint.");
   };
 
   return (
@@ -24,8 +32,25 @@ export default function AdminLogin() {
         <h1 className="text-xl font-bold mb-1" style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}>
           Admin Dashboard
         </h1>
-        <p className="text-sm mb-6" style={{ color: C.muted }}>Sign in to manage Way Education content.</p>
+        <p className="text-sm mb-2" style={{ color: C.muted }}>Sign in to manage Way Education content.</p>
+        <p className="text-[11px] mb-4" style={{ color: C.muted }}>
+          Session is verified via backend auth endpoints.
+        </p>
         <form onSubmit={handleSubmit}>
+          <label className="text-xs font-semibold mb-1.5 flex items-center gap-1.5" style={{ color: C.inkSoft }}>
+            <Mail size={13} /> Email
+          </label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setError("");
+            }}
+            className="w-full px-3.5 py-2.5 rounded-xl text-sm outline-none mb-3"
+            style={{ border: `1px solid ${C.border}` }}
+            disabled={busy}
+          />
           <label className="text-xs font-semibold mb-1.5 flex items-center gap-1.5" style={{ color: C.inkSoft }}>
             <Lock size={13} /> Password
           </label>
@@ -34,19 +59,21 @@ export default function AdminLogin() {
             value={pwd}
             onChange={(e) => {
               setPwd(e.target.value);
-              setError(false);
+              setError("");
             }}
             className="w-full px-3.5 py-2.5 rounded-xl text-sm outline-none mb-2"
             style={{ border: `1px solid ${error ? C.orangeDark : C.border}` }}
             autoFocus
+            disabled={busy}
           />
-          {error && <p className="text-xs mb-3" style={{ color: C.orangeDark }}>Incorrect password.</p>}
+          {error && <p className="text-xs mb-3" style={{ color: C.orangeDark }}>{error}</p>}
           <button
             type="submit"
+            disabled={busy}
             className="w-full py-3 rounded-xl text-sm font-semibold text-white mt-3 transition-transform hover:scale-[1.02] active:scale-95"
-            style={{ background: grad.cta }}
+            style={{ background: grad.cta, opacity: busy ? 0.8 : 1 }}
           >
-            Unlock Dashboard
+            {busy ? "Signing in…" : "Unlock Dashboard"}
           </button>
         </form>
       </GlassCard>

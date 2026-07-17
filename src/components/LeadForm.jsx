@@ -1,26 +1,69 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Send, MessageCircle } from "lucide-react";
 import { C, grad } from "../theme/tokens";
 import { useData } from "../admin/useData";
+import { apiFetch } from "../lib/api";
 
 // A single source of truth for the "get a consultation" form. Used by:
 // - ApplySidebar (full detail page for partner universities)
 // - RequestInfoModal (directory universities without full data yet)
-export default function LeadForm({ t, majors = [], onSubmitted }) {
+export default function LeadForm({ t, majors = [], onSubmitted, context = {} }) {
   const { settings } = useData();
+  const location = useLocation();
   const [form, setForm] = useState({ name: "", phone: "", email: "", major: "" });
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const nameId = "lead-name";
   const phoneId = "lead-phone";
   const emailId = "lead-email";
   const majorId = "lead-major";
 
-  const handleSubmit = (e) => {
+  const utm = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    return {
+      source: params.get("utm_source") || undefined,
+      medium: params.get("utm_medium") || undefined,
+      campaign: params.get("utm_campaign") || undefined,
+      term: params.get("utm_term") || undefined,
+      content: params.get("utm_content") || undefined,
+    };
+  }, [location.search]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // No backend yet -- wire this up to your API / CRM / email service later.
-    // e.g. fetch("/api/leads", { method: "POST", body: JSON.stringify(form) })
-    setSubmitted(true);
-    if (onSubmitted) onSubmitted(form);
+    setBusy(true);
+    setError("");
+    try {
+      await apiFetch("/api/leads", {
+        method: "POST",
+        body: JSON.stringify({
+          name: form.name,
+          phone: form.phone,
+          whatsapp: form.phone,
+          email: form.email,
+          preferredCountry: context.preferredCountry,
+          preferredUniversity: context.preferredUniversity,
+          program: form.major || context.program,
+          degree: context.degree,
+          language: context.language,
+          message: context.message,
+          referralSource: context.referralSource || "website",
+          utmSource: utm.source,
+          utmMedium: utm.medium,
+          utmCampaign: utm.campaign,
+          utmTerm: utm.term,
+          utmContent: utm.content,
+        }),
+      });
+      setSubmitted(true);
+      if (onSubmitted) onSubmitted(form);
+    } catch (err) {
+      setError(err.message || "Unable to submit your request right now.");
+    } finally {
+      setBusy(false);
+    }
   };
 
   if (submitted) {
@@ -44,6 +87,7 @@ export default function LeadForm({ t, majors = [], onSubmitted }) {
           onChange={(e) => setForm({ ...form, name: e.target.value })}
           className="w-full px-3.5 py-2.5 rounded-xl text-sm outline-none"
           style={{ border: `1px solid ${C.border}` }}
+          disabled={busy}
         />
         <input
           id={phoneId}
@@ -56,6 +100,7 @@ export default function LeadForm({ t, majors = [], onSubmitted }) {
           onChange={(e) => setForm({ ...form, phone: e.target.value })}
           className="w-full px-3.5 py-2.5 rounded-xl text-sm outline-none"
           style={{ border: `1px solid ${C.border}` }}
+          disabled={busy}
         />
         <input
           id={emailId}
@@ -68,6 +113,7 @@ export default function LeadForm({ t, majors = [], onSubmitted }) {
           onChange={(e) => setForm({ ...form, email: e.target.value })}
           className="w-full px-3.5 py-2.5 rounded-xl text-sm outline-none"
           style={{ border: `1px solid ${C.border}` }}
+          disabled={busy}
         />
         {majors.length > 0 && (
           <select
@@ -78,18 +124,21 @@ export default function LeadForm({ t, majors = [], onSubmitted }) {
             onChange={(e) => setForm({ ...form, major: e.target.value })}
             className="w-full px-3.5 py-2.5 rounded-xl text-sm outline-none bg-white"
             style={{ border: `1px solid ${C.border}` }}
+            disabled={busy}
           >
             <option value="">{t.sidebarMajorSel}</option>
             {majors.map((m, i) => <option key={i}>{m}</option>)}
           </select>
         )}
+        {error && <p className="text-xs" style={{ color: C.orangeDark }}>{error}</p>}
       </div>
       <button
         type="submit"
+        disabled={busy}
         className="w-full py-3 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2 transition-transform hover:scale-[1.02] active:scale-95 mb-3"
-        style={{ background: grad.cta }}
+        style={{ background: grad.cta, opacity: busy ? 0.8 : 1 }}
       >
-        <Send size={15} /> {t.sidebarSubmit}
+        <Send size={15} /> {busy ? "Submitting..." : t.sidebarSubmit}
       </button>
       <a
         href={`https://wa.me/${settings.whatsapp}`}

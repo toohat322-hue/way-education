@@ -1,12 +1,13 @@
 import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Building2, ListTree, BookOpen, HelpCircle, Type, Download, Upload, MessageCircle } from "lucide-react";
+import { Building2, ListTree, BookOpen, HelpCircle, Type, Download, Upload, MessageCircle, Inbox } from "lucide-react";
 import { C, grad } from "../../theme/tokens";
 import GlassCard from "../../components/GlassCard";
 import { PageHeader, StatTile, GhostButton, PrimaryButton, TextInput, Label } from "../ui";
 import { useData } from "../useData";
 import { useLanguage } from "../../context/useLanguage";
 import { useToast } from "../useToast";
+import { sanitizeDigitsOnly, validateBackupPayload } from "../security";
 
 const SECTIONS = [
   { to: "/admin/universities", label: "Partner Universities", icon: Building2, desc: "Full detail pages: tuition, majors, scholarships, documents, reviews." },
@@ -14,6 +15,7 @@ const SECTIONS = [
   { to: "/admin/majors", label: "Majors", icon: BookOpen, desc: "The popular-majors grid on the homepage." },
   { to: "/admin/faqs", label: "FAQs", icon: HelpCircle, desc: "Frequently asked questions section." },
   { to: "/admin/content", label: "Site Copy", icon: Type, desc: "Every EN/AR string used across the site." },
+  { to: "/admin/leads", label: "Leads", icon: Inbox, desc: "CRM pipeline for incoming consultations and applications." },
 ];
 
 export default function AdminDashboard() {
@@ -23,11 +25,15 @@ export default function AdminDashboard() {
   const fileInputRef = useRef(null);
   const [whatsapp, setWhatsapp] = useState(settings.whatsapp);
 
-  const handleSaveWhatsapp = () => {
-    const digits = whatsapp.replace(/\D/g, "");
+  const handleSaveWhatsapp = async () => {
+    const digits = sanitizeDigitsOnly(whatsapp);
     setWhatsapp(digits);
-    updateSettings({ whatsapp: digits });
-    showToast("WhatsApp number saved");
+    try {
+      await updateSettings({ whatsapp: digits });
+      showToast("WhatsApp number saved");
+    } catch (err) {
+      showToast(err.message || "Unable to save WhatsApp number", "error");
+    }
   };
 
   const handleExport = () => {
@@ -55,7 +61,14 @@ export default function AdminDashboard() {
     const reader = new FileReader();
     reader.onload = () => {
       try {
-        const data = JSON.parse(String(reader.result));
+        const raw = JSON.parse(String(reader.result));
+        const validated = validateBackupPayload(raw);
+        if (!validated.ok) {
+          showToast(`Import failed — ${validated.error}`, "error");
+          return;
+        }
+
+        const data = validated.value;
         if (Array.isArray(data.universities)) restoreUniversities(data.universities);
         if (Array.isArray(data.directory)) restoreDirectory(data.directory);
         if (Array.isArray(data.majors)) restoreMajors(data.majors);
@@ -63,7 +76,7 @@ export default function AdminDashboard() {
         if (data.strings) restoreStrings(data.strings);
         if (data.settings) {
           updateSettings(data.settings);
-          setWhatsapp(data.settings.whatsapp ?? whatsapp);
+          setWhatsapp(data.settings.whatsapp ?? "");
         }
         showToast("Backup imported");
       } catch {
@@ -75,7 +88,7 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <PageHeader title="Dashboard" sub="Manage everything shown on Way Education — changes save to this browser instantly." />
+      <PageHeader title="Dashboard" sub="Manage everything shown on Way Education — changes persist through the backend API." />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <StatTile icon={Building2} label="Partner Universities" value={universities.length} />
@@ -105,7 +118,7 @@ export default function AdminDashboard() {
         <div>
           <div className="font-semibold text-sm mb-1" style={{ color: C.ink }}>Backup & Restore</div>
           <div className="text-xs max-w-md" style={{ color: C.muted }}>
-            All edits live only in this browser's storage. Export a backup file to keep your changes safe, and import it to restore them here or in another browser.
+            Export the current CMS snapshot for safekeeping or migration. Import will replace the live backend content once the snapshot importer is wired in.
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">

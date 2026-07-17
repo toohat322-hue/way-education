@@ -8,6 +8,7 @@ import { uniqueSlugId } from "./slugify";
 import { Field, Label, TextInput, TextArea, Select, PrimaryButton, GhostButton, AdminModal, Toggle } from "./ui";
 import ImageUploadField from "./ImageUploadField";
 import GalleryUploadField from "./GalleryUploadField";
+import { sanitizeExternalUrl } from "./security";
 
 const COUNTRY_OPTIONS = [
   { en: "Türkiye", ar: "تركيا" },
@@ -107,8 +108,26 @@ export default function UniversityFormModal({ uni, initial, onClose, onSaved }) 
     setForm((f) => ({ ...f, testimonials: [...f.testimonials, { name: "", textEn: "", textAr: "", rating: 5 }] }));
   const removeTestimonialRow = (i) => setForm((f) => ({ ...f, testimonials: f.testimonials.filter((_, idx) => idx !== i) }));
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const rawLinks = {
+      website: form.website,
+      facebook: form.facebook,
+      instagram: form.instagram,
+      linkedin: form.linkedin,
+    };
+    const cleanLinks = {};
+    for (const [key, value] of Object.entries(rawLinks)) {
+      const raw = String(value || "").trim();
+      const sanitized = sanitizeExternalUrl(raw);
+      if (raw && !sanitized) {
+        showToast(`Invalid ${key} URL. Use a full http(s) link.`, "error");
+        return;
+      }
+      cleanLinks[key] = sanitized;
+    }
+
     const country = COUNTRY_OPTIONS.find((c) => c.en === form.countryEn) || COUNTRY_OPTIONS[0];
     const type = TYPE_OPTIONS.find((t) => t.en === form.typeEn) || TYPE_OPTIONS[0];
 
@@ -137,33 +156,28 @@ export default function UniversityFormModal({ uni, initial, onClose, onSaved }) 
         ar: form.docsAr.split("\n").map((s) => s.trim()).filter(Boolean),
       },
       testimonials: form.testimonials.map((t) => ({ name: t.name, text: { en: t.textEn, ar: t.textAr }, rating: Number(t.rating) || 5 })),
-      contact: { phone: form.phone, email: form.email, website: form.website },
-      social: { facebook: form.facebook, instagram: form.instagram, linkedin: form.linkedin },
+      contact: { phone: form.phone.trim(), email: form.email.trim(), website: cleanLinks.website },
+      social: { facebook: cleanLinks.facebook, instagram: cleanLinks.instagram, linkedin: cleanLinks.linkedin },
       featured: form.featured,
       active: form.active,
       grad: uni?.grad || CARD_GRADS[Math.floor(Math.random() * CARD_GRADS.length)],
       initial: (form.name.charAt(0) || "U").toUpperCase(),
     };
 
-    let savedId, persisted;
-    if (uni) {
-      persisted = updateUniversity(uni.id, payload);
-      savedId = uni.id;
-    } else {
-      savedId = uniqueSlugId(form.name, universities.map((u) => u.id));
-      persisted = addUniversity({ id: savedId, ...payload });
-    }
+    try {
+      let saved;
+      if (uni) {
+        saved = await updateUniversity(uni.id, payload);
+      } else {
+        saved = await addUniversity(payload);
+      }
 
-    if (persisted) {
       showToast(uni ? `Saved changes to ${payload.name}` : `${payload.name} added`);
-    } else {
-      // Most likely cause: an uploaded image (or several) pushed this record
-      // past the browser's localStorage quota -- the change is still applied
-      // for this session, but won't survive a refresh until freed up.
-      showToast("Saved for this session, but your browser's storage is full — uploaded images may not persist after a refresh. Try a smaller image.", "error");
+      if (onSaved) onSaved(saved);
+      onClose();
+    } catch (err) {
+      showToast(err.message || "Unable to save university", "error");
     }
-    if (onSaved) onSaved({ id: savedId, ...payload });
-    onClose();
   };
 
   return (

@@ -24,17 +24,21 @@ function FaqFormModal({ faq, onClose }) {
     onClose();
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const payload = { q: { en: form.qEn, ar: form.qAr }, a: { en: form.aEn, ar: form.aAr } };
-    if (faq) {
-      updateFaq(faq.id, payload);
-      showToast("FAQ saved");
-    } else {
-      addFaq(payload);
-      showToast("FAQ added");
+    try {
+      if (faq) {
+        await updateFaq(faq.id, payload);
+        showToast("FAQ saved");
+      } else {
+        await addFaq(payload);
+        showToast("FAQ added");
+      }
+      onClose();
+    } catch (err) {
+      showToast(err.message || "Unable to save FAQ", "error");
     }
-    onClose();
   };
 
   return (
@@ -65,7 +69,7 @@ export default function AdminFaqs() {
         sub={`${faqs.length} questions shown on the homepage.`}
         action={
           <div className="flex items-center gap-2">
-            <GhostButton onClick={() => { if (window.confirm("Reset FAQs to defaults? This discards your edits.")) { resetFaqs(); showToast("FAQs reset to defaults"); } }}>
+            <GhostButton onClick={async () => { if (window.confirm("Reset FAQs to defaults? This discards your edits.")) { try { await resetFaqs(); showToast("FAQs reset to defaults"); } catch (err) { showToast(err.message || "Unable to reset FAQs", "error"); } } }}>
               Reset
             </GhostButton>
             <PrimaryButton onClick={() => setEditing(null)}>
@@ -88,7 +92,7 @@ export default function AdminFaqs() {
                   <Pencil size={14} />
                 </button>
                 <button
-                  onClick={() => { if (window.confirm("Remove this FAQ?")) { removeFaq(f.id); showToast("FAQ removed"); } }}
+                  onClick={async () => { if (window.confirm("Remove this FAQ?")) { try { await removeFaq(f.id); showToast("FAQ removed"); } catch (err) { showToast(err.message || "Unable to remove FAQ", "error"); } } }}
                   className="p-2 rounded-lg"
                   style={{ color: C.orangeDark }}
                   aria-label="Remove FAQ"
