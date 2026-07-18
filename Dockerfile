@@ -3,10 +3,10 @@
 
 # 1. Build Frontend
 FROM node:22-alpine AS frontend-builder
-WORKDIR /app
-COPY package*.json ./
+WORKDIR /app/frontend
+COPY frontend/package*.json ./
 RUN npm ci
-COPY . .
+COPY frontend/ .
 RUN npm run build
 
 # 2. Build Backend
@@ -29,7 +29,7 @@ COPY --from=backend-builder /app/backend/package*.json ./
 COPY --from=backend-builder /app/backend/prisma ./prisma
 
 # Copy frontend build output (can be served by NestJS or another server like Nginx)
-COPY --from=frontend-builder /app/dist ./frontend-dist
+COPY --from=frontend-builder /app/frontend/dist ./frontend-dist
 
 ENV NODE_ENV=production
 ENV PORT=8000

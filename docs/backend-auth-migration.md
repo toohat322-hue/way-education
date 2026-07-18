@@ -4,14 +4,14 @@ This project now uses server-backed admin authentication only.
 
 ## Frontend switch
 
-1. Create `.env` from `.env.example`.
+1. Create `frontend/.env` from `frontend/.env.example`.
 2. Set:
 
 ```bash
 VITE_API_BASE_URL=http://localhost:8000
 ```
 
-3. Start frontend and backend.
+3. Start the frontend from `frontend/` and the backend from `backend/`.
 4. Visit `/admin`.
 
 The frontend uses these endpoints:

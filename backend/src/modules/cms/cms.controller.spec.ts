@@ -1,4 +1,3 @@
-import { Test } from "@nestjs/testing";
 import { CmsController } from "./cms.controller";
 import { CmsService } from "./cms.service";
 
@@ -13,13 +12,9 @@ describe("CmsController", () => {
     listBlogPosts: jest.fn().mockResolvedValue([]),
   };
 
-  beforeEach(async () => {
-    const moduleRef = await Test.createTestingModule({
-      controllers: [CmsController],
-      providers: [{ provide: CmsService, useValue: cmsService }],
-    }).compile();
-
-    controller = moduleRef.get(CmsController);
+  beforeEach(() => {
+    jest.clearAllMocks();
+    controller = new CmsController(cmsService as unknown as CmsService);
   });
 
   it("returns bootstrap payload", async () => {

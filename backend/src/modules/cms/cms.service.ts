@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { AuditService } from "../../common/services/audit.service";
 import { AuthenticatedUser } from "../../common/decorators/current-user.decorator";
 import {
@@ -174,12 +174,14 @@ export class CmsService {
 
   async updateUniversity(slug: string, dto: CreateUniversityDto, currentUser: AuthenticatedUser, ipAddress?: string, userAgent?: string) {
     const university = await this.repository.updateUniversity(slug, dto);
-    if (!university) return null;
+    if (!university) throw new NotFoundException(`University with slug "${slug}" not found`);
     await this.auditService.log({ userId: currentUser.id, action: "cms.university.update", entityType: "university", entityId: university.id, ipAddress, userAgent });
     return this.serializeUniversity(university);
   }
 
   async deleteUniversity(slug: string, currentUser: AuthenticatedUser, ipAddress?: string, userAgent?: string) {
+    const existing = await this.repository.findUniversityBySlug(slug);
+    if (!existing) throw new NotFoundException(`University with slug "${slug}" not found`);
     const university = await this.repository.deleteUniversity(slug);
     await this.auditService.log({ userId: currentUser.id, action: "cms.university.archive", entityType: "university", entityId: university.id, ipAddress, userAgent });
     return { ok: true };
@@ -192,12 +194,16 @@ export class CmsService {
   }
 
   async updateDirectoryEntry(slug: string, dto: CreateDirectoryEntryDto, currentUser: AuthenticatedUser, ipAddress?: string, userAgent?: string) {
+    const existing = await this.repository.findDirectoryEntryBySlug(slug);
+    if (!existing) throw new NotFoundException(`Directory entry with slug "${slug}" not found`);
     const entry = await this.repository.updateDirectoryEntry(slug, dto);
     await this.auditService.log({ userId: currentUser.id, action: "cms.directory.update", entityType: "directory_entry", entityId: entry.id, ipAddress, userAgent });
     return this.serializeDirectoryEntry(entry);
   }
 
   async deleteDirectoryEntry(slug: string, currentUser: AuthenticatedUser, ipAddress?: string, userAgent?: string) {
+    const existing = await this.repository.findDirectoryEntryBySlug(slug);
+    if (!existing) throw new NotFoundException(`Directory entry with slug "${slug}" not found`);
     await this.repository.deleteDirectoryEntry(slug);
     await this.auditService.log({ userId: currentUser.id, action: "cms.directory.delete", entityType: "directory_entry", entityId: slug, ipAddress, userAgent });
     return { ok: true };
@@ -215,12 +221,16 @@ export class CmsService {
   }
 
   async updateMajor(slug: string, dto: CreateMajorDto, currentUser: AuthenticatedUser, ipAddress?: string, userAgent?: string) {
+    const existing = await this.repository.findMajorBySlug(slug);
+    if (!existing) throw new NotFoundException(`Major with slug "${slug}" not found`);
     const major = await this.repository.updateMajor(slug, dto);
     await this.auditService.log({ userId: currentUser.id, action: "cms.major.update", entityType: "major", entityId: major.id, ipAddress, userAgent });
     return this.serializeMajor(major);
   }
 
   async deleteMajor(slug: string, currentUser: AuthenticatedUser, ipAddress?: string, userAgent?: string) {
+    const existing = await this.repository.findMajorBySlug(slug);
+    if (!existing) throw new NotFoundException(`Major with slug "${slug}" not found`);
     await this.repository.deleteMajor(slug);
     await this.auditService.log({ userId: currentUser.id, action: "cms.major.delete", entityType: "major", entityId: slug, ipAddress, userAgent });
     return { ok: true };
@@ -238,12 +248,16 @@ export class CmsService {
   }
 
   async updateFaq(id: string, dto: CreateFaqDto, currentUser: AuthenticatedUser, ipAddress?: string, userAgent?: string) {
+    const existing = await this.repository.findFaqById(id);
+    if (!existing) throw new NotFoundException(`FAQ with id "${id}" not found`);
     const faq = await this.repository.updateFaq(id, dto);
     await this.auditService.log({ userId: currentUser.id, action: "cms.faq.update", entityType: "faq", entityId: faq.id, ipAddress, userAgent });
     return this.serializeFaq(faq);
   }
 
   async deleteFaq(id: string, currentUser: AuthenticatedUser, ipAddress?: string, userAgent?: string) {
+    const existing = await this.repository.findFaqById(id);
+    if (!existing) throw new NotFoundException(`FAQ with id "${id}" not found`);
     await this.repository.deleteFaq(id);
     await this.auditService.log({ userId: currentUser.id, action: "cms.faq.delete", entityType: "faq", entityId: id, ipAddress, userAgent });
     return { ok: true };
@@ -281,12 +295,16 @@ export class CmsService {
   }
 
   async updateCountry(code: string, dto: CreateCountryDto, currentUser: AuthenticatedUser, ipAddress?: string, userAgent?: string) {
+    const existing = await this.repository.findCountryByCode(code);
+    if (!existing) throw new NotFoundException(`Country with code "${code}" not found`);
     const country = await this.repository.updateCountry(code, dto);
     await this.auditService.log({ userId: currentUser.id, action: "cms.country.update", entityType: "country", entityId: country.id, ipAddress, userAgent });
     return this.serializeCountry(country);
   }
 
   async deleteCountry(code: string, currentUser: AuthenticatedUser, ipAddress?: string, userAgent?: string) {
+    const existing = await this.repository.findCountryByCode(code);
+    if (!existing) throw new NotFoundException(`Country with code "${code}" not found`);
     const country = await this.repository.deleteCountry(code);
     await this.auditService.log({ userId: currentUser.id, action: "cms.country.delete", entityType: "country", entityId: country.id, ipAddress, userAgent });
     return { ok: true };
@@ -303,12 +321,16 @@ export class CmsService {
   }
 
   async updateCity(id: string, dto: CreateCityDto, currentUser: AuthenticatedUser, ipAddress?: string, userAgent?: string) {
+    const existing = await this.repository.findCityById(id);
+    if (!existing) throw new NotFoundException(`City with id "${id}" not found`);
     const city = await this.repository.updateCity(id, dto);
     await this.auditService.log({ userId: currentUser.id, action: "cms.city.update", entityType: "city", entityId: city.id, ipAddress, userAgent });
     return this.serializeCity(city);
   }
 
   async deleteCity(id: string, currentUser: AuthenticatedUser, ipAddress?: string, userAgent?: string) {
+    const existing = await this.repository.findCityById(id);
+    if (!existing) throw new NotFoundException(`City with id "${id}" not found`);
     await this.repository.deleteCity(id);
     await this.auditService.log({ userId: currentUser.id, action: "cms.city.delete", entityType: "city", entityId: id, ipAddress, userAgent });
     return { ok: true };
@@ -325,12 +347,16 @@ export class CmsService {
   }
 
   async updateSeoPage(key: string, dto: CreateSeoPageDto, currentUser: AuthenticatedUser, ipAddress?: string, userAgent?: string) {
+    const existing = await this.repository.findSeoPageByKey(key);
+    if (!existing) throw new NotFoundException(`SEO page with key "${key}" not found`);
     const page = await this.repository.updateSeoPage(key, dto);
     await this.auditService.log({ userId: currentUser.id, action: "cms.seo.update", entityType: "seo_page", entityId: page.id, ipAddress, userAgent });
     return this.serializeSeoPage(page);
   }
 
   async deleteSeoPage(key: string, currentUser: AuthenticatedUser, ipAddress?: string, userAgent?: string) {
+    const existing = await this.repository.findSeoPageByKey(key);
+    if (!existing) throw new NotFoundException(`SEO page with key "${key}" not found`);
     const page = await this.repository.deleteSeoPage(key);
     await this.auditService.log({ userId: currentUser.id, action: "cms.seo.delete", entityType: "seo_page", entityId: page.id, ipAddress, userAgent });
     return { ok: true };
@@ -347,12 +373,16 @@ export class CmsService {
   }
 
   async updateBlogPost(slug: string, dto: CreateBlogPostDto, currentUser: AuthenticatedUser, ipAddress?: string, userAgent?: string) {
+    const existing = await this.repository.findBlogPostBySlug(slug);
+    if (!existing) throw new NotFoundException(`Blog post with slug "${slug}" not found`);
     const post = await this.repository.updateBlogPost(slug, dto);
     await this.auditService.log({ userId: currentUser.id, action: "cms.blog.update", entityType: "blog_post", entityId: post.id, ipAddress, userAgent });
     return this.serializeBlogPost(post);
   }
 
   async deleteBlogPost(slug: string, currentUser: AuthenticatedUser, ipAddress?: string, userAgent?: string) {
+    const existing = await this.repository.findBlogPostBySlug(slug);
+    if (!existing) throw new NotFoundException(`Blog post with slug "${slug}" not found`);
     const post = await this.repository.deleteBlogPost(slug);
     await this.auditService.log({ userId: currentUser.id, action: "cms.blog.delete", entityType: "blog_post", entityId: post.id, ipAddress, userAgent });
     return { ok: true };

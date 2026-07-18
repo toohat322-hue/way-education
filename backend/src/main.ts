@@ -8,6 +8,7 @@ import { NestFactory } from "@nestjs/core";
 import { ConfigService } from "@nestjs/config";
 import { AppModule } from "./app.module";
 import { PrismaService } from "./common/prisma/prisma.service";
+import { PrismaExceptionFilter } from "./common/filters/prisma-exception.filter";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: false });
@@ -41,6 +42,7 @@ async function bootstrap() {
       transformOptions: { enableImplicitConversion: true },
     })
   );
+  app.useGlobalFilters(new PrismaExceptionFilter());
 
   const prisma = app.get(PrismaService);
   await prisma.enableShutdownHooks(app);

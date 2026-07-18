@@ -17,9 +17,13 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: |
+            frontend/package-lock.json
+            backend/package-lock.json
 
-      - name: Install root dependencies
+      - name: Install frontend dependencies
         run: npm ci
+        working-directory: ./frontend
 
       - name: Install backend dependencies
         run: npm ci
@@ -27,12 +31,15 @@ jobs:
 
       - name: Lint
         run: npm run lint
+        working-directory: ./frontend
 
       - name: Format check
         run: npm run format:check
+        working-directory: ./frontend
 
       - name: Frontend tests
         run: npm run test:coverage
+        working-directory: ./frontend
 
       - name: Backend tests
         run: npm run test
@@ -40,6 +47,7 @@ jobs:
 
       - name: Build frontend
         run: npm run build
+        working-directory: ./frontend
 
       - name: Build backend
         run: npm run build
@@ -49,7 +57,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: coverage/
+          path: frontend/coverage/
 
   e2e:
     runs-on: ubuntu-latest
@@ -63,19 +71,23 @@ jobs:
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
         run: npm ci
+        working-directory: ./frontend
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
+        working-directory: ./frontend
 
       - name: Run Playwright tests
         run: npm run e2e -- --project=chromium
+        working-directory: ./frontend
 
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
-          path: playwright-report/
+          path: frontend/playwright-report/

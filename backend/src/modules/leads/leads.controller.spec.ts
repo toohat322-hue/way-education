@@ -1,4 +1,3 @@
-import { Test } from "@nestjs/testing";
 import { LeadsController } from "./leads.controller";
 import { LeadsService } from "./leads.service";
 
@@ -11,13 +10,9 @@ describe("LeadsController", () => {
     getStats: jest.fn().mockResolvedValue({ NEW: 4 }),
   };
 
-  beforeEach(async () => {
-    const moduleRef = await Test.createTestingModule({
-      controllers: [LeadsController],
-      providers: [{ provide: LeadsService, useValue: leadsService }],
-    }).compile();
-
-    controller = moduleRef.get(LeadsController);
+  beforeEach(() => {
+    jest.clearAllMocks();
+    controller = new LeadsController(leadsService as unknown as LeadsService);
   });
 
   it("creates a lead", async () => {

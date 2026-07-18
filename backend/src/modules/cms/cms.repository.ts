@@ -126,6 +126,42 @@ export class CmsRepository {
     };
   }
 
+  // ─── Existence finders (used by service for 404 checks) ─────────────
+
+  findUniversityBySlug(slug: string) {
+    return this.prisma.university.findUnique({ where: { slug, deletedAt: null } });
+  }
+
+  findDirectoryEntryBySlug(slug: string) {
+    return this.prisma.directoryEntry.findUnique({ where: { slug } });
+  }
+
+  findMajorBySlug(slug: string) {
+    return this.prisma.major.findUnique({ where: { slug } });
+  }
+
+  findFaqById(id: string) {
+    return this.prisma.faq.findUnique({ where: { id } });
+  }
+
+  findCountryByCode(code: string) {
+    return this.prisma.country.findUnique({ where: { code: code.toLowerCase() } });
+  }
+
+  findCityById(id: string) {
+    return this.prisma.city.findUnique({ where: { id } });
+  }
+
+  findSeoPageByKey(key: string) {
+    return this.prisma.seoPage.findUnique({ where: { key } });
+  }
+
+  findBlogPostBySlug(slug: string) {
+    return this.prisma.blogPost.findUnique({ where: { slug } });
+  }
+
+  // ─── Bootstrap & Lists ────────────────────────────────────────────
+
   getBootstrap() {
     return Promise.all([
       this.prisma.university.findMany({

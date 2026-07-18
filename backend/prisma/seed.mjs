@@ -1,10 +1,10 @@
 import { PrismaClient } from "@prisma/client";
-import { UNIVERSITIES } from "../../src/data/universities.js";
-import { DIRECTORY } from "../../src/data/directory.js";
-import { MAJORS } from "../../src/data/majors.js";
-import { FAQS } from "../../src/data/faqs.js";
-import { SETTINGS } from "../../src/data/settings.js";
-import { STRINGS } from "../../src/data/translations.js";
+import { UNIVERSITIES } from "../../frontend/src/data/universities.js";
+import { DIRECTORY } from "../../frontend/src/data/directory.js";
+import { MAJORS } from "../../frontend/src/data/majors.js";
+import { FAQS } from "../../frontend/src/data/faqs.js";
+import { SETTINGS } from "../../frontend/src/data/settings.js";
+import { STRINGS } from "../../frontend/src/data/translations.js";
 
 const prisma = new PrismaClient();
 
@@ -42,8 +42,8 @@ async function seedSettingsAndCopy() {
     update: {
       whatsapp: SETTINGS.whatsapp,
       websiteName: "Way Education",
-      supportEmail: "hello@wayeducation.com",
-      supportPhone: "+90 500 000 00 00",
+      supportEmail: "contact@wayeducations.com",
+      supportPhone: "+90 (501) 600 00 33",
       addressEn: "Istanbul, Türkiye",
       addressAr: "إسطنبول، تركيا",
       seoTitle: "Way Education",
@@ -57,8 +57,8 @@ async function seedSettingsAndCopy() {
       id: "site-settings",
       whatsapp: SETTINGS.whatsapp,
       websiteName: "Way Education",
-      supportEmail: "hello@wayeducation.com",
-      supportPhone: "+90 500 000 00 00",
+      supportEmail: "contact@wayeducations.com",
+      supportPhone: "+90 (501) 600 00 33",
       addressEn: "Istanbul, Türkiye",
       addressAr: "إسطنبول، تركيا",
       seoTitle: "Way Education",

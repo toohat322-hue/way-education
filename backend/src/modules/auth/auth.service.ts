@@ -56,7 +56,7 @@ export class AuthService {
     return {
       httpOnly: true,
       secure: isProd,
-      sameSite: "lax" as const,
+      sameSite: "strict" as const,
       path: "/",
       domain: domain === "localhost" ? undefined : domain,
       maxAge,

@@ -77,6 +77,10 @@ export class LeadsRepository {
     return { items, total, page, pageSize };
   }
 
+  findLeadById(id: string) {
+    return this.prisma.lead.findUnique({ where: { id } });
+  }
+
   updateLead(id: string, dto: UpdateLeadDto) {
     return this.prisma.lead.update({
       where: { id },
