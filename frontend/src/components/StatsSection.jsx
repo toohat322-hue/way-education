@@ -10,11 +10,22 @@ function StatBlock({ value, suffix, label }) {
     <div className="text-center">
       <div
         className="text-3xl md:text-5xl font-extrabold mb-1"
-        style={{ fontFamily: "Poppins, sans-serif", background: "linear-gradient(135deg,#ffffff,#BFD3FF)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}
+        style={{
+          fontFamily: "Poppins, sans-serif",
+          background: "linear-gradient(135deg,#ffffff,#BFD3FF)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+        }}
       >
-        {value}{suffix}
+        {value}
+        {suffix}
       </div>
-      <div className="text-xs md:text-sm" style={{ color: "rgba(255,255,255,0.75)" }}>{label}</div>
+      <div
+        className="text-xs md:text-sm"
+        style={{ color: "rgba(255,255,255,0.75)" }}
+      >
+        {label}
+      </div>
     </div>
   );
 }
@@ -29,11 +40,20 @@ export default function StatsSection() {
   const s4 = useCountUp(95, 1400, visible);
 
   return (
-    <section ref={ref} className="py-16 md:py-24" style={{ background: grad.navy }}>
+    <section
+      ref={ref}
+      className="py-16 md:py-24"
+      style={{ background: grad.navy }}
+    >
       <div className="max-w-6xl mx-auto px-5 sm:px-8">
         <div className="text-center mb-12">
           <Eyebrow>{t.statsEyebrow}</Eyebrow>
-          <h2 className="text-3xl md:text-5xl font-bold" style={{ fontFamily: "Poppins, sans-serif", color: "#fff" }}>{t.statsTitle}</h2>
+          <h2
+            className="text-3xl md:text-5xl font-bold"
+            style={{ fontFamily: "Poppins, sans-serif", color: "#fff" }}
+          >
+            {t.statsTitle}
+          </h2>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <StatBlock value={s1} suffix="+" label={t.stat1} />

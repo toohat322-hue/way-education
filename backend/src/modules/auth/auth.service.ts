@@ -1,5 +1,9 @@
 import { randomUUID } from "node:crypto";
-import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import * as argon2 from "argon2";
@@ -7,7 +11,12 @@ import { Response } from "express";
 import { MailerService } from "../../common/mailer/mailer.service";
 import { AuditService } from "../../common/services/audit.service";
 import { AuthRepository } from "./auth.repository";
-import { LoginDto, RequestPasswordResetDto, ResetPasswordDto, VerifyEmailDto } from "./dto/auth.dto";
+import {
+  LoginDto,
+  RequestPasswordResetDto,
+  ResetPasswordDto,
+  VerifyEmailDto,
+} from "./dto/auth.dto";
 
 const ACCESS_COOKIE = "accessToken";
 const REFRESH_COOKIE = "refreshToken";
@@ -29,24 +38,32 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly auditService: AuditService,
-    private readonly mailerService: MailerService
+    private readonly mailerService: MailerService,
   ) {}
 
   async onModuleInit() {
     const adminEmail = this.configService.getOrThrow<string>("ADMIN_EMAIL");
-    const adminPassword = this.configService.getOrThrow<string>("ADMIN_PASSWORD");
+    const adminPassword =
+      this.configService.getOrThrow<string>("ADMIN_PASSWORD");
     const passwordHash = await argon2.hash(adminPassword);
     await this.authRepository.ensureInitialAdmin(adminEmail, passwordHash);
   }
 
   private parseDuration(value: string) {
-    const match = String(value).trim().match(/^(\d+)([smhd])$/i);
+    const match = String(value)
+      .trim()
+      .match(/^(\d+)([smhd])$/i);
     if (!match) {
       throw new Error(`Unsupported duration format: ${value}`);
     }
     const amount = Number(match[1]);
     const unit = match[2].toLowerCase();
-    const multipliers: Record<string, number> = { s: 1_000, m: 60_000, h: 3_600_000, d: 86_400_000 };
+    const multipliers: Record<string, number> = {
+      s: 1_000,
+      m: 60_000,
+      h: 3_600_000,
+      d: 86_400_000,
+    };
     return amount * multipliers[unit];
   }
 
@@ -63,7 +80,12 @@ export class AuthService {
     };
   }
 
-  private async writeSessionCookies(response: Response, user: { id: string; email: string; role: string; sessionVersion: number }, userAgent?: string, ipAddress?: string) {
+  private async writeSessionCookies(
+    response: Response,
+    user: { id: string; email: string; role: string; sessionVersion: number },
+    userAgent?: string,
+    ipAddress?: string,
+  ) {
     const accessTtl = this.configService.getOrThrow<string>("JWT_ACCESS_TTL");
     const refreshTtl = this.configService.getOrThrow<string>("JWT_REFRESH_TTL");
     const accessExpiresIn = accessTtl as `${number}${"s" | "m" | "h" | "d"}`;
@@ -73,19 +95,30 @@ export class AuthService {
     const refreshJti = randomUUID();
 
     const accessToken = await this.jwtService.signAsync(
-      { sub: user.id, email: user.email, role: user.role, version: user.sessionVersion },
+      {
+        sub: user.id,
+        email: user.email,
+        role: user.role,
+        version: user.sessionVersion,
+      },
       {
         secret: this.configService.getOrThrow<string>("JWT_ACCESS_SECRET"),
         expiresIn: accessExpiresIn as any,
-      }
+      },
     );
 
     const refreshToken = await this.jwtService.signAsync(
-      { sub: user.id, email: user.email, role: user.role, version: user.sessionVersion, jti: refreshJti },
+      {
+        sub: user.id,
+        email: user.email,
+        role: user.role,
+        version: user.sessionVersion,
+        jti: refreshJti,
+      },
       {
         secret: this.configService.getOrThrow<string>("JWT_REFRESH_SECRET"),
         expiresIn: refreshExpiresIn as any,
-      }
+      },
     );
 
     await this.authRepository.createRefreshToken(
@@ -93,11 +126,19 @@ export class AuthService {
       await argon2.hash(refreshToken),
       new Date(Date.now() + refreshMaxAge),
       userAgent,
-      ipAddress
+      ipAddress,
     );
 
-    response.cookie(ACCESS_COOKIE, accessToken, this.cookieOptions(accessMaxAge));
-    response.cookie(REFRESH_COOKIE, refreshToken, this.cookieOptions(refreshMaxAge));
+    response.cookie(
+      ACCESS_COOKIE,
+      accessToken,
+      this.cookieOptions(accessMaxAge),
+    );
+    response.cookie(
+      REFRESH_COOKIE,
+      refreshToken,
+      this.cookieOptions(refreshMaxAge),
+    );
   }
 
   private clearSessionCookies(response: Response) {
@@ -105,7 +146,10 @@ export class AuthService {
     response.clearCookie(REFRESH_COOKIE, this.cookieOptions(0));
   }
 
-  private async verifyOpaqueToken<T extends { userId: string }>(token: string, candidates: Array<T & { id: string; tokenHash: string }>) {
+  private async verifyOpaqueToken<T extends { userId: string }>(
+    token: string,
+    candidates: Array<T & { id: string; tokenHash: string }>,
+  ) {
     for (const candidate of candidates) {
       if (await argon2.verify(candidate.tokenHash, token)) {
         return candidate;
@@ -114,13 +158,22 @@ export class AuthService {
     return null;
   }
 
-  async login(dto: LoginDto, response: Response, userAgent?: string, ipAddress?: string) {
-    const user = await this.authRepository.findUserByEmail(dto.email.toLowerCase());
+  async login(
+    dto: LoginDto,
+    response: Response,
+    userAgent?: string,
+    ipAddress?: string,
+  ) {
+    const user = await this.authRepository.findUserByEmail(
+      dto.email.toLowerCase(),
+    );
     if (!user) {
       throw new UnauthorizedException("Invalid credentials");
     }
     if (user.lockedUntil && user.lockedUntil > new Date()) {
-      throw new UnauthorizedException("Account temporarily locked due to repeated failed login attempts");
+      throw new UnauthorizedException(
+        "Account temporarily locked due to repeated failed login attempts",
+      );
     }
 
     const ok = await argon2.verify(user.passwordHash, dto.password);
@@ -168,7 +221,12 @@ export class AuthService {
     };
   }
 
-  async refresh(refreshToken: string | undefined, response: Response, userAgent?: string, ipAddress?: string) {
+  async refresh(
+    refreshToken: string | undefined,
+    response: Response,
+    userAgent?: string,
+    ipAddress?: string,
+  ) {
     if (!refreshToken) {
       throw new UnauthorizedException("Refresh token missing");
     }
@@ -187,8 +245,13 @@ export class AuthService {
       throw new UnauthorizedException("Session revoked");
     }
 
-    const candidates = await this.authRepository.findActiveRefreshTokens(user.id);
-    const matched = await this.verifyOpaqueToken(refreshToken, candidates.map((entry) => ({ ...entry, userId: user.id })));
+    const candidates = await this.authRepository.findActiveRefreshTokens(
+      user.id,
+    );
+    const matched = await this.verifyOpaqueToken(
+      refreshToken,
+      candidates.map((entry) => ({ ...entry, userId: user.id })),
+    );
     if (!matched) {
       throw new UnauthorizedException("Refresh token not recognized");
     }
@@ -207,14 +270,24 @@ export class AuthService {
     return { ok: true };
   }
 
-  async logout(userId: string | undefined, refreshToken: string | undefined, response: Response, userAgent?: string, ipAddress?: string) {
+  async logout(
+    userId: string | undefined,
+    refreshToken: string | undefined,
+    response: Response,
+    userAgent?: string,
+    ipAddress?: string,
+  ) {
     this.clearSessionCookies(response);
     if (!userId || !refreshToken) {
       return { ok: true };
     }
 
-    const candidates = await this.authRepository.findActiveRefreshTokens(userId);
-    const matched = await this.verifyOpaqueToken(refreshToken, candidates.map((entry) => ({ ...entry, userId })));
+    const candidates =
+      await this.authRepository.findActiveRefreshTokens(userId);
+    const matched = await this.verifyOpaqueToken(
+      refreshToken,
+      candidates.map((entry) => ({ ...entry, userId })),
+    );
     if (matched) {
       await this.authRepository.revokeRefreshToken(matched.id);
     }
@@ -246,14 +319,24 @@ export class AuthService {
     };
   }
 
-  async requestPasswordReset(dto: RequestPasswordResetDto, ipAddress?: string, userAgent?: string) {
-    const user = await this.authRepository.findUserByEmail(dto.email.toLowerCase());
+  async requestPasswordReset(
+    dto: RequestPasswordResetDto,
+    ipAddress?: string,
+    userAgent?: string,
+  ) {
+    const user = await this.authRepository.findUserByEmail(
+      dto.email.toLowerCase(),
+    );
     if (!user) {
       return { ok: true };
     }
 
     const token = randomUUID();
-    await this.authRepository.createPasswordResetToken(user.id, await argon2.hash(token), new Date(Date.now() + 60 * 60_000));
+    await this.authRepository.createPasswordResetToken(
+      user.id,
+      await argon2.hash(token),
+      new Date(Date.now() + 60 * 60_000),
+    );
     await this.mailerService.sendPasswordReset(user.email, token);
     await this.auditService.log({
       userId: user.id,
@@ -266,7 +349,11 @@ export class AuthService {
     return { ok: true };
   }
 
-  async resetPassword(dto: ResetPasswordDto, ipAddress?: string, userAgent?: string) {
+  async resetPassword(
+    dto: ResetPasswordDto,
+    ipAddress?: string,
+    userAgent?: string,
+  ) {
     const tokens = await this.authRepository.findAllActivePasswordResetTokens();
     for (const token of tokens) {
       if (await argon2.verify(token.tokenHash, dto.token)) {
@@ -296,13 +383,21 @@ export class AuthService {
     throw new BadRequestException("Password reset token is invalid or expired");
   }
 
-  async requestEmailVerification(userId: string, ipAddress?: string, userAgent?: string) {
+  async requestEmailVerification(
+    userId: string,
+    ipAddress?: string,
+    userAgent?: string,
+  ) {
     const user = await this.authRepository.findUserById(userId);
     if (!user) {
       throw new UnauthorizedException("User not found");
     }
     const token = randomUUID();
-    await this.authRepository.createEmailVerificationToken(user.id, await argon2.hash(token), new Date(Date.now() + 24 * 60 * 60_000));
+    await this.authRepository.createEmailVerificationToken(
+      user.id,
+      await argon2.hash(token),
+      new Date(Date.now() + 24 * 60 * 60_000),
+    );
     await this.mailerService.sendEmailVerification(user.email, token);
     await this.auditService.log({
       userId: user.id,
@@ -315,16 +410,25 @@ export class AuthService {
     return { ok: true };
   }
 
-  async verifyEmail(userId: string, dto: VerifyEmailDto, ipAddress?: string, userAgent?: string) {
+  async verifyEmail(
+    userId: string,
+    dto: VerifyEmailDto,
+    ipAddress?: string,
+    userAgent?: string,
+  ) {
     const user = await this.authRepository.findUserById(userId);
     if (!user) {
       throw new UnauthorizedException("User not found");
     }
-    const tokens = await this.authRepository.findActiveEmailVerificationTokens(user.id);
+    const tokens = await this.authRepository.findActiveEmailVerificationTokens(
+      user.id,
+    );
     for (const token of tokens) {
       if (await argon2.verify(token.tokenHash, dto.token)) {
         await this.authRepository.useEmailVerificationToken(token.id);
-        await this.authRepository.updateUser(user.id, { emailVerifiedAt: new Date() });
+        await this.authRepository.updateUser(user.id, {
+          emailVerifiedAt: new Date(),
+        });
         await this.auditService.log({
           userId: user.id,
           action: "auth.email_verified",

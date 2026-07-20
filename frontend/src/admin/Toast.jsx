@@ -25,7 +25,11 @@ export function ToastProvider({ children }) {
               boxShadow: "0 10px 30px rgba(0,0,0,0.25)",
             }}
           >
-            {toast.tone === "error" ? <XCircle size={16} /> : <CheckCircle2 size={16} />}
+            {toast.tone === "error" ? (
+              <XCircle size={16} />
+            ) : (
+              <CheckCircle2 size={16} />
+            )}
             {toast.message}
           </div>
         </div>

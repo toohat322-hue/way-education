@@ -22,9 +22,13 @@ const AdminApp = lazy(() => import("./admin/AdminApp"));
 
 function AdminFallback() {
   return (
-    <div className="min-h-screen flex items-center justify-center" style={{ background: grad.hero }}>
-
-      <div className="text-sm font-medium" style={{ color: C.muted }}>Loading dashboard…</div>
+    <div
+      className="min-h-screen flex items-center justify-center"
+      style={{ background: grad.hero }}
+    >
+      <div className="text-sm font-medium" style={{ color: C.muted }}>
+        Loading dashboard…
+      </div>
     </div>
   );
 }

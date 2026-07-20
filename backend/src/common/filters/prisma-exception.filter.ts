@@ -1,4 +1,9 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpStatus } from "@nestjs/common";
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  HttpStatus,
+} from "@nestjs/common";
 import { Prisma } from "@prisma/client";
 import { Response } from "express";
 
@@ -19,7 +24,8 @@ export class PrismaExceptionFilter implements ExceptionFilter {
     switch (exception.code) {
       case "P2025": {
         // Record to update/delete does not exist
-        const model = (exception.meta as Record<string, any>)?.modelName || "Record";
+        const model =
+          (exception.meta as Record<string, any>)?.modelName || "Record";
         response.status(HttpStatus.NOT_FOUND).json({
           statusCode: HttpStatus.NOT_FOUND,
           message: `${model} not found`,
@@ -42,7 +48,8 @@ export class PrismaExceptionFilter implements ExceptionFilter {
 
       case "P2003": {
         // Foreign key constraint failure
-        const fieldName = (exception.meta as Record<string, any>)?.field_name || "reference";
+        const fieldName =
+          (exception.meta as Record<string, any>)?.field_name || "reference";
         response.status(HttpStatus.BAD_REQUEST).json({
           statusCode: HttpStatus.BAD_REQUEST,
           message: `Related ${fieldName} does not exist`,

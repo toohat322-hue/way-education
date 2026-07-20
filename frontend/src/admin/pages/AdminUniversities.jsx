@@ -28,28 +28,64 @@ export default function AdminUniversities() {
         {universities.map((u) => (
           <GlassCard key={u.id} className="p-4" style={{ background: "#fff" }}>
             <div className="flex items-start justify-between gap-2 mb-2">
-              <h3 className="font-semibold text-sm" style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}>{u.name}</h3>
-              <div className="flex items-center gap-1 shrink-0 px-2 py-0.5 rounded-full text-xs font-semibold" style={{ background: "#FFF1E8", color: C.orangeDark }}>
+              <h3
+                className="font-semibold text-sm"
+                style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}
+              >
+                {u.name}
+              </h3>
+              <div
+                className="flex items-center gap-1 shrink-0 px-2 py-0.5 rounded-full text-xs font-semibold"
+                style={{ background: "#FFF1E8", color: C.orangeDark }}
+              >
                 <Star size={12} fill={C.orange} color={C.orange} /> {u.rating}
               </div>
             </div>
             <div className="flex items-center flex-wrap gap-1.5 mb-2">
               {u.featured && (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold text-white" style={{ background: grad.cta }}>Featured</span>
+                <span
+                  className="px-2 py-0.5 rounded-full text-[10px] font-semibold text-white"
+                  style={{ background: grad.cta }}
+                >
+                  Featured
+                </span>
               )}
               <span
                 className="px-2 py-0.5 rounded-full text-[10px] font-semibold"
-                style={u.active === false ? { background: "#FFF1EE", color: C.orangeDark } : { background: "#E7F9EF", color: "#16A34A" }}
+                style={
+                  u.active === false
+                    ? { background: "#FFF1EE", color: C.orangeDark }
+                    : { background: "#E7F9EF", color: "#16A34A" }
+                }
               >
                 {u.active === false ? "Inactive" : "Active"}
               </span>
             </div>
-            <p className="text-xs mb-3" style={{ color: C.muted }}>{u.city.en}, {u.country.en} · ${u.tuition.toLocaleString()}/yr</p>
+            <p className="text-xs mb-3" style={{ color: C.muted }}>
+              {u.city.en}, {u.country.en} · ${u.tuition.toLocaleString()}/yr
+            </p>
             <div className="flex items-center gap-2">
-              <GhostButton onClick={() => setEditing(u)} className="flex-1 flex items-center justify-center gap-1.5">
+              <GhostButton
+                onClick={() => setEditing(u)}
+                className="flex-1 flex items-center justify-center gap-1.5"
+              >
                 <Pencil size={13} /> Edit
               </GhostButton>
-                <DangerButton onClick={async () => { if (window.confirm(`Remove ${u.name}?`)) { try { await removeUniversity(u.id); showToast(`${u.name} removed`); } catch (err) { showToast(err.message || `Unable to remove ${u.name}`, "error"); } } }}>
+              <DangerButton
+                onClick={async () => {
+                  if (window.confirm(`Remove ${u.name}?`)) {
+                    try {
+                      await removeUniversity(u.id);
+                      showToast(`${u.name} removed`);
+                    } catch (err) {
+                      showToast(
+                        err.message || `Unable to remove ${u.name}`,
+                        "error",
+                      );
+                    }
+                  }
+                }}
+              >
                 <Trash2 size={13} />
               </DangerButton>
             </div>
@@ -57,7 +93,12 @@ export default function AdminUniversities() {
         ))}
       </div>
 
-      {editing !== undefined && <UniversityFormModal uni={editing} onClose={() => setEditing(undefined)} />}
+      {editing !== undefined && (
+        <UniversityFormModal
+          uni={editing}
+          onClose={() => setEditing(undefined)}
+        />
+      )}
     </div>
   );
 }

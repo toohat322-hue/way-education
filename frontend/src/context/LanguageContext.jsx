@@ -13,7 +13,9 @@ function mergeStrings(base, override) {
 }
 
 export function LanguageProvider({ children }) {
-  const [lang, setLang] = useState(() => localStorage.getItem("st_lang") || "en");
+  const [lang, setLang] = useState(
+    () => localStorage.getItem("st_lang") || "en",
+  );
   const [override, setOverride] = useState(null);
   const saveTimerRef = useRef(undefined);
 
@@ -24,7 +26,10 @@ export function LanguageProvider({ children }) {
   }, [lang]);
 
   const toggleLang = () => setLang((l) => (l === "en" ? "ar" : "en"));
-  const strings = useMemo(() => mergeStrings(BASE_STRINGS, override), [override]);
+  const strings = useMemo(
+    () => mergeStrings(BASE_STRINGS, override),
+    [override],
+  );
   const t = strings[lang];
   const isRtl = lang === "ar";
 
@@ -64,7 +69,13 @@ export function LanguageProvider({ children }) {
 
   const updateString = (langKey, key, value) => {
     setOverride((prev) => {
-      const next = { ...mergeStrings(BASE_STRINGS, prev), [langKey]: { ...(((prev && prev[langKey]) || BASE_STRINGS[langKey]) ?? {}), [key]: value } };
+      const next = {
+        ...mergeStrings(BASE_STRINGS, prev),
+        [langKey]: {
+          ...(((prev && prev[langKey]) || BASE_STRINGS[langKey]) ?? {}),
+          [key]: value,
+        },
+      };
       queueSave(next);
       return next;
     });
@@ -88,7 +99,19 @@ export function LanguageProvider({ children }) {
   };
 
   return (
-    <LanguageContext.Provider value={{ lang, setLang, toggleLang, t, isRtl, strings, updateString, resetStrings, restoreStrings }}>
+    <LanguageContext.Provider
+      value={{
+        lang,
+        setLang,
+        toggleLang,
+        t,
+        isRtl,
+        strings,
+        updateString,
+        resetStrings,
+        restoreStrings,
+      }}
+    >
       {children}
     </LanguageContext.Provider>
   );

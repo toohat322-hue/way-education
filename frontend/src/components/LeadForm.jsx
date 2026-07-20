@@ -8,10 +8,20 @@ import { apiFetch } from "../lib/api";
 // A single source of truth for the "get a consultation" form. Used by:
 // - ApplySidebar (full detail page for partner universities)
 // - RequestInfoModal (directory universities without full data yet)
-export default function LeadForm({ t, majors = [], onSubmitted, context = {} }) {
+export default function LeadForm({
+  t,
+  majors = [],
+  onSubmitted,
+  context = {},
+}) {
   const { settings } = useData();
   const location = useLocation();
-  const [form, setForm] = useState({ name: "", phone: "", email: "", major: "" });
+  const [form, setForm] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    major: "",
+  });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -68,7 +78,10 @@ export default function LeadForm({ t, majors = [], onSubmitted, context = {} }) 
 
   if (submitted) {
     return (
-      <div className="p-4 rounded-xl text-sm text-center" style={{ background: "#E7F9F0", color: "#16A34A" }}>
+      <div
+        className="p-4 rounded-xl text-sm text-center"
+        style={{ background: "#E7F9F0", color: "#16A34A" }}
+      >
         {t.formSuccess}
       </div>
     );
@@ -127,10 +140,16 @@ export default function LeadForm({ t, majors = [], onSubmitted, context = {} }) 
             disabled={busy}
           >
             <option value="">{t.sidebarMajorSel}</option>
-            {majors.map((m, i) => <option key={i}>{m}</option>)}
+            {majors.map((m, i) => (
+              <option key={i}>{m}</option>
+            ))}
           </select>
         )}
-        {error && <p className="text-xs" style={{ color: C.orangeDark }}>{error}</p>}
+        {error && (
+          <p className="text-xs" style={{ color: C.orangeDark }}>
+            {error}
+          </p>
+        )}
       </div>
       <button
         type="submit"

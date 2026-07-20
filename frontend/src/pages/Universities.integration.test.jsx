@@ -10,7 +10,9 @@ describe("Universities page integration", () => {
     const user = userEvent.setup();
     renderWithProviders(<Universities />, { route: "/universities" });
 
-    const requestButtons = screen.getAllByRole("button", { name: /request info/i });
+    const requestButtons = screen.getAllByRole("button", {
+      name: /request info/i,
+    });
     await user.click(requestButtons[0]);
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();

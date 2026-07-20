@@ -18,13 +18,16 @@ describe("LeadForm", () => {
         <DataProvider>
           <LeadForm t={t} onSubmitted={onSubmitted} majors={["Medicine"]} />
         </DataProvider>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     await user.type(screen.getByLabelText(t.sidebarName), "John Doe");
     await user.type(screen.getByLabelText(t.sidebarPhone), "+905551112233");
     await user.type(screen.getByLabelText(t.sidebarEmail), "john@example.com");
-    await user.selectOptions(screen.getByLabelText(t.sidebarMajorSel), "Medicine");
+    await user.selectOptions(
+      screen.getByLabelText(t.sidebarMajorSel),
+      "Medicine",
+    );
     await user.click(screen.getByRole("button", { name: t.sidebarSubmit }));
 
     expect(onSubmitted).toHaveBeenCalledWith({

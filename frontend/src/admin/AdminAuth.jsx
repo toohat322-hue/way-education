@@ -60,7 +60,9 @@ export function AdminAuthProvider({ children }) {
   };
 
   return (
-    <AdminAuthContext.Provider value={{ unlocked, booting, user, login, logout }}>
+    <AdminAuthContext.Provider
+      value={{ unlocked, booting, user, login, logout }}
+    >
       {children}
     </AdminAuthContext.Provider>
   );

@@ -16,7 +16,9 @@ export function Eyebrow({ children }) {
 
 export default function SectionHeader({ eyebrow, title, sub, center = true }) {
   return (
-    <div className={`mb-10 md:mb-14 ${center ? "text-center max-w-2xl mx-auto" : ""}`}>
+    <div
+      className={`mb-10 md:mb-14 ${center ? "text-center max-w-2xl mx-auto" : ""}`}
+    >
       <Eyebrow>{eyebrow}</Eyebrow>
       <h2
         className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-4"

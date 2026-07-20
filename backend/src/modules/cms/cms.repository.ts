@@ -37,15 +37,29 @@ export class CmsRepository {
     });
   }
 
-  private async ensureCity(countryId: string, city: { en: string; ar: string }) {
-    const existing = await this.prisma.city.findFirst({ where: { countryId, nameEn: city.en } });
+  private async ensureCity(
+    countryId: string,
+    city: { en: string; ar: string },
+  ) {
+    const existing = await this.prisma.city.findFirst({
+      where: { countryId, nameEn: city.en },
+    });
     if (existing) {
-      return this.prisma.city.update({ where: { id: existing.id }, data: { nameAr: city.ar } });
+      return this.prisma.city.update({
+        where: { id: existing.id },
+        data: { nameAr: city.ar },
+      });
     }
-    return this.prisma.city.create({ data: { countryId, nameEn: city.en, nameAr: city.ar } });
+    return this.prisma.city.create({
+      data: { countryId, nameEn: city.en, nameAr: city.ar },
+    });
   }
 
-  private mapUniversityCreateInput(dto: CreateUniversityDto, cityId: string, countryId: string): Prisma.UniversityCreateInput {
+  private mapUniversityCreateInput(
+    dto: CreateUniversityDto,
+    cityId: string,
+    countryId: string,
+  ): Prisma.UniversityCreateInput {
     return {
       slug: slugify(dto.name),
       name: dto.name,
@@ -94,12 +108,14 @@ export class CmsRepository {
         })),
       },
       admissions: {
-        create: [{
-          documentsEn: dto.docs.en,
-          documentsAr: dto.docs.ar,
-          notesEn: dto.gpaReq,
-          notesAr: dto.gpaReq,
-        }],
+        create: [
+          {
+            documentsEn: dto.docs.en,
+            documentsAr: dto.docs.ar,
+            notesEn: dto.gpaReq,
+            notesAr: dto.gpaReq,
+          },
+        ],
       },
       reviews: {
         create: dto.testimonials.map((testimonial) => ({
@@ -110,18 +126,23 @@ export class CmsRepository {
         })),
       },
       scholarships: {
-        create: dto.scholarship > 0
-          ? [{
-              titleEn: `${dto.scholarship}% Scholarship`,
-              titleAr: `منحة ${dto.scholarship}%`,
-              percentage: dto.scholarship,
-              descriptionEn: `Scholarship support up to ${dto.scholarship}%`,
-              descriptionAr: `دعم منح يصل إلى ${dto.scholarship}%`,
-            }]
-          : [],
+        create:
+          dto.scholarship > 0
+            ? [
+                {
+                  titleEn: `${dto.scholarship}% Scholarship`,
+                  titleAr: `منحة ${dto.scholarship}%`,
+                  percentage: dto.scholarship,
+                  descriptionEn: `Scholarship support up to ${dto.scholarship}%`,
+                  descriptionAr: `دعم منح يصل إلى ${dto.scholarship}%`,
+                },
+              ]
+            : [],
       },
       versions: {
-        create: [{ version: 1, snapshot: dto as unknown as Prisma.InputJsonValue }],
+        create: [
+          { version: 1, snapshot: dto as unknown as Prisma.InputJsonValue },
+        ],
       },
     };
   }
@@ -129,7 +150,9 @@ export class CmsRepository {
   // ─── Existence finders (used by service for 404 checks) ─────────────
 
   findUniversityBySlug(slug: string) {
-    return this.prisma.university.findUnique({ where: { slug, deletedAt: null } });
+    return this.prisma.university.findUnique({
+      where: { slug, deletedAt: null },
+    });
   }
 
   findDirectoryEntryBySlug(slug: string) {
@@ -145,7 +168,9 @@ export class CmsRepository {
   }
 
   findCountryByCode(code: string) {
-    return this.prisma.country.findUnique({ where: { code: code.toLowerCase() } });
+    return this.prisma.country.findUnique({
+      where: { code: code.toLowerCase() },
+    });
   }
 
   findCityById(id: string) {
@@ -177,7 +202,10 @@ export class CmsRepository {
         },
         orderBy: [{ featured: "desc" }, { name: "asc" }],
       }),
-      this.prisma.directoryEntry.findMany({ include: { city: true, country: true }, orderBy: { name: "asc" } }),
+      this.prisma.directoryEntry.findMany({
+        include: { city: true, country: true },
+        orderBy: { name: "asc" },
+      }),
       this.prisma.major.findMany({ orderBy: { nameEn: "asc" } }),
       this.prisma.faq.findMany({ orderBy: { sortOrder: "asc" } }),
       this.prisma.siteSettings.findFirst(),
@@ -219,7 +247,9 @@ export class CmsRepository {
   }
 
   async updateUniversity(slug: string, dto: CreateUniversityDto) {
-    const current = await this.prisma.university.findUnique({ where: { slug } });
+    const current = await this.prisma.university.findUnique({
+      where: { slug },
+    });
     if (!current) return null;
     const country = await this.ensureCountry(dto.country);
     const city = await this.ensureCity(country.id, dto.city);
@@ -251,7 +281,8 @@ export class CmsRepository {
         aboutAr: dto.about.ar,
         featured: dto.featured,
         active: dto.active,
-        status: (dto.status?.toUpperCase() as UniversityStatus) || current.status,
+        status:
+          (dto.status?.toUpperCase() as UniversityStatus) || current.status,
         contactPhone: dto.contact?.phone,
         contactEmail: dto.contact?.email,
         contactWebsite: dto.contact?.website,
@@ -261,7 +292,10 @@ export class CmsRepository {
         cityId: city.id,
         countryId: country.id,
         currentVersion: { increment: 1 },
-        gallery: { deleteMany: {}, create: dto.gallery.map((url, index) => ({ url, sortOrder: index })) },
+        gallery: {
+          deleteMany: {},
+          create: dto.gallery.map((url, index) => ({ url, sortOrder: index })),
+        },
         programs: {
           deleteMany: {},
           create: dto.majors.map((major, index) => ({
@@ -272,23 +306,63 @@ export class CmsRepository {
             sortOrder: index,
           })),
         },
-        admissions: { deleteMany: {}, create: [{ documentsEn: dto.docs.en, documentsAr: dto.docs.ar, notesEn: dto.gpaReq, notesAr: dto.gpaReq }] },
-        reviews: { deleteMany: {}, create: dto.testimonials.map((testimonial) => ({ studentName: testimonial.name, rating: testimonial.rating, textEn: testimonial.text.en, textAr: testimonial.text.ar })) },
+        admissions: {
+          deleteMany: {},
+          create: [
+            {
+              documentsEn: dto.docs.en,
+              documentsAr: dto.docs.ar,
+              notesEn: dto.gpaReq,
+              notesAr: dto.gpaReq,
+            },
+          ],
+        },
+        reviews: {
+          deleteMany: {},
+          create: dto.testimonials.map((testimonial) => ({
+            studentName: testimonial.name,
+            rating: testimonial.rating,
+            textEn: testimonial.text.en,
+            textAr: testimonial.text.ar,
+          })),
+        },
         scholarships: {
           deleteMany: {},
-          create: dto.scholarship > 0
-            ? [{ titleEn: `${dto.scholarship}% Scholarship`, titleAr: `منحة ${dto.scholarship}%`, percentage: dto.scholarship, descriptionEn: `Scholarship support up to ${dto.scholarship}%`, descriptionAr: `دعم منح يصل إلى ${dto.scholarship}%` }]
-            : [],
+          create:
+            dto.scholarship > 0
+              ? [
+                  {
+                    titleEn: `${dto.scholarship}% Scholarship`,
+                    titleAr: `منحة ${dto.scholarship}%`,
+                    percentage: dto.scholarship,
+                    descriptionEn: `Scholarship support up to ${dto.scholarship}%`,
+                    descriptionAr: `دعم منح يصل إلى ${dto.scholarship}%`,
+                  },
+                ]
+              : [],
         },
         versions: {
-          create: [{ version: current.currentVersion + 1, snapshot: dto as unknown as Prisma.InputJsonValue }],
+          create: [
+            {
+              version: current.currentVersion + 1,
+              snapshot: dto as unknown as Prisma.InputJsonValue,
+            },
+          ],
         },
       },
     });
 
     return this.prisma.university.findUnique({
       where: { slug },
-      include: { city: true, country: true, programs: true, admissions: true, reviews: true, scholarships: true, gallery: true },
+      include: {
+        city: true,
+        country: true,
+        programs: true,
+        admissions: true,
+        reviews: true,
+        scholarships: true,
+        gallery: true,
+      },
     });
   }
 
@@ -300,8 +374,14 @@ export class CmsRepository {
   }
 
   async createDirectoryEntry(dto: CreateDirectoryEntryDto) {
-    const country = await this.ensureCountry({ en: dto.country, ar: dto.country });
-    const city = await this.ensureCity(country.id, { en: dto.city, ar: dto.city });
+    const country = await this.ensureCountry({
+      en: dto.country,
+      ar: dto.country,
+    });
+    const city = await this.ensureCity(country.id, {
+      en: dto.city,
+      ar: dto.city,
+    });
     return this.prisma.directoryEntry.create({
       data: {
         slug: slugify(dto.name),
@@ -316,11 +396,23 @@ export class CmsRepository {
   }
 
   async updateDirectoryEntry(slug: string, dto: CreateDirectoryEntryDto) {
-    const country = await this.ensureCountry({ en: dto.country, ar: dto.country });
-    const city = await this.ensureCity(country.id, { en: dto.city, ar: dto.city });
+    const country = await this.ensureCountry({
+      en: dto.country,
+      ar: dto.country,
+    });
+    const city = await this.ensureCity(country.id, {
+      en: dto.city,
+      ar: dto.city,
+    });
     return this.prisma.directoryEntry.update({
       where: { slug },
-      data: { name: dto.name, type: dto.type, founded: dto.founded, countryId: country.id, cityId: city.id },
+      data: {
+        name: dto.name,
+        type: dto.type,
+        founded: dto.founded,
+        countryId: country.id,
+        cityId: city.id,
+      },
       include: { city: true, country: true },
     });
   }
@@ -335,14 +427,25 @@ export class CmsRepository {
 
   createMajor(dto: CreateMajorDto) {
     return this.prisma.major.create({
-      data: { slug: slugify(dto.name.en), iconName: dto.iconName, nameEn: dto.name.en, nameAr: dto.name.ar, count: dto.count },
+      data: {
+        slug: slugify(dto.name.en),
+        iconName: dto.iconName,
+        nameEn: dto.name.en,
+        nameAr: dto.name.ar,
+        count: dto.count,
+      },
     });
   }
 
   updateMajor(slug: string, dto: CreateMajorDto) {
     return this.prisma.major.update({
       where: { slug },
-      data: { iconName: dto.iconName, nameEn: dto.name.en, nameAr: dto.name.ar, count: dto.count },
+      data: {
+        iconName: dto.iconName,
+        nameEn: dto.name.en,
+        nameAr: dto.name.ar,
+        count: dto.count,
+      },
     });
   }
 
@@ -357,14 +460,25 @@ export class CmsRepository {
   async createFaq(dto: CreateFaqDto) {
     const count = await this.prisma.faq.count();
     return this.prisma.faq.create({
-      data: { questionEn: dto.q.en, questionAr: dto.q.ar, answerEn: dto.a.en, answerAr: dto.a.ar, sortOrder: count },
+      data: {
+        questionEn: dto.q.en,
+        questionAr: dto.q.ar,
+        answerEn: dto.a.en,
+        answerAr: dto.a.ar,
+        sortOrder: count,
+      },
     });
   }
 
   updateFaq(id: string, dto: CreateFaqDto) {
     return this.prisma.faq.update({
       where: { id },
-      data: { questionEn: dto.q.en, questionAr: dto.q.ar, answerEn: dto.a.en, answerAr: dto.a.ar },
+      data: {
+        questionEn: dto.q.en,
+        questionAr: dto.q.ar,
+        answerEn: dto.a.en,
+        answerAr: dto.a.ar,
+      },
     });
   }
 
@@ -384,7 +498,8 @@ export class CmsRepository {
         addressEn: "Istanbul, Türkiye",
         addressAr: "إسطنبول، تركيا",
         seoTitle: "Way Education",
-        seoDescription: "Study admissions platform for Türkiye and Northern Cyprus.",
+        seoDescription:
+          "Study admissions platform for Türkiye and Northern Cyprus.",
         socialLinks: {},
         analytics: {},
         featureFlags: {},
@@ -399,10 +514,18 @@ export class CmsRepository {
       where: { id: current.id },
       data: {
         ...dto,
-        languages: dto.languages ? (dto.languages as unknown as Prisma.InputJsonValue) : undefined,
-        socialLinks: dto.socialLinks ? (dto.socialLinks as unknown as Prisma.InputJsonValue) : undefined,
-        analytics: dto.analytics ? (dto.analytics as unknown as Prisma.InputJsonValue) : undefined,
-        featureFlags: dto.featureFlags ? (dto.featureFlags as unknown as Prisma.InputJsonValue) : undefined,
+        languages: dto.languages
+          ? (dto.languages as unknown as Prisma.InputJsonValue)
+          : undefined,
+        socialLinks: dto.socialLinks
+          ? (dto.socialLinks as unknown as Prisma.InputJsonValue)
+          : undefined,
+        analytics: dto.analytics
+          ? (dto.analytics as unknown as Prisma.InputJsonValue)
+          : undefined,
+        featureFlags: dto.featureFlags
+          ? (dto.featureFlags as unknown as Prisma.InputJsonValue)
+          : undefined,
       },
     });
   }
@@ -422,19 +545,32 @@ export class CmsRepository {
   }
 
   listCountries() {
-    return this.prisma.country.findMany({ include: { cities: true }, orderBy: { nameEn: "asc" } });
+    return this.prisma.country.findMany({
+      include: { cities: true },
+      orderBy: { nameEn: "asc" },
+    });
   }
 
   createCountry(dto: CreateCountryDto) {
     return this.prisma.country.create({
-      data: { code: dto.code.toLowerCase(), nameEn: dto.nameEn, nameAr: dto.nameAr, isActive: dto.isActive ?? true },
+      data: {
+        code: dto.code.toLowerCase(),
+        nameEn: dto.nameEn,
+        nameAr: dto.nameAr,
+        isActive: dto.isActive ?? true,
+      },
     });
   }
 
   updateCountry(code: string, dto: CreateCountryDto) {
     return this.prisma.country.update({
       where: { code: code.toLowerCase() },
-      data: { code: dto.code.toLowerCase(), nameEn: dto.nameEn, nameAr: dto.nameAr, isActive: dto.isActive ?? true },
+      data: {
+        code: dto.code.toLowerCase(),
+        nameEn: dto.nameEn,
+        nameAr: dto.nameAr,
+        isActive: dto.isActive ?? true,
+      },
     });
   }
 
@@ -443,19 +579,35 @@ export class CmsRepository {
   }
 
   listCities() {
-    return this.prisma.city.findMany({ include: { country: true }, orderBy: [{ country: { nameEn: "asc" } }, { nameEn: "asc" }] });
+    return this.prisma.city.findMany({
+      include: { country: true },
+      orderBy: [{ country: { nameEn: "asc" } }, { nameEn: "asc" }],
+    });
   }
 
   async createCity(dto: CreateCityDto) {
-    const country = await this.prisma.country.findUnique({ where: { code: dto.countryCode.toLowerCase() } });
-    if (!country) throw new Error(`Country not found for code ${dto.countryCode}`);
-    return this.prisma.city.create({ data: { countryId: country.id, nameEn: dto.nameEn, nameAr: dto.nameAr }, include: { country: true } });
+    const country = await this.prisma.country.findUnique({
+      where: { code: dto.countryCode.toLowerCase() },
+    });
+    if (!country)
+      throw new Error(`Country not found for code ${dto.countryCode}`);
+    return this.prisma.city.create({
+      data: { countryId: country.id, nameEn: dto.nameEn, nameAr: dto.nameAr },
+      include: { country: true },
+    });
   }
 
   async updateCity(id: string, dto: CreateCityDto) {
-    const country = await this.prisma.country.findUnique({ where: { code: dto.countryCode.toLowerCase() } });
-    if (!country) throw new Error(`Country not found for code ${dto.countryCode}`);
-    return this.prisma.city.update({ where: { id }, data: { countryId: country.id, nameEn: dto.nameEn, nameAr: dto.nameAr }, include: { country: true } });
+    const country = await this.prisma.country.findUnique({
+      where: { code: dto.countryCode.toLowerCase() },
+    });
+    if (!country)
+      throw new Error(`Country not found for code ${dto.countryCode}`);
+    return this.prisma.city.update({
+      where: { id },
+      data: { countryId: country.id, nameEn: dto.nameEn, nameAr: dto.nameAr },
+      include: { country: true },
+    });
   }
 
   deleteCity(id: string) {
@@ -468,14 +620,20 @@ export class CmsRepository {
 
   createSeoPage(dto: CreateSeoPageDto) {
     return this.prisma.seoPage.create({
-      data: { ...dto, schemaMarkup: dto.schemaMarkup as unknown as Prisma.InputJsonValue },
+      data: {
+        ...dto,
+        schemaMarkup: dto.schemaMarkup as unknown as Prisma.InputJsonValue,
+      },
     });
   }
 
   updateSeoPage(key: string, dto: CreateSeoPageDto) {
     return this.prisma.seoPage.update({
       where: { key },
-      data: { ...dto, schemaMarkup: dto.schemaMarkup as unknown as Prisma.InputJsonValue },
+      data: {
+        ...dto,
+        schemaMarkup: dto.schemaMarkup as unknown as Prisma.InputJsonValue,
+      },
     });
   }
 
@@ -484,7 +642,9 @@ export class CmsRepository {
   }
 
   listBlogPosts() {
-    return this.prisma.blogPost.findMany({ orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }] });
+    return this.prisma.blogPost.findMany({
+      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+    });
   }
 
   createBlogPost(dto: CreateBlogPostDto) {
@@ -501,7 +661,8 @@ export class CmsRepository {
         authorName: dto.authorName,
         tags: (dto.tags || []) as unknown as Prisma.InputJsonValue,
         status: (dto.status?.toUpperCase() as BlogStatus) || "DRAFT",
-        publishedAt: dto.status?.toUpperCase() === "PUBLISHED" ? new Date() : null,
+        publishedAt:
+          dto.status?.toUpperCase() === "PUBLISHED" ? new Date() : null,
       },
     });
   }
@@ -521,7 +682,8 @@ export class CmsRepository {
         authorName: dto.authorName,
         tags: (dto.tags || []) as unknown as Prisma.InputJsonValue,
         status: (dto.status?.toUpperCase() as BlogStatus) || "DRAFT",
-        publishedAt: dto.status?.toUpperCase() === "PUBLISHED" ? new Date() : null,
+        publishedAt:
+          dto.status?.toUpperCase() === "PUBLISHED" ? new Date() : null,
       },
     });
   }
@@ -531,13 +693,14 @@ export class CmsRepository {
   }
 
   async exportSnapshot() {
-    const [bootstrap, countries, cities, seoPages, blogPosts] = await Promise.all([
-      this.getBootstrap(),
-      this.listCountries(),
-      this.listCities(),
-      this.listSeoPages(),
-      this.listBlogPosts(),
-    ]);
+    const [bootstrap, countries, cities, seoPages, blogPosts] =
+      await Promise.all([
+        this.getBootstrap(),
+        this.listCountries(),
+        this.listCities(),
+        this.listSeoPages(),
+        this.listBlogPosts(),
+      ]);
     return {
       exportedAt: new Date().toISOString(),
       universities: bootstrap[0],
@@ -555,7 +718,7 @@ export class CmsRepository {
 
   async importSnapshot(dto: ImportSnapshotDto) {
     const snapshot = (dto.snapshot || {}) as Record<string, any>;
-    
+
     // Clear relations and core entities to allow clean insert
     await this.prisma.universityVersion.deleteMany();
     await this.prisma.universityProgram.deleteMany();
@@ -582,7 +745,9 @@ export class CmsRepository {
     }
     if (Array.isArray(snapshot.directory)) {
       for (const entry of snapshot.directory) {
-        await this.createDirectoryEntry(entry as unknown as CreateDirectoryEntryDto);
+        await this.createDirectoryEntry(
+          entry as unknown as CreateDirectoryEntryDto,
+        );
       }
     }
     if (Array.isArray(snapshot.universities)) {
@@ -593,21 +758,39 @@ export class CmsRepository {
 
     await this.prisma.$transaction(async (tx) => {
       if (snapshot.settings) {
-        await tx.siteSettings.upsert({ where: { id: snapshot.settings.id || "site-settings" }, update: snapshot.settings as Prisma.SiteSettingsUpdateInput, create: snapshot.settings as Prisma.SiteSettingsCreateInput });
+        await tx.siteSettings.upsert({
+          where: { id: snapshot.settings.id || "site-settings" },
+          update: snapshot.settings as Prisma.SiteSettingsUpdateInput,
+          create: snapshot.settings as Prisma.SiteSettingsCreateInput,
+        });
       }
       if (snapshot.siteCopy) {
-        await tx.siteCopy.upsert({ where: { id: snapshot.siteCopy.id || "site-copy" }, update: { data: snapshot.siteCopy.data as Prisma.InputJsonValue }, create: { id: snapshot.siteCopy.id || "site-copy", data: snapshot.siteCopy.data as Prisma.InputJsonValue } });
+        await tx.siteCopy.upsert({
+          where: { id: snapshot.siteCopy.id || "site-copy" },
+          update: { data: snapshot.siteCopy.data as Prisma.InputJsonValue },
+          create: {
+            id: snapshot.siteCopy.id || "site-copy",
+            data: snapshot.siteCopy.data as Prisma.InputJsonValue,
+          },
+        });
       }
       if (Array.isArray(snapshot.blogPosts)) {
         await tx.blogPost.deleteMany();
         for (const post of snapshot.blogPosts) {
-          await tx.blogPost.create({ data: { ...post, tags: post.tags as Prisma.InputJsonValue } });
+          await tx.blogPost.create({
+            data: { ...post, tags: post.tags as Prisma.InputJsonValue },
+          });
         }
       }
       if (Array.isArray(snapshot.seoPages)) {
         await tx.seoPage.deleteMany();
         for (const page of snapshot.seoPages) {
-          await tx.seoPage.create({ data: { ...page, schemaMarkup: page.schemaMarkup as Prisma.InputJsonValue } });
+          await tx.seoPage.create({
+            data: {
+              ...page,
+              schemaMarkup: page.schemaMarkup as Prisma.InputJsonValue,
+            },
+          });
         }
       }
     });

@@ -7,7 +7,10 @@ export const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 export const ALLOWED_MAX_SIZE_MB = 5;
 
 // Returns an error string if `file` fails the type/size check, or null if it's fine.
-export function validateImageFile(file, { types = ALLOWED_IMAGE_TYPES, maxSizeMB = ALLOWED_MAX_SIZE_MB } = {}) {
+export function validateImageFile(
+  file,
+  { types = ALLOWED_IMAGE_TYPES, maxSizeMB = ALLOWED_MAX_SIZE_MB } = {},
+) {
   if (!types.includes(file.type)) {
     return `${file.name}: unsupported file type (use JPG, PNG, or WEBP).`;
   }
@@ -32,7 +35,10 @@ export async function uploadImageFile(file) {
 
   const payload = await response.json().catch(() => null);
   if (!response.ok) {
-    const message = payload?.message || payload?.error || (typeof payload === "string" ? payload : "Upload failed");
+    const message =
+      payload?.message ||
+      payload?.error ||
+      (typeof payload === "string" ? payload : "Upload failed");
     throw new Error(message);
   }
 

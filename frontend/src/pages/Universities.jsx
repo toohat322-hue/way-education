@@ -27,19 +27,28 @@ export default function Universities() {
   }, [directory]);
 
   const matchesFilters = (u) => {
-    if (query && !u.name.toLowerCase().includes(query.toLowerCase())) return false;
+    if (query && !u.name.toLowerCase().includes(query.toLowerCase()))
+      return false;
     if (country && (u.country?.en || u.country) !== country) return false;
     if (type && (u.type?.en || u.type) !== type) return false;
-    
+
     // Advanced Filters
     const qCity = params.get("city");
     if (qCity && u.city?.en !== qCity) return false;
-    
+
     const qLang = params.get("language");
-    if (qLang && !u.languages?.some(l => l.en === qLang)) return false;
+    if (qLang && !u.languages?.some((l) => l.en === qLang)) return false;
 
     const qMajor = params.get("major");
-    if (qMajor && !u.faculties?.some(f => f.en.includes(qMajor) || f.programs?.some(p => p.en.includes(qMajor)))) return false;
+    if (
+      qMajor &&
+      !u.faculties?.some(
+        (f) =>
+          f.en.includes(qMajor) ||
+          f.programs?.some((p) => p.en.includes(qMajor)),
+      )
+    )
+      return false;
 
     return true;
   };
@@ -50,30 +59,45 @@ export default function Universities() {
 
   const filteredDirectory = directory.filter((u) => matchesFilters(u));
   const totalCount = filteredPartners.length + filteredDirectory.length;
-  const shownDirectory = filteredDirectory.slice(0, Math.max(0, visible - filteredPartners.length));
+  const shownDirectory = filteredDirectory.slice(
+    0,
+    Math.max(0, visible - filteredPartners.length),
+  );
 
   const handleCountryChange = (val) => {
     setCountry(val);
     setVisible(PAGE_SIZE);
-    if (val) setParams({ country: val }); else setParams({});
+    if (val) setParams({ country: val });
+    else setParams({});
   };
 
   return (
     <div className="max-w-7xl mx-auto px-5 sm:px-8 py-12 md:py-16">
       <div className="mb-10 max-w-2xl">
-        <h1 className="text-3xl md:text-4xl font-bold mb-3" style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}>
+        <h1
+          className="text-3xl md:text-4xl font-bold mb-3"
+          style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}
+        >
           {t.allUnisTitle}
         </h1>
-        <p className="text-base" style={{ color: C.muted }}>{t.allUnisSub}</p>
+        <p className="text-base" style={{ color: C.muted }}>
+          {t.allUnisSub}
+        </p>
       </div>
 
       <GlassCard className="p-4 md:p-5 mb-10" style={{ background: "#fff" }}>
         <div className="grid sm:grid-cols-[1fr,180px,160px] gap-3">
-          <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl" style={{ border: `1px solid ${C.border}` }}>
+          <div
+            className="flex items-center gap-2 px-3 py-2.5 rounded-xl"
+            style={{ border: `1px solid ${C.border}` }}
+          >
             <Search size={16} color={C.muted} />
             <input
               value={query}
-              onChange={(e) => { setQuery(e.target.value); setVisible(PAGE_SIZE); }}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setVisible(PAGE_SIZE);
+              }}
               placeholder={t.searchDirPlaceholder}
               aria-label={t.searchDirPlaceholder}
               type="search"
@@ -88,43 +112,64 @@ export default function Universities() {
             style={{ border: `1px solid ${C.border}` }}
           >
             <option value="">{t.allCountries}</option>
-            {countries.map((c, i) => <option key={i} value={c}>{c}</option>)}
+            {countries.map((c, i) => (
+              <option key={i} value={c}>
+                {c}
+              </option>
+            ))}
           </select>
           <select
             value={type}
-            onChange={(e) => { setType(e.target.value); setVisible(PAGE_SIZE); }}
+            onChange={(e) => {
+              setType(e.target.value);
+              setVisible(PAGE_SIZE);
+            }}
             aria-label={t.anyType}
             className="px-3 py-2.5 rounded-xl text-sm bg-white outline-none"
             style={{ border: `1px solid ${C.border}` }}
           >
             <option value="">{t.anyType}</option>
-            <option value="Public">{lang === "en" ? "Public" : "حكومية"}</option>
-            <option value="Private">{lang === "en" ? "Private" : "خاصة"}</option>
+            <option value="Public">
+              {lang === "en" ? "Public" : "حكومية"}
+            </option>
+            <option value="Private">
+              {lang === "en" ? "Private" : "خاصة"}
+            </option>
           </select>
         </div>
       </GlassCard>
 
       {totalCount === 0 ? (
-        <p className="text-center py-16 text-sm" style={{ color: C.muted }}>{t.noResults}</p>
+        <p className="text-center py-16 text-sm" style={{ color: C.muted }}>
+          {t.noResults}
+        </p>
       ) : (
         <>
           {filteredPartners.length > 0 && (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-              {filteredPartners.map((u) => <UniversityCard key={u.id} u={u} />)}
+              {filteredPartners.map((u) => (
+                <UniversityCard key={u.id} u={u} />
+              ))}
             </div>
           )}
 
           {shownDirectory.length > 0 && (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {shownDirectory.map((u) => (
-                <DirectoryCard key={u.id} uni={u} t={t} onRequestInfo={setModalUni} />
+                <DirectoryCard
+                  key={u.id}
+                  uni={u}
+                  t={t}
+                  onRequestInfo={setModalUni}
+                />
               ))}
             </div>
           )}
 
           <div className="text-center mt-10">
             <p className="text-xs mb-4" style={{ color: C.muted }}>
-              {t.showingResults} {Math.min(visible, totalCount)} {t.ofResults} {totalCount}
+              {t.showingResults} {Math.min(visible, totalCount)} {t.ofResults}{" "}
+              {totalCount}
             </p>
             {visible < totalCount && (
               <button
@@ -139,7 +184,11 @@ export default function Universities() {
         </>
       )}
 
-      <RequestInfoModal uni={modalUni} t={t} onClose={() => setModalUni(null)} />
+      <RequestInfoModal
+        uni={modalUni}
+        t={t}
+        onClose={() => setModalUni(null)}
+      />
     </div>
   );
 }

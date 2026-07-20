@@ -10,6 +10,6 @@ export function renderWithProviders(ui, { route = "/" } = {}) {
       <LanguageProvider>
         <MemoryRouter initialEntries={[route]}>{ui}</MemoryRouter>
       </LanguageProvider>
-    </DataProvider>
+    </DataProvider>,
   );
 }

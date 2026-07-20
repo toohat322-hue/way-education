@@ -17,7 +17,10 @@ type EnvShape = {
   ADMIN_PASSWORD: string;
 };
 
-function requireString(env: Record<string, unknown>, key: keyof EnvShape): string {
+function requireString(
+  env: Record<string, unknown>,
+  key: keyof EnvShape,
+): string {
   const value = String(env[key] ?? "").trim();
   if (!value) {
     throw new Error(`Missing required environment variable: ${key}`);
@@ -25,7 +28,11 @@ function requireString(env: Record<string, unknown>, key: keyof EnvShape): strin
   return value;
 }
 
-function requirePort(env: Record<string, unknown>, key: keyof EnvShape, fallback?: number): number {
+function requirePort(
+  env: Record<string, unknown>,
+  key: keyof EnvShape,
+  fallback?: number,
+): number {
   const raw = String(env[key] ?? fallback ?? "").trim();
   const value = Number(raw);
   if (!Number.isInteger(value) || value <= 0) {

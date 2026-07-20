@@ -7,7 +7,9 @@ export type AuthenticatedUser = {
   sessionVersion: number;
 };
 
-export const CurrentUser = createParamDecorator((_: unknown, ctx: ExecutionContext) => {
-  const request = ctx.switchToHttp().getRequest();
-  return request.currentUser as AuthenticatedUser | undefined;
-});
+export const CurrentUser = createParamDecorator(
+  (_: unknown, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest();
+    return request.currentUser as AuthenticatedUser | undefined;
+  },
+);

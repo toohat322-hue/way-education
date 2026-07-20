@@ -4,7 +4,11 @@ import { Controller, Get } from "@nestjs/common";
 export class HealthController {
   @Get()
   getHealth() {
-    return { ok: true, service: "way-education-backend", timestamp: new Date().toISOString() };
+    return {
+      ok: true,
+      service: "way-education-backend",
+      timestamp: new Date().toISOString(),
+    };
   }
 
   @Get("live")

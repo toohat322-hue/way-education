@@ -5,7 +5,14 @@ describe("CmsController", () => {
   let controller: CmsController;
 
   const cmsService = {
-    getBootstrap: jest.fn().mockResolvedValue({ universities: [], directory: [], majors: [], faqs: [], settings: null, strings: {} }),
+    getBootstrap: jest.fn().mockResolvedValue({
+      universities: [],
+      directory: [],
+      majors: [],
+      faqs: [],
+      settings: null,
+      strings: {},
+    }),
     listCountries: jest.fn().mockResolvedValue([]),
     listCities: jest.fn().mockResolvedValue([]),
     listSeoPages: jest.fn().mockResolvedValue([]),

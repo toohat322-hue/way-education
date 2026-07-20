@@ -1,7 +1,12 @@
 import React from "react";
 import { C } from "../theme/tokens";
 
-export default function GlassCard({ children, className = "", style = {}, ...rest }) {
+export default function GlassCard({
+  children,
+  className = "",
+  style = {},
+  ...rest
+}) {
   return (
     <div
       {...rest}

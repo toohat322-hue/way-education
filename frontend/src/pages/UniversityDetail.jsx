@@ -1,8 +1,23 @@
 import React, { Suspense, lazy, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
-  ArrowLeft, ArrowRight, MapPin, Award, Clock, Users, Globe,
-  DollarSign, BookOpen, Check, Camera, Pencil, Star, Phone, Mail, Link2, EyeOff,
+  ArrowLeft,
+  ArrowRight,
+  MapPin,
+  Award,
+  Clock,
+  Users,
+  Globe,
+  DollarSign,
+  BookOpen,
+  Check,
+  Camera,
+  Pencil,
+  Star,
+  Phone,
+  Mail,
+  Link2,
+  EyeOff,
 } from "lucide-react";
 import { C, grad } from "../theme/tokens";
 import GlassCard from "../components/GlassCard";
@@ -22,8 +37,12 @@ function InfoPill({ icon: Icon, label, value }) {
   return (
     <div className="p-4 rounded-2xl" style={{ background: "#F6F8FF" }}>
       <Icon size={16} color={C.blue} className="mb-2" />
-      <div className="text-xs mb-0.5" style={{ color: C.muted }}>{label}</div>
-      <div className="font-semibold text-sm" style={{ color: C.ink }}>{value}</div>
+      <div className="text-xs mb-0.5" style={{ color: C.muted }}>
+        {label}
+      </div>
+      <div className="font-semibold text-sm" style={{ color: C.ink }}>
+        {value}
+      </div>
     </div>
   );
 }
@@ -31,8 +50,15 @@ function InfoPill({ icon: Icon, label, value }) {
 function ApplySidebar({ uni, t, lang }) {
   return (
     <GlassCard className="p-6" style={{ background: "#fff" }}>
-      <h3 className="font-semibold text-base mb-1" style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}>{t.sidebarApplyTitle}</h3>
-      <p className="text-xs mb-5" style={{ color: C.muted }}>{t.sidebarNote}</p>
+      <h3
+        className="font-semibold text-base mb-1"
+        style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}
+      >
+        {t.sidebarApplyTitle}
+      </h3>
+      <p className="text-xs mb-5" style={{ color: C.muted }}>
+        {t.sidebarNote}
+      </p>
       <LeadForm
         t={t}
         majors={uni.majors.map((m) => m.name[lang])}
@@ -60,28 +86,54 @@ function ContactSocialCard({ uni }) {
 
   return (
     <GlassCard className="p-6 mt-5" style={{ background: "#fff" }}>
-      <h3 className="font-semibold text-sm mb-4" style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}>Contact & Social</h3>
+      <h3
+        className="font-semibold text-sm mb-4"
+        style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}
+      >
+        Contact & Social
+      </h3>
       {hasContact && (
         <div className="space-y-2.5">
           {contact.phone && (
-            <a href={`tel:${contact.phone}`} className="flex items-center gap-2.5 text-sm" style={{ color: C.inkSoft }}>
+            <a
+              href={`tel:${contact.phone}`}
+              className="flex items-center gap-2.5 text-sm"
+              style={{ color: C.inkSoft }}
+            >
               <Phone size={14} color={C.blue} /> {contact.phone}
             </a>
           )}
           {contact.email && (
-            <a href={`mailto:${contact.email}`} className="flex items-center gap-2.5 text-sm" style={{ color: C.inkSoft }}>
+            <a
+              href={`mailto:${contact.email}`}
+              className="flex items-center gap-2.5 text-sm"
+              style={{ color: C.inkSoft }}
+            >
               <Mail size={14} color={C.blue} /> {contact.email}
             </a>
           )}
           {contact.website && (
-            <a href={contact.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 text-sm">
-              <Link2 size={14} color={C.blue} className="shrink-0" /> <span className="truncate">{contact.website.replace(/^https?:\/\//, "")}</span>
+            <a
+              href={contact.website}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2.5 text-sm"
+            >
+              <Link2 size={14} color={C.blue} className="shrink-0" />{" "}
+              <span className="truncate">
+                {contact.website.replace(/^https?:\/\//, "")}
+              </span>
             </a>
           )}
         </div>
       )}
       {hasSocial && (
-        <div className={`flex flex-wrap gap-2 ${hasContact ? "mt-4 pt-4" : ""}`} style={hasContact ? { borderTop: `1px solid ${C.border}` } : undefined}>
+        <div
+          className={`flex flex-wrap gap-2 ${hasContact ? "mt-4 pt-4" : ""}`}
+          style={
+            hasContact ? { borderTop: `1px solid ${C.border}` } : undefined
+          }
+        >
           {[
             ["Facebook", social.facebook],
             ["Instagram", social.instagram],
@@ -122,8 +174,16 @@ export default function UniversityDetail() {
   if (!uni || (uni.active === false && !unlocked)) {
     return (
       <div className="max-w-3xl mx-auto px-5 py-24 text-center">
-        <p className="mb-4" style={{ color: C.muted }}>{t.notFound}</p>
-        <Link to="/" className="font-semibold text-sm" style={{ color: C.blue }}>{t.backHome}</Link>
+        <p className="mb-4" style={{ color: C.muted }}>
+          {t.notFound}
+        </p>
+        <Link
+          to="/"
+          className="font-semibold text-sm"
+          style={{ color: C.blue }}
+        >
+          {t.backHome}
+        </Link>
       </div>
     );
   }
@@ -142,11 +202,27 @@ export default function UniversityDetail() {
     <div>
       <div className="relative h-56 md:h-72" style={{ background: uni.grad }}>
         {uni.image ? (
-          <img src={uni.image} alt={uni.name} className="absolute inset-0 w-full h-full object-cover" />
+          <img
+            src={uni.image}
+            alt={uni.name}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
         ) : (
-          <div className="absolute inset-0 opacity-15" style={{ backgroundImage: "radial-gradient(circle at 20% 20%, #fff 1px, transparent 1px)", backgroundSize: "18px 18px" }} />
+          <div
+            className="absolute inset-0 opacity-15"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle at 20% 20%, #fff 1px, transparent 1px)",
+              backgroundSize: "18px 18px",
+            }}
+          />
         )}
-        <div className="absolute inset-0" style={{ background: uni.image ? "rgba(11,18,48,0.35)" : "transparent" }} />
+        <div
+          className="absolute inset-0"
+          style={{
+            background: uni.image ? "rgba(11,18,48,0.35)" : "transparent",
+          }}
+        />
         {uni.photoCredit && (
           <a
             href={uni.photoCredit.url}
@@ -160,39 +236,65 @@ export default function UniversityDetail() {
         )}
         <div className="max-w-6xl mx-auto px-5 sm:px-8 h-full flex flex-col justify-between py-5 relative">
           <div className="flex items-center justify-between">
-            <button onClick={() => navigate("/")} className="flex items-center gap-1.5 text-sm font-medium text-white/90 w-fit">
-              {isRtl ? <ArrowRight size={16} /> : <ArrowLeft size={16} />} {t.backHome}
+            <button
+              onClick={() => navigate("/")}
+              className="flex items-center gap-1.5 text-sm font-medium text-white/90 w-fit"
+            >
+              {isRtl ? <ArrowRight size={16} /> : <ArrowLeft size={16} />}{" "}
+              {t.backHome}
             </button>
             {unlocked && (
               <button
                 onClick={() => setEditOpen(true)}
                 className="flex items-center gap-1.5 text-sm font-medium text-white px-3.5 py-1.5 rounded-full transition-transform hover:scale-105 active:scale-95"
-                style={{ background: "rgba(255,255,255,0.18)", backdropFilter: "blur(6px)" }}
+                style={{
+                  background: "rgba(255,255,255,0.18)",
+                  backdropFilter: "blur(6px)",
+                }}
               >
                 <Pencil size={14} /> Edit
               </button>
             )}
           </div>
           <div className="flex items-end gap-4">
-            <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-white flex items-center justify-center font-bold text-2xl shrink-0 overflow-hidden" style={{ color: C.blue }}>
+            <div
+              className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-white flex items-center justify-center font-bold text-2xl shrink-0 overflow-hidden"
+              style={{ color: C.blue }}
+            >
               {uni.logo ? (
-                <img src={uni.logo} alt={`${uni.name} logo`} className="w-full h-full object-cover" />
+                <img
+                  src={uni.logo}
+                  alt={`${uni.name} logo`}
+                  className="w-full h-full object-cover"
+                />
               ) : (
                 uni.initial
               )}
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <h1 className="text-xl md:text-3xl font-bold text-white" style={{ fontFamily: "Poppins, sans-serif" }}>{uni.name}</h1>
+                <h1
+                  className="text-xl md:text-3xl font-bold text-white"
+                  style={{ fontFamily: "Poppins, sans-serif" }}
+                >
+                  {uni.name}
+                </h1>
                 {uni.featured && (
-                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold text-white shrink-0" style={{ background: grad.cta }}>
+                  <span
+                    className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold text-white shrink-0"
+                    style={{ background: grad.cta }}
+                  >
                     <Star size={11} fill="#fff" /> Featured
                   </span>
                 )}
               </div>
               <div className="flex items-center gap-2 text-sm text-white/85">
-                <MapPin size={14} /> {uni.city[lang]}, {uni.country[lang]} · {uni.type[lang]}
-                <span className="hidden sm:inline-flex items-center gap-1 ms-2"><StarRow rating={uni.rating} size={13} /> {uni.rating} ({uni.reviews})</span>
+                <MapPin size={14} /> {uni.city[lang]}, {uni.country[lang]} ·{" "}
+                {uni.type[lang]}
+                <span className="hidden sm:inline-flex items-center gap-1 ms-2">
+                  <StarRow rating={uni.rating} size={13} /> {uni.rating} (
+                  {uni.reviews})
+                </span>
               </div>
             </div>
           </div>
@@ -201,8 +303,12 @@ export default function UniversityDetail() {
 
       {unlocked && uni.active === false && (
         <div className="max-w-6xl mx-auto px-5 sm:px-8 mt-6">
-          <div className="flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm" style={{ background: "#FFF1EE", color: C.orangeDark }}>
-            <EyeOff size={16} /> Inactive — hidden from students. Only visible to you because you're signed in as admin.
+          <div
+            className="flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm"
+            style={{ background: "#FFF1EE", color: C.orangeDark }}
+          >
+            <EyeOff size={16} /> Inactive — hidden from students. Only visible
+            to you because you're signed in as admin.
           </div>
         </div>
       )}
@@ -216,10 +322,18 @@ export default function UniversityDetail() {
               [Users, uni.studentsCount, t.students],
               [Globe, uni.intl, t.intlStudents],
             ].map(([Icon, v, l], i) => (
-              <GlassCard key={i} className="p-4 text-center" style={{ background: "#fff" }}>
+              <GlassCard
+                key={i}
+                className="p-4 text-center"
+                style={{ background: "#fff" }}
+              >
                 <Icon size={18} color={C.blue} className="mx-auto mb-2" />
-                <div className="font-bold text-sm" style={{ color: C.ink }}>{v}</div>
-                <div className="text-xs" style={{ color: C.muted }}>{l}</div>
+                <div className="font-bold text-sm" style={{ color: C.ink }}>
+                  {v}
+                </div>
+                <div className="text-xs" style={{ color: C.muted }}>
+                  {l}
+                </div>
               </GlassCard>
             ))}
           </div>
@@ -243,11 +357,28 @@ export default function UniversityDetail() {
 
           {tab === "about" && (
             <GlassCard className="p-6 fade-up" style={{ background: "#fff" }}>
-              <p className="text-sm md:text-base leading-relaxed mb-6" style={{ color: C.inkSoft }}>{uni.about[lang]}</p>
+              <p
+                className="text-sm md:text-base leading-relaxed mb-6"
+                style={{ color: C.inkSoft }}
+              >
+                {uni.about[lang]}
+              </p>
               <div className="grid sm:grid-cols-3 gap-4">
-                <InfoPill icon={DollarSign} label={t.tuitionRange} value={`$${uni.tuition.toLocaleString()}+`} />
-                <InfoPill icon={Globe} label={t.language} value={uni.language[lang]} />
-                <InfoPill icon={Award} label={t.scholarshipUpTo} value={`${uni.scholarship}%`} />
+                <InfoPill
+                  icon={DollarSign}
+                  label={t.tuitionRange}
+                  value={`$${uni.tuition.toLocaleString()}+`}
+                />
+                <InfoPill
+                  icon={Globe}
+                  label={t.language}
+                  value={uni.language[lang]}
+                />
+                <InfoPill
+                  icon={Award}
+                  label={t.scholarshipUpTo}
+                  value={`${uni.scholarship}%`}
+                />
               </div>
             </GlassCard>
           )}
@@ -257,13 +388,28 @@ export default function UniversityDetail() {
               {uni.majors.map((m, i) => {
                 const Icon = resolveIcon(m.iconName);
                 return (
-                  <GlassCard key={i} className="p-5 flex items-center gap-4" style={{ background: "#fff" }}>
-                    <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style={{ background: grad.primarySoft }}>
+                  <GlassCard
+                    key={i}
+                    className="p-5 flex items-center gap-4"
+                    style={{ background: "#fff" }}
+                  >
+                    <div
+                      className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+                      style={{ background: grad.primarySoft }}
+                    >
                       <Icon size={20} color={C.blue} />
                     </div>
                     <div className="flex-1">
-                      <div className="font-semibold text-sm" style={{ color: C.ink }}>{m.name[lang]}</div>
-                      <div className="text-xs" style={{ color: C.muted }}>${m.fee.toLocaleString()}{t.perYear}</div>
+                      <div
+                        className="font-semibold text-sm"
+                        style={{ color: C.ink }}
+                      >
+                        {m.name[lang]}
+                      </div>
+                      <div className="text-xs" style={{ color: C.muted }}>
+                        ${m.fee.toLocaleString()}
+                        {t.perYear}
+                      </div>
                     </div>
                   </GlassCard>
                 );
@@ -273,16 +419,35 @@ export default function UniversityDetail() {
 
           {tab === "admission" && (
             <GlassCard className="p-6 fade-up" style={{ background: "#fff" }}>
-              <h3 className="font-semibold text-base mb-4" style={{ color: C.ink, fontFamily: "Poppins, sans-serif" }}>{t.admissionReq}</h3>
-              <div className="flex items-center gap-3 mb-5 p-3 rounded-xl" style={{ background: C.bgAlt }}>
+              <h3
+                className="font-semibold text-base mb-4"
+                style={{ color: C.ink, fontFamily: "Poppins, sans-serif" }}
+              >
+                {t.admissionReq}
+              </h3>
+              <div
+                className="flex items-center gap-3 mb-5 p-3 rounded-xl"
+                style={{ background: C.bgAlt }}
+              >
                 <BookOpen size={18} color={C.blue} />
-                <span className="text-sm" style={{ color: C.inkSoft }}>{t.gpaReq}: <b>{uni.gpaReq}</b></span>
+                <span className="text-sm" style={{ color: C.inkSoft }}>
+                  {t.gpaReq}: <b>{uni.gpaReq}</b>
+                </span>
               </div>
-              <h4 className="font-medium text-sm mb-3" style={{ color: C.ink }}>{t.docsReq}</h4>
+              <h4 className="font-medium text-sm mb-3" style={{ color: C.ink }}>
+                {t.docsReq}
+              </h4>
               <ul className="space-y-2.5">
                 {uni.docs[lang].map((d, i) => (
-                  <li key={i} className="flex items-center gap-2.5 text-sm" style={{ color: C.inkSoft }}>
-                    <div className="w-5 h-5 rounded-full flex items-center justify-center shrink-0" style={{ background: "#E7F9EF" }}>
+                  <li
+                    key={i}
+                    className="flex items-center gap-2.5 text-sm"
+                    style={{ color: C.inkSoft }}
+                  >
+                    <div
+                      className="w-5 h-5 rounded-full flex items-center justify-center shrink-0"
+                      style={{ background: "#E7F9EF" }}
+                    >
                       <Check size={12} color="#16A34A" />
                     </div>
                     {d}
@@ -294,21 +459,45 @@ export default function UniversityDetail() {
 
           {tab === "reviews" && (
             <div className="fade-up">
-              <GlassCard className="p-6 mb-5 flex items-center gap-6" style={{ background: "#fff" }}>
-                <div className="text-4xl font-extrabold" style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}>{uni.rating}</div>
+              <GlassCard
+                className="p-6 mb-5 flex items-center gap-6"
+                style={{ background: "#fff" }}
+              >
+                <div
+                  className="text-4xl font-extrabold"
+                  style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}
+                >
+                  {uni.rating}
+                </div>
                 <div>
                   <StarRow rating={uni.rating} size={16} />
-                  <div className="text-xs mt-1" style={{ color: C.muted }}>{t.reviewsAvg} {uni.reviews} {t.reviewsCount}</div>
+                  <div className="text-xs mt-1" style={{ color: C.muted }}>
+                    {t.reviewsAvg} {uni.reviews} {t.reviewsCount}
+                  </div>
                 </div>
               </GlassCard>
               <div className="space-y-4">
                 {uni.testimonials.map((r, i) => (
-                  <GlassCard key={i} className="p-5" style={{ background: "#fff" }}>
+                  <GlassCard
+                    key={i}
+                    className="p-5"
+                    style={{ background: "#fff" }}
+                  >
                     <div className="flex items-center justify-between mb-2">
-                      <span className="font-semibold text-sm" style={{ color: C.ink }}>{r.name}</span>
+                      <span
+                        className="font-semibold text-sm"
+                        style={{ color: C.ink }}
+                      >
+                        {r.name}
+                      </span>
                       <StarRow rating={r.rating} size={13} />
                     </div>
-                    <p className="text-sm leading-relaxed" style={{ color: C.muted }}>"{r.text[lang]}"</p>
+                    <p
+                      className="text-sm leading-relaxed"
+                      style={{ color: C.muted }}
+                    >
+                      "{r.text[lang]}"
+                    </p>
                   </GlassCard>
                 ))}
               </div>
@@ -317,14 +506,35 @@ export default function UniversityDetail() {
 
           {tab === "gallery" && (
             <div className="fade-up">
-              <h3 className="font-semibold text-base mb-4" style={{ color: C.ink, fontFamily: "Poppins, sans-serif" }}>{t.galleryTitle}</h3>
+              <h3
+                className="font-semibold text-base mb-4"
+                style={{ color: C.ink, fontFamily: "Poppins, sans-serif" }}
+              >
+                {t.galleryTitle}
+              </h3>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {uni.gallery && uni.gallery.length > 0
                   ? uni.gallery.map((src, i) => (
-                      <img key={i} src={src} alt={`${uni.name} ${i + 1}`} className="h-28 sm:h-36 rounded-2xl w-full object-cover" />
+                      <img
+                        key={i}
+                        src={src}
+                        alt={`${uni.name} ${i + 1}`}
+                        className="h-28 sm:h-36 rounded-2xl w-full object-cover"
+                      />
                     ))
-                  : [grad.card1, grad.card2, grad.card3, grad.card4, grad.card1, grad.card2].map((g, i) => (
-                      <div key={i} className="h-28 sm:h-36 rounded-2xl flex items-center justify-center" style={{ background: g }}>
+                  : [
+                      grad.card1,
+                      grad.card2,
+                      grad.card3,
+                      grad.card4,
+                      grad.card1,
+                      grad.card2,
+                    ].map((g, i) => (
+                      <div
+                        key={i}
+                        className="h-28 sm:h-36 rounded-2xl flex items-center justify-center"
+                        style={{ background: g }}
+                      >
                         <Camera size={22} color="rgba(255,255,255,0.75)" />
                       </div>
                     ))}
@@ -334,8 +544,16 @@ export default function UniversityDetail() {
 
           {tab === "location" && (
             <div className="fade-up">
-              <h3 className="font-semibold text-base mb-4" style={{ color: C.ink, fontFamily: "Poppins, sans-serif" }}>{t.mapTitle}</h3>
-              <GlassCard className="overflow-hidden" style={{ background: "#fff" }}>
+              <h3
+                className="font-semibold text-base mb-4"
+                style={{ color: C.ink, fontFamily: "Poppins, sans-serif" }}
+              >
+                {t.mapTitle}
+              </h3>
+              <GlassCard
+                className="overflow-hidden"
+                style={{ background: "#fff" }}
+              >
                 <iframe
                   title="map"
                   className="w-full h-72 md:h-96 border-0"

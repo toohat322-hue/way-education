@@ -2,7 +2,12 @@ import React, { useRef, useState } from "react";
 import { UploadCloud, RefreshCw, Trash2, X, Loader2 } from "lucide-react";
 import { C } from "../theme/tokens";
 import { Label } from "./ui";
-import { uploadImageFile, validateImageFile, ALLOWED_IMAGE_TYPES, ALLOWED_MAX_SIZE_MB } from "./imageUpload";
+import {
+  uploadImageFile,
+  validateImageFile,
+  ALLOWED_IMAGE_TYPES,
+  ALLOWED_MAX_SIZE_MB,
+} from "./imageUpload";
 
 const ACCEPT = ALLOWED_IMAGE_TYPES.join(",");
 
@@ -99,13 +104,18 @@ export default function GalleryUploadField({ value = [], onChange }) {
     <div>
       <div className="flex items-center justify-between mb-3">
         <Label>Gallery</Label>
-        <span className="text-xs" style={{ color: C.muted }}>{value.length} photo{value.length === 1 ? "" : "s"}</span>
+        <span className="text-xs" style={{ color: C.muted }}>
+          {value.length} photo{value.length === 1 ? "" : "s"}
+        </span>
       </div>
 
       <div
         ref={dropRef}
         onClick={() => addInputRef.current?.click()}
-        onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragActive(true);
+        }}
         onDragLeave={() => setDragActive(false)}
         onDrop={handleDrop}
         className="flex flex-col items-center justify-center gap-1.5 py-6 px-4 rounded-xl cursor-pointer text-center transition-colors"
@@ -114,9 +124,15 @@ export default function GalleryUploadField({ value = [], onChange }) {
           background: dragActive ? "rgba(41,82,227,0.06)" : C.bgAlt,
         }}
       >
-        {busy ? <Loader2 size={20} color={C.blue} className="animate-spin" /> : <UploadCloud size={20} color={C.blue} />}
+        {busy ? (
+          <Loader2 size={20} color={C.blue} className="animate-spin" />
+        ) : (
+          <UploadCloud size={20} color={C.blue} />
+        )}
         <p className="text-sm font-medium" style={{ color: C.ink }}>
-          {busy ? "Processing..." : "Drag & drop photos here, or click to browse"}
+          {busy
+            ? "Processing..."
+            : "Drag & drop photos here, or click to browse"}
         </p>
         <p className="text-xs" style={{ color: C.muted }}>
           JPG, PNG or WEBP · up to {ALLOWED_MAX_SIZE_MB}MB each
@@ -144,7 +160,9 @@ export default function GalleryUploadField({ value = [], onChange }) {
       {errors.length > 0 && (
         <div className="mt-2 space-y-1">
           {errors.map((msg, i) => (
-            <p key={i} className="text-xs" style={{ color: C.orangeDark }}>{msg}</p>
+            <p key={i} className="text-xs" style={{ color: C.orangeDark }}>
+              {msg}
+            </p>
           ))}
         </div>
       )}
@@ -152,8 +170,16 @@ export default function GalleryUploadField({ value = [], onChange }) {
       {value.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mt-4">
           {value.map((src, i) => (
-            <div key={i} className="group relative aspect-square rounded-xl overflow-hidden" style={{ border: `1px solid ${C.border}` }}>
-              <img src={src} alt={`Gallery photo ${i + 1}`} className="w-full h-full object-cover" />
+            <div
+              key={i}
+              className="group relative aspect-square rounded-xl overflow-hidden"
+              style={{ border: `1px solid ${C.border}` }}
+            >
+              <img
+                src={src}
+                alt={`Gallery photo ${i + 1}`}
+                className="w-full h-full object-cover"
+              />
               <div
                 className="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
                 style={{ background: "rgba(11,18,48,0.55)" }}

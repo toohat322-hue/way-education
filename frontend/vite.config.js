@@ -27,37 +27,37 @@ export default defineConfig(({ command }) => {
         },
       },
     },
-  build: {
-    sourcemap: false,
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (
-            id.includes("node_modules/react") ||
-            id.includes("node_modules/react-dom") ||
-            id.includes("node_modules/react-router-dom")
-          ) {
-            return "react";
-          }
+    build: {
+      sourcemap: false,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (
+              id.includes("node_modules/react") ||
+              id.includes("node_modules/react-dom") ||
+              id.includes("node_modules/react-router-dom")
+            ) {
+              return "react";
+            }
 
-          return undefined;
+            return undefined;
+          },
         },
       },
     },
-  },
-  test: {
-    environment: "jsdom",
-    setupFiles: "./src/test/setup.js",
-    globals: true,
-    css: true,
-    include: ["src/**/*.{test,spec}.{js,jsx,ts,tsx}"],
-    exclude: ["tests/e2e/**", "**/node_modules/**", "dist/**"],
-    coverage: {
-      provider: "v8",
-      reporter: ["text", "html", "lcov"],
-      include: ["src/**/*.{js,jsx}"],
-      exclude: ["src/main.jsx", "src/data/directory.js"],
+    test: {
+      environment: "jsdom",
+      setupFiles: "./src/test/setup.js",
+      globals: true,
+      css: true,
+      include: ["src/**/*.{test,spec}.{js,jsx,ts,tsx}"],
+      exclude: ["tests/e2e/**", "**/node_modules/**", "dist/**"],
+      coverage: {
+        provider: "v8",
+        reporter: ["text", "html", "lcov"],
+        include: ["src/**/*.{js,jsx}"],
+        exclude: ["src/main.jsx", "src/data/directory.js"],
+      },
     },
-  },
   };
 });

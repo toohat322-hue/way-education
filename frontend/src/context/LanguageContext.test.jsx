@@ -28,7 +28,7 @@ describe("LanguageContext", () => {
     render(
       <LanguageProvider>
         <Probe />
-      </LanguageProvider>
+      </LanguageProvider>,
     );
 
     expect(screen.getByTestId("lang")).toHaveTextContent("en");
@@ -41,7 +41,7 @@ describe("LanguageContext", () => {
     render(
       <LanguageProvider>
         <Probe />
-      </LanguageProvider>
+      </LanguageProvider>,
     );
 
     await user.click(screen.getByRole("button", { name: "toggle" }));

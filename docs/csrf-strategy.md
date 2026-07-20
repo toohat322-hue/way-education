@@ -24,6 +24,7 @@ This means the browser will **not** send the authentication cookies if a cross-o
 For defense-in-depth, especially against legacy browser behavior or scenarios where `SameSite` might be insufficient, we use the `CsrfGuard`.
 
 **How it works:**
+
 - Modern browsers enforce a strict Same-Origin Policy (SOP).
 - Cross-origin requests (like a `<form>` submission from `evil.com` to our API) can be triggered, but browsers will **not** allow custom headers to be attached to those requests unless explicitly permitted by CORS.
 - Our frontend (`lib/api.js`) automatically attaches `X-Requested-With: XMLHttpRequest` to every API call.

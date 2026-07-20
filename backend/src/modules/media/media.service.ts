@@ -70,14 +70,23 @@ export class MediaService {
     await fs.writeFile(absolutePath, file.buffer);
     return this.prisma.mediaAsset.update({
       where: { id },
-      data: { mimeType: file.mimetype, size: file.size, type: this.inferType(file.mimetype), originalName: file.originalname },
+      data: {
+        mimeType: file.mimetype,
+        size: file.size,
+        type: this.inferType(file.mimetype),
+        originalName: file.originalname,
+      },
     });
   }
 
   async remove(id: string) {
     const asset = await this.prisma.mediaAsset.findUnique({ where: { id } });
     if (!asset) return { ok: true };
-    const absolutePath = path.join(this.baseDir(), asset.folder, asset.filename);
+    const absolutePath = path.join(
+      this.baseDir(),
+      asset.folder,
+      asset.filename,
+    );
     await fs.rm(absolutePath, { force: true });
     await this.prisma.mediaAsset.delete({ where: { id } });
     return { ok: true };

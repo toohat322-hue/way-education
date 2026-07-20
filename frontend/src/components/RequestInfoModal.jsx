@@ -30,16 +30,29 @@ export default function RequestInfoModal({ uni, t, onClose }) {
         aria-modal="true"
         aria-label={uni.name}
       >
-        <button onClick={onClose} className="absolute top-4 inset-e-4 p-1.5 rounded-full" style={{ background: C.bgAlt }} aria-label="Close">
+        <button
+          onClick={onClose}
+          className="absolute top-4 inset-e-4 p-1.5 rounded-full"
+          style={{ background: C.bgAlt }}
+          aria-label="Close"
+        >
           <X size={16} color={C.inkSoft} />
         </button>
-        <h3 className="font-semibold text-base mb-1 pe-8" style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}>
+        <h3
+          className="font-semibold text-base mb-1 pe-8"
+          style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}
+        >
           {uni.name}
         </h3>
-        <div className="flex items-center gap-1 text-xs mb-4" style={{ color: C.muted }}>
+        <div
+          className="flex items-center gap-1 text-xs mb-4"
+          style={{ color: C.muted }}
+        >
           <MapPin size={12} /> {uni.city} · {uni.country} · {uni.type}
         </div>
-        <p className="text-xs mb-5" style={{ color: C.muted }}>{t.sidebarNote}</p>
+        <p className="text-xs mb-5" style={{ color: C.muted }}>
+          {t.sidebarNote}
+        </p>
         <LeadForm
           t={t}
           context={{

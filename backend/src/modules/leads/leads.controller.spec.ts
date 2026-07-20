@@ -6,7 +6,9 @@ describe("LeadsController", () => {
 
   const leadsService = {
     createLead: jest.fn().mockResolvedValue({ ok: true, leadId: "lead_123" }),
-    listLeads: jest.fn().mockResolvedValue({ items: [], total: 0, page: 1, pageSize: 20 }),
+    listLeads: jest
+      .fn()
+      .mockResolvedValue({ items: [], total: 0, page: 1, pageSize: 20 }),
     getStats: jest.fn().mockResolvedValue({ NEW: 4 }),
   };
 
@@ -16,7 +18,10 @@ describe("LeadsController", () => {
   });
 
   it("creates a lead", async () => {
-    const result = await controller.createLead({ name: "John", phone: "+90555111", email: "john@example.com" }, { ip: "127.0.0.1", headers: { "user-agent": "jest" } } as any);
+    const result = await controller.createLead(
+      { name: "John", phone: "+90555111", email: "john@example.com" },
+      { ip: "127.0.0.1", headers: { "user-agent": "jest" } } as any,
+    );
     expect(result).toEqual({ ok: true, leadId: "lead_123" });
   });
 

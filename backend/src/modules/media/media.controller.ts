@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import multer from "multer";
 import { CurrentUser } from "../../common/decorators/current-user.decorator";
@@ -20,18 +32,32 @@ export class MediaController {
   }
 
   @Post()
-  @UseInterceptors(FileInterceptor("file", { storage: multer.memoryStorage(), limits: { fileSize: 25 * 1024 * 1024 } }))
+  @UseInterceptors(
+    FileInterceptor("file", {
+      storage: multer.memoryStorage(),
+      limits: { fileSize: 25 * 1024 * 1024 },
+    }),
+  )
   upload(@UploadedFile() file: any, @Query("folder") folder?: string) {
     return this.mediaService.upload(file, folder || "root");
   }
 
   @Patch(":id")
-  update(@Param("id") id: string, @Body() dto: UpdateMediaDto, @CurrentUser() _user: any) {
+  update(
+    @Param("id") id: string,
+    @Body() dto: UpdateMediaDto,
+    @CurrentUser() _user: any,
+  ) {
     return this.mediaService.update(id, dto);
   }
 
   @Post(":id/replace")
-  @UseInterceptors(FileInterceptor("file", { storage: multer.memoryStorage(), limits: { fileSize: 25 * 1024 * 1024 } }))
+  @UseInterceptors(
+    FileInterceptor("file", {
+      storage: multer.memoryStorage(),
+      limits: { fileSize: 25 * 1024 * 1024 },
+    }),
+  )
   replace(@Param("id") id: string, @UploadedFile() file: any) {
     return this.mediaService.replace(id, file);
   }

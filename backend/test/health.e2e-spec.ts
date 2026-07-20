@@ -20,9 +20,12 @@ describe("Health API", () => {
   });
 
   it("GET /health returns ok", async () => {
-    await request(app.getHttpServer()).get("/health").expect(200).expect(({ body }) => {
-      expect(body.ok).toBe(true);
-      expect(body.service).toBe("way-education-backend");
-    });
+    await request(app.getHttpServer())
+      .get("/health")
+      .expect(200)
+      .expect(({ body }) => {
+        expect(body.ok).toBe(true);
+        expect(body.service).toBe("way-education-backend");
+      });
   });
 });

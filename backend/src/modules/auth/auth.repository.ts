@@ -22,9 +22,21 @@ export class AuthRepository {
     return this.prisma.user.update({ where: { id }, data });
   }
 
-  async createRefreshToken(userId: string, tokenHash: string, expiresAt: Date, userAgent?: string | null, ipAddress?: string | null) {
+  async createRefreshToken(
+    userId: string,
+    tokenHash: string,
+    expiresAt: Date,
+    userAgent?: string | null,
+    ipAddress?: string | null,
+  ) {
     return this.prisma.refreshToken.create({
-      data: { userId, tokenHash, expiresAt, userAgent: userAgent ?? null, ipAddress: ipAddress ?? null },
+      data: {
+        userId,
+        tokenHash,
+        expiresAt,
+        userAgent: userAgent ?? null,
+        ipAddress: ipAddress ?? null,
+      },
     });
   }
 
@@ -50,7 +62,9 @@ export class AuthRepository {
   }
 
   createPasswordResetToken(userId: string, tokenHash: string, expiresAt: Date) {
-    return this.prisma.passwordResetToken.create({ data: { userId, tokenHash, expiresAt } });
+    return this.prisma.passwordResetToken.create({
+      data: { userId, tokenHash, expiresAt },
+    });
   }
 
   findActivePasswordResetTokens(userId: string) {
@@ -68,11 +82,20 @@ export class AuthRepository {
   }
 
   usePasswordResetToken(id: string) {
-    return this.prisma.passwordResetToken.update({ where: { id }, data: { usedAt: new Date() } });
+    return this.prisma.passwordResetToken.update({
+      where: { id },
+      data: { usedAt: new Date() },
+    });
   }
 
-  createEmailVerificationToken(userId: string, tokenHash: string, expiresAt: Date) {
-    return this.prisma.emailVerificationToken.create({ data: { userId, tokenHash, expiresAt } });
+  createEmailVerificationToken(
+    userId: string,
+    tokenHash: string,
+    expiresAt: Date,
+  ) {
+    return this.prisma.emailVerificationToken.create({
+      data: { userId, tokenHash, expiresAt },
+    });
   }
 
   findActiveEmailVerificationTokens(userId: string) {
@@ -83,7 +106,10 @@ export class AuthRepository {
   }
 
   useEmailVerificationToken(id: string) {
-    return this.prisma.emailVerificationToken.update({ where: { id }, data: { usedAt: new Date() } });
+    return this.prisma.emailVerificationToken.update({
+      where: { id },
+      data: { usedAt: new Date() },
+    });
   }
 
   async ensureInitialAdmin(email: string, passwordHash: string): Promise<User> {

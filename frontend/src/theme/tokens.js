@@ -19,7 +19,8 @@ export const C = {
 
 export const grad = {
   primary: "linear-gradient(135deg,#2952E3 0%,#17C3E0 100%)",
-  primarySoft: "linear-gradient(135deg,rgba(41,82,227,0.10) 0%,rgba(23,195,224,0.10) 100%)",
+  primarySoft:
+    "linear-gradient(135deg,rgba(41,82,227,0.10) 0%,rgba(23,195,224,0.10) 100%)",
   cta: "linear-gradient(135deg,#FF8A3D 0%,#E8501A 100%)",
   hero: "radial-gradient(120% 100% at 15% 0%, #EAF1FF 0%, #F6F8FF 45%, #EAFBFF 100%)",
   navy: "linear-gradient(180deg,#0B1230 0%,#152B7A 100%)",

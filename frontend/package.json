@@ -15,7 +15,8 @@
     "test:coverage": "vitest run --coverage",
     "e2e": "npm run build && playwright test",
     "e2e:ui": "playwright test --ui",
-    "format:check": "prettier --check . ../backend ../docs ../README.md ../Dockerfile ../docker-compose.yml ../.github",
+    "format:check": "prettier --ignore-path ../.gitignore --ignore-path ../.prettierignore --check . ../backend ../docs ../README.md ../docker-compose.yml ../.github",
+    "format:write": "prettier --ignore-path ../.gitignore --ignore-path ../.prettierignore --write . ../backend ../docs ../README.md ../docker-compose.yml ../.github",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -65,6 +65,7 @@ node scripts/run-e2e.js
 ```
 
 **What this script does:**
+
 1. Uses `docker-compose.test.yml` to spin up an isolated `postgres-test` container on port 5433.
 2. Resets and seeds the test database cleanly.
 3. Starts the NestJS backend on a test port (`8001`).

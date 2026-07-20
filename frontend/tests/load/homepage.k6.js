@@ -40,7 +40,8 @@ export default function () {
     const res = http.get(`${BASE_URL}${path}`);
     check(res, {
       "status is 200": (r) => r.status === 200,
-      "html response": (r) => (r.headers["Content-Type"] || "").includes("text/html"),
+      "html response": (r) =>
+        (r.headers["Content-Type"] || "").includes("text/html"),
     });
   });
 

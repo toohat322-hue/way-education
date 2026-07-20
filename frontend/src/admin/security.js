@@ -24,11 +24,21 @@ export function validateBackupPayload(payload) {
     return { ok: false, error: "Backup root must be a JSON object." };
   }
 
-  const keys = ["universities", "directory", "majors", "faqs", "strings", "settings"];
+  const keys = [
+    "universities",
+    "directory",
+    "majors",
+    "faqs",
+    "strings",
+    "settings",
+  ];
   for (const key of keys) {
     if (!(key in payload)) continue;
 
-    if (["universities", "directory", "majors", "faqs"].includes(key) && !Array.isArray(payload[key])) {
+    if (
+      ["universities", "directory", "majors", "faqs"].includes(key) &&
+      !Array.isArray(payload[key])
+    ) {
       return { ok: false, error: `Invalid "${key}": expected an array.` };
     }
 
@@ -38,7 +48,8 @@ export function validateBackupPayload(payload) {
   }
 
   const next = {};
-  if (Array.isArray(payload.universities)) next.universities = payload.universities;
+  if (Array.isArray(payload.universities))
+    next.universities = payload.universities;
   if (Array.isArray(payload.directory)) next.directory = payload.directory;
   if (Array.isArray(payload.majors)) next.majors = payload.majors;
   if (Array.isArray(payload.faqs)) next.faqs = payload.faqs;

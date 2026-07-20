@@ -21,12 +21,15 @@ async function bootstrap() {
   app.setGlobalPrefix("api");
   app.use(cookieParser());
   app.use(compression());
-  app.use("/media", express.static(path.resolve(process.cwd(), "storage", "media")));
+  app.use(
+    "/media",
+    express.static(path.resolve(process.cwd(), "storage", "media")),
+  );
   app.use(
     helmet({
       crossOriginResourcePolicy: false,
       contentSecurityPolicy: false,
-    })
+    }),
   );
   app.enableCors({
     origin: origins,
@@ -40,7 +43,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
       transform: true,
       transformOptions: { enableImplicitConversion: true },
-    })
+    }),
   );
   app.useGlobalFilters(new PrismaExceptionFilter());
 

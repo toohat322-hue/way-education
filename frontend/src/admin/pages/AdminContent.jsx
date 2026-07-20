@@ -10,8 +10,11 @@ export default function AdminContent() {
   const [query, setQuery] = useState("");
 
   const keys = useMemo(
-    () => Object.keys(strings.en).filter((k) => k !== "dir" && k.toLowerCase().includes(query.toLowerCase())),
-    [strings, query]
+    () =>
+      Object.keys(strings.en).filter(
+        (k) => k !== "dir" && k.toLowerCase().includes(query.toLowerCase()),
+      ),
+    [strings, query],
   );
 
   return (
@@ -20,13 +23,25 @@ export default function AdminContent() {
         title="Site Copy"
         sub="Every EN/AR string on the site. Edits apply immediately, everywhere they're used."
         action={
-          <GhostButton onClick={() => { if (window.confirm("Reset all site copy to defaults? This discards your edits.")) resetStrings(); }}>
+          <GhostButton
+            onClick={() => {
+              if (
+                window.confirm(
+                  "Reset all site copy to defaults? This discards your edits.",
+                )
+              )
+                resetStrings();
+            }}
+          >
             Reset all
           </GhostButton>
         }
       />
 
-      <GlassCard className="p-1 mb-6 flex items-center gap-2 px-4" style={{ background: "#fff" }}>
+      <GlassCard
+        className="p-1 mb-6 flex items-center gap-2 px-4"
+        style={{ background: "#fff" }}
+      >
         <Search size={16} color={C.muted} />
         <input
           id="content-search"
@@ -43,7 +58,12 @@ export default function AdminContent() {
           const isArray = Array.isArray(strings.en[key]);
           return (
             <GlassCard key={key} className="p-4" style={{ background: "#fff" }}>
-              <div className="text-xs font-semibold mb-2 font-mono" style={{ color: C.muted }}>{key}</div>
+              <div
+                className="text-xs font-semibold mb-2 font-mono"
+                style={{ color: C.muted }}
+              >
+                {key}
+              </div>
               <div className="grid sm:grid-cols-2 gap-3">
                 {isArray ? (
                   <>
@@ -51,20 +71,33 @@ export default function AdminContent() {
                       rows={3}
                       aria-label={`${key} in English`}
                       value={strings.en[key].join("\n")}
-                      onChange={(e) => updateString("en", key, e.target.value.split("\n"))}
+                      onChange={(e) =>
+                        updateString("en", key, e.target.value.split("\n"))
+                      }
                     />
                     <TextArea
                       rows={3}
                       dir="rtl"
                       aria-label={`${key} in Arabic`}
                       value={(strings.ar[key] || []).join("\n")}
-                      onChange={(e) => updateString("ar", key, e.target.value.split("\n"))}
+                      onChange={(e) =>
+                        updateString("ar", key, e.target.value.split("\n"))
+                      }
                     />
                   </>
                 ) : (
                   <>
-                    <TextInput aria-label={`${key} in English`} value={strings.en[key]} onChange={(e) => updateString("en", key, e.target.value)} />
-                    <TextInput aria-label={`${key} in Arabic`} dir="rtl" value={strings.ar[key] || ""} onChange={(e) => updateString("ar", key, e.target.value)} />
+                    <TextInput
+                      aria-label={`${key} in English`}
+                      value={strings.en[key]}
+                      onChange={(e) => updateString("en", key, e.target.value)}
+                    />
+                    <TextInput
+                      aria-label={`${key} in Arabic`}
+                      dir="rtl"
+                      value={strings.ar[key] || ""}
+                      onChange={(e) => updateString("ar", key, e.target.value)}
+                    />
                   </>
                 )}
               </div>
@@ -72,7 +105,9 @@ export default function AdminContent() {
           );
         })}
         {keys.length === 0 && (
-          <p className="text-sm text-center py-10" style={{ color: C.muted }}>No matching text keys.</p>
+          <p className="text-sm text-center py-10" style={{ color: C.muted }}>
+            No matching text keys.
+          </p>
         )}
       </div>
     </div>

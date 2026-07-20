@@ -12,7 +12,8 @@ export class MailerService {
     this.transporter = nodemailer.createTransport({
       host: this.configService.getOrThrow<string>("SMTP_HOST"),
       port: Number(this.configService.getOrThrow<string>("SMTP_PORT")),
-      secure: Number(this.configService.getOrThrow<string>("SMTP_PORT")) === 465,
+      secure:
+        Number(this.configService.getOrThrow<string>("SMTP_PORT")) === 465,
       auth: {
         user: this.configService.getOrThrow<string>("SMTP_USER"),
         pass: this.configService.getOrThrow<string>("SMTP_PASS"),
@@ -55,12 +56,13 @@ export class MailerService {
       `Message: ${lead.message || "None"}`,
     ].join("<br>");
 
-    await this.transporter.sendMail({
-      from: this.from,
-      to: toEmail,
-      subject: `New Application/Lead: ${lead.name}`,
-      text: `A new application was submitted by ${lead.name}. Please check the admin dashboard for details.`,
-      html: `
+    await this.transporter
+      .sendMail({
+        from: this.from,
+        to: toEmail,
+        subject: `New Application/Lead: ${lead.name}`,
+        text: `A new application was submitted by ${lead.name}. Please check the admin dashboard for details.`,
+        html: `
         <h2>New Application Received</h2>
         <p>A new application or lead was just submitted through the website. Here are the details:</p>
         <div style="background: #f4f6f8; padding: 16px; border-radius: 8px;">
@@ -68,8 +70,12 @@ export class MailerService {
         </div>
         <p><br>Log into the <a href="https://wayeducations.com/admin">Admin Dashboard</a> to manage this lead.</p>
       `,
-    }).catch(err => {
-      console.error("Failed to send email alert. Check SMTP configuration.", err);
-    });
+      })
+      .catch((err) => {
+        console.error(
+          "Failed to send email alert. Check SMTP configuration.",
+          err,
+        );
+      });
   }
 }

@@ -18,7 +18,9 @@ describe("RequestInfoModal", () => {
     const user = userEvent.setup();
     const onClose = vi.fn();
 
-    renderWithProviders(<RequestInfoModal uni={uni} t={STRINGS.en} onClose={onClose} />);
+    renderWithProviders(
+      <RequestInfoModal uni={uni} t={STRINGS.en} onClose={onClose} />,
+    );
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     await user.keyboard("{Escape}");

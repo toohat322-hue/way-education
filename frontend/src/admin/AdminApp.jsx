@@ -19,7 +19,9 @@ export default function AdminApp() {
   if (booting) {
     return (
       <div className="min-h-screen flex items-center justify-center p-5">
-        <p className="text-sm" style={{ color: "#64748B" }}>Checking admin session…</p>
+        <p className="text-sm" style={{ color: "#64748B" }}>
+          Checking admin session…
+        </p>
       </div>
     );
   }

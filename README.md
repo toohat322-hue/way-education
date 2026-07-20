@@ -4,14 +4,14 @@ Way Education is a university admissions platform for MENA students looking to s
 
 ## Project Structure
 
-* **Frontend**: `frontend/` contains React 19, Vite, Tailwind CSS 4, React Router 7, Vitest, and Playwright tests.
-* **Backend**: `backend/` contains NestJS 11, Prisma 6, PostgreSQL integration, Jest tests, and database migrations.
-* **Root**: project-level Docker, CI, documentation, and local database orchestration.
+- **Frontend**: `frontend/` contains React 19, Vite, Tailwind CSS 4, React Router 7, Vitest, and Playwright tests.
+- **Backend**: `backend/` contains NestJS 11, Prisma 6, PostgreSQL integration, Jest tests, and database migrations.
+- **Root**: project-level Docker, CI, documentation, and local database orchestration.
 
 ## Requirements
 
-* Node.js >= 22
-* PostgreSQL >= 16, or Docker for the provided `docker-compose.yml`
+- Node.js >= 22
+- PostgreSQL >= 16, or Docker for the provided `docker-compose.yml`
 
 ## Getting Started
 
@@ -60,8 +60,8 @@ This starts the NestJS backend at `http://localhost:8000` and the Vite dev serve
 
 The CMS and CRM are accessible at `/admin`.
 
-* **Default login**: `admin@wayeducation.com`
-* **Default password**: see `backend/.env` or check with your administrator
+- **Default login**: `admin@wayeducation.com`
+- **Default password**: see `backend/.env` or check with your administrator
 
 ## Testing
 
@@ -84,8 +84,8 @@ npm run build
 
 ## Deployment
 
-* **Frontend**: from `frontend/`, run `npm run build`. The output is written to `frontend/dist/`.
-* **Backend**: from `backend/`, run `npm run build` and start with `node dist/main`. Ensure the production database is migrated and environment variables are set.
+- **Frontend**: from `frontend/`, run `npm run build`. The output is written to `frontend/dist/`.
+- **Backend**: from `backend/`, run `npm run build` and start with `node dist/main`. Ensure the production database is migrated and environment variables are set.
 
 ## CI/CD
 

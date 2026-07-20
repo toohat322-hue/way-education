@@ -12,7 +12,12 @@ import { uploadImageFile } from "./imageUpload";
 //
 // CUSTOMIZE:
 //   - `shape="square"` for logos, the default wide box suits cover photos.
-export default function ImageUploadField({ label, value, onChange, shape = "wide" }) {
+export default function ImageUploadField({
+  label,
+  value,
+  onChange,
+  shape = "wide",
+}) {
   const inputRef = useRef(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -42,7 +47,11 @@ export default function ImageUploadField({ label, value, onChange, shape = "wide
           className={`shrink-0 rounded-xl overflow-hidden flex items-center justify-center ${shape === "square" ? "w-16 h-16" : "w-24 h-16"}`}
           style={{ background: C.bgAlt, border: `1px solid ${C.border}` }}
         >
-          {value ? <img src={value} alt="" className="w-full h-full object-cover" /> : <ImageIcon size={20} color={C.muted} />}
+          {value ? (
+            <img src={value} alt="" className="w-full h-full object-cover" />
+          ) : (
+            <ImageIcon size={20} color={C.muted} />
+          )}
         </div>
 
         <div className="flex-1 min-w-0 space-y-1.5">
@@ -52,21 +61,43 @@ export default function ImageUploadField({ label, value, onChange, shape = "wide
               onClick={() => inputRef.current?.click()}
               disabled={busy}
               className="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5"
-              style={{ border: `1px solid ${C.border}`, color: C.inkSoft, background: "#fff" }}
+              style={{
+                border: `1px solid ${C.border}`,
+                color: C.inkSoft,
+                background: "#fff",
+              }}
             >
-              {busy ? <Loader2 size={13} className="animate-spin" /> : <Upload size={13} />} {value ? "Replace" : "Upload"}
+              {busy ? (
+                <Loader2 size={13} className="animate-spin" />
+              ) : (
+                <Upload size={13} />
+              )}{" "}
+              {value ? "Replace" : "Upload"}
             </button>
             {value && (
-              <button type="button" onClick={() => onChange("")} className="p-1.5 rounded-lg" style={{ color: C.orangeDark }} aria-label="Remove image">
+              <button
+                type="button"
+                onClick={() => onChange("")}
+                className="p-1.5 rounded-lg"
+                style={{ color: C.orangeDark }}
+                aria-label="Remove image"
+              >
                 <X size={13} />
               </button>
             )}
-            <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleFile} />
+            <input
+              ref={inputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFile}
+            />
           </div>
 
           {isUploaded ? (
             <p className="text-[11px]" style={{ color: C.muted }}>
-              Uploaded image ({Math.round(value.length / 1024).toLocaleString()} KB, stored in this browser).
+              Uploaded image ({Math.round(value.length / 1024).toLocaleString()}{" "}
+              KB, stored in this browser).
             </p>
           ) : (
             <TextInput
@@ -76,7 +107,11 @@ export default function ImageUploadField({ label, value, onChange, shape = "wide
               className="text-xs"
             />
           )}
-          {error && <p className="text-[11px]" style={{ color: C.orangeDark }}>{error}</p>}
+          {error && (
+            <p className="text-[11px]" style={{ color: C.orangeDark }}>
+              {error}
+            </p>
+          )}
         </div>
       </div>
     </div>

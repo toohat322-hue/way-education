@@ -22,14 +22,20 @@ async function ensureCountry(country) {
   return prisma.country.upsert({
     where: { code },
     update: { nameEn: country.en || country, nameAr: country.ar || country },
-    create: { code, nameEn: country.en || country, nameAr: country.ar || country },
+    create: {
+      code,
+      nameEn: country.en || country,
+      nameAr: country.ar || country,
+    },
   });
 }
 
 async function ensureCity(countryId, city) {
   const nameEn = city.en || city;
   const nameAr = city.ar || city;
-  const existing = await prisma.city.findFirst({ where: { countryId, nameEn } });
+  const existing = await prisma.city.findFirst({
+    where: { countryId, nameEn },
+  });
   if (existing) {
     return prisma.city.update({ where: { id: existing.id }, data: { nameAr } });
   }
@@ -47,7 +53,8 @@ async function seedSettingsAndCopy() {
       addressEn: "Istanbul, Türkiye",
       addressAr: "إسطنبول، تركيا",
       seoTitle: "Way Education",
-      seoDescription: "University admissions platform for Türkiye and Northern Cyprus.",
+      seoDescription:
+        "University admissions platform for Türkiye and Northern Cyprus.",
       socialLinks: {},
       analytics: {},
       featureFlags: {},
@@ -62,7 +69,8 @@ async function seedSettingsAndCopy() {
       addressEn: "Istanbul, Türkiye",
       addressAr: "إسطنبول، تركيا",
       seoTitle: "Way Education",
-      seoDescription: "University admissions platform for Türkiye and Northern Cyprus.",
+      seoDescription:
+        "University admissions platform for Türkiye and Northern Cyprus.",
       socialLinks: {},
       analytics: {},
       featureFlags: {},
@@ -81,8 +89,19 @@ async function seedMajors() {
   for (const major of MAJORS) {
     await prisma.major.upsert({
       where: { slug: slugify(major.name.en) },
-      update: { iconName: major.iconName, nameEn: major.name.en, nameAr: major.name.ar, count: major.count },
-      create: { slug: slugify(major.name.en), iconName: major.iconName, nameEn: major.name.en, nameAr: major.name.ar, count: major.count },
+      update: {
+        iconName: major.iconName,
+        nameEn: major.name.en,
+        nameAr: major.name.ar,
+        count: major.count,
+      },
+      create: {
+        slug: slugify(major.name.en),
+        iconName: major.iconName,
+        nameEn: major.name.en,
+        nameAr: major.name.ar,
+        count: major.count,
+      },
     });
   }
 }
@@ -105,12 +124,31 @@ async function seedFaqs() {
 
 async function seedDirectory() {
   for (const entry of DIRECTORY) {
-    const country = await ensureCountry({ en: entry.country, ar: entry.country });
-    const city = await ensureCity(country.id, { en: entry.city, ar: entry.city });
+    const country = await ensureCountry({
+      en: entry.country,
+      ar: entry.country,
+    });
+    const city = await ensureCity(country.id, {
+      en: entry.city,
+      ar: entry.city,
+    });
     await prisma.directoryEntry.upsert({
       where: { slug: entry.id },
-      update: { name: entry.name, type: entry.type, founded: entry.founded, countryId: country.id, cityId: city.id },
-      create: { slug: entry.id, name: entry.name, type: entry.type, founded: entry.founded, countryId: country.id, cityId: city.id },
+      update: {
+        name: entry.name,
+        type: entry.type,
+        founded: entry.founded,
+        countryId: country.id,
+        cityId: city.id,
+      },
+      create: {
+        slug: entry.id,
+        name: entry.name,
+        type: entry.type,
+        founded: entry.founded,
+        countryId: country.id,
+        cityId: city.id,
+      },
     });
   }
 }
@@ -119,7 +157,9 @@ async function seedUniversities() {
   for (const university of UNIVERSITIES) {
     const country = await ensureCountry(university.country);
     const city = await ensureCity(country.id, university.city);
-    const existing = await prisma.university.findUnique({ where: { slug: university.id } });
+    const existing = await prisma.university.findUnique({
+      where: { slug: university.id },
+    });
 
     const payload = {
       slug: university.id,
@@ -163,19 +203,51 @@ async function seedUniversities() {
         data: {
           ...payload,
           programs: {
-            create: university.majors.map((major, index) => ({ nameEn: major.name.en, nameAr: major.name.ar, fee: major.fee, iconName: major.iconName, sortOrder: index })),
+            create: university.majors.map((major, index) => ({
+              nameEn: major.name.en,
+              nameAr: major.name.ar,
+              fee: major.fee,
+              iconName: major.iconName,
+              sortOrder: index,
+            })),
           },
           admissions: {
-            create: [{ documentsEn: university.docs.en, documentsAr: university.docs.ar, notesEn: university.gpaReq, notesAr: university.gpaReq }],
+            create: [
+              {
+                documentsEn: university.docs.en,
+                documentsAr: university.docs.ar,
+                notesEn: university.gpaReq,
+                notesAr: university.gpaReq,
+              },
+            ],
           },
           reviews: {
-            create: university.testimonials.map((review) => ({ studentName: review.name, rating: review.rating, textEn: review.text.en, textAr: review.text.ar })),
+            create: university.testimonials.map((review) => ({
+              studentName: review.name,
+              rating: review.rating,
+              textEn: review.text.en,
+              textAr: review.text.ar,
+            })),
           },
-          scholarships: university.scholarship > 0 ? {
-            create: [{ titleEn: `${university.scholarship}% Scholarship`, titleAr: `منحة ${university.scholarship}%`, percentage: university.scholarship, descriptionEn: `Scholarship support up to ${university.scholarship}%`, descriptionAr: `دعم منح يصل إلى ${university.scholarship}%` }],
-          } : undefined,
+          scholarships:
+            university.scholarship > 0
+              ? {
+                  create: [
+                    {
+                      titleEn: `${university.scholarship}% Scholarship`,
+                      titleAr: `منحة ${university.scholarship}%`,
+                      percentage: university.scholarship,
+                      descriptionEn: `Scholarship support up to ${university.scholarship}%`,
+                      descriptionAr: `دعم منح يصل إلى ${university.scholarship}%`,
+                    },
+                  ],
+                }
+              : undefined,
           gallery: {
-            create: (university.gallery || []).map((url, index) => ({ url, sortOrder: index })),
+            create: (university.gallery || []).map((url, index) => ({
+              url,
+              sortOrder: index,
+            })),
           },
           versions: {
             create: [{ version: 1, snapshot: university }],
@@ -189,11 +261,58 @@ async function seedUniversities() {
       where: { slug: university.id },
       data: {
         ...payload,
-        programs: { deleteMany: {}, create: university.majors.map((major, index) => ({ nameEn: major.name.en, nameAr: major.name.ar, fee: major.fee, iconName: major.iconName, sortOrder: index })) },
-        admissions: { deleteMany: {}, create: [{ documentsEn: university.docs.en, documentsAr: university.docs.ar, notesEn: university.gpaReq, notesAr: university.gpaReq }] },
-        reviews: { deleteMany: {}, create: university.testimonials.map((review) => ({ studentName: review.name, rating: review.rating, textEn: review.text.en, textAr: review.text.ar })) },
-        scholarships: university.scholarship > 0 ? { deleteMany: {}, create: [{ titleEn: `${university.scholarship}% Scholarship`, titleAr: `منحة ${university.scholarship}%`, percentage: university.scholarship, descriptionEn: `Scholarship support up to ${university.scholarship}%`, descriptionAr: `دعم منح يصل إلى ${university.scholarship}%` }] } : { deleteMany: {} },
-        gallery: { deleteMany: {}, create: (university.gallery || []).map((url, index) => ({ url, sortOrder: index })) },
+        programs: {
+          deleteMany: {},
+          create: university.majors.map((major, index) => ({
+            nameEn: major.name.en,
+            nameAr: major.name.ar,
+            fee: major.fee,
+            iconName: major.iconName,
+            sortOrder: index,
+          })),
+        },
+        admissions: {
+          deleteMany: {},
+          create: [
+            {
+              documentsEn: university.docs.en,
+              documentsAr: university.docs.ar,
+              notesEn: university.gpaReq,
+              notesAr: university.gpaReq,
+            },
+          ],
+        },
+        reviews: {
+          deleteMany: {},
+          create: university.testimonials.map((review) => ({
+            studentName: review.name,
+            rating: review.rating,
+            textEn: review.text.en,
+            textAr: review.text.ar,
+          })),
+        },
+        scholarships:
+          university.scholarship > 0
+            ? {
+                deleteMany: {},
+                create: [
+                  {
+                    titleEn: `${university.scholarship}% Scholarship`,
+                    titleAr: `منحة ${university.scholarship}%`,
+                    percentage: university.scholarship,
+                    descriptionEn: `Scholarship support up to ${university.scholarship}%`,
+                    descriptionAr: `دعم منح يصل إلى ${university.scholarship}%`,
+                  },
+                ],
+              }
+            : { deleteMany: {} },
+        gallery: {
+          deleteMany: {},
+          create: (university.gallery || []).map((url, index) => ({
+            url,
+            sortOrder: index,
+          })),
+        },
       },
     });
   }

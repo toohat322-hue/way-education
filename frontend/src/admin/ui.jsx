@@ -5,7 +5,11 @@ import GlassCard from "../components/GlassCard";
 
 export function Label({ children, htmlFor }) {
   return (
-    <label htmlFor={htmlFor} className="text-xs font-semibold mb-1.5 block" style={{ color: C.inkSoft }}>
+    <label
+      htmlFor={htmlFor}
+      className="text-xs font-semibold mb-1.5 block"
+      style={{ color: C.inkSoft }}
+    >
       {children}
     </label>
   );
@@ -49,12 +53,19 @@ export function Field({ label, id, children }) {
   return (
     <div>
       {label && <Label htmlFor={id}>{label}</Label>}
-      {id && React.isValidElement(children) ? React.cloneElement(children, { id }) : children}
+      {id && React.isValidElement(children)
+        ? React.cloneElement(children, { id })
+        : children}
     </div>
   );
 }
 
-export function PrimaryButton({ children, className = "", style = {}, ...rest }) {
+export function PrimaryButton({
+  children,
+  className = "",
+  style = {},
+  ...rest
+}) {
   return (
     <button
       {...rest}
@@ -71,7 +82,12 @@ export function GhostButton({ children, className = "", style = {}, ...rest }) {
     <button
       {...rest}
       className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-transform hover:scale-[1.02] active:scale-95 ${className}`}
-      style={{ border: `1px solid ${C.border}`, color: C.inkSoft, background: "#fff", ...style }}
+      style={{
+        border: `1px solid ${C.border}`,
+        color: C.inkSoft,
+        background: "#fff",
+        ...style,
+      }}
     >
       {children}
     </button>
@@ -92,8 +108,14 @@ export function Toggle({ checked, onChange, label, sub }) {
       style={{ background: C.bgAlt, border: `1px solid ${C.border}` }}
     >
       <span>
-        <span className="block text-sm font-semibold" style={{ color: C.ink }}>{label}</span>
-        {sub && <span className="block text-xs mt-0.5" style={{ color: C.muted }}>{sub}</span>}
+        <span className="block text-sm font-semibold" style={{ color: C.ink }}>
+          {label}
+        </span>
+        {sub && (
+          <span className="block text-xs mt-0.5" style={{ color: C.muted }}>
+            {sub}
+          </span>
+        )}
       </span>
       <span
         className="relative w-11 h-6 rounded-full shrink-0 transition-colors duration-200"
@@ -108,7 +130,12 @@ export function Toggle({ checked, onChange, label, sub }) {
   );
 }
 
-export function DangerButton({ children, className = "", style = {}, ...rest }) {
+export function DangerButton({
+  children,
+  className = "",
+  style = {},
+  ...rest
+}) {
   return (
     <button
       {...rest}
@@ -146,10 +173,18 @@ export function AdminModal({ title, onClose, children, wide = false }) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-5">
-          <h3 className="font-semibold text-lg" style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}>
+          <h3
+            className="font-semibold text-lg"
+            style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}
+          >
             {title}
           </h3>
-          <button onClick={onClose} className="p-1.5 rounded-full" style={{ background: C.bgAlt }} aria-label="Close">
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-full"
+            style={{ background: C.bgAlt }}
+            aria-label="Close"
+          >
             <X size={16} color={C.inkSoft} />
           </button>
         </div>
@@ -163,10 +198,17 @@ export function PageHeader({ title, sub, action }) {
   return (
     <div className="flex flex-wrap items-start justify-between gap-4 mb-8">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold mb-1" style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}>
+        <h1
+          className="text-2xl md:text-3xl font-bold mb-1"
+          style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}
+        >
           {title}
         </h1>
-        {sub && <p className="text-sm" style={{ color: C.muted }}>{sub}</p>}
+        {sub && (
+          <p className="text-sm" style={{ color: C.muted }}>
+            {sub}
+          </p>
+        )}
       </div>
       {action}
     </div>
@@ -176,13 +218,21 @@ export function PageHeader({ title, sub, action }) {
 export function StatTile({ icon: Icon, label, value }) {
   return (
     <GlassCard className="p-5" style={{ background: "#fff" }}>
-      <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: grad.primarySoft }}>
+      <div
+        className="w-10 h-10 rounded-xl flex items-center justify-center mb-3"
+        style={{ background: grad.primarySoft }}
+      >
         <Icon size={18} color={C.blue} />
       </div>
-      <div className="text-2xl font-extrabold mb-0.5" style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}>
+      <div
+        className="text-2xl font-extrabold mb-0.5"
+        style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}
+      >
         {value}
       </div>
-      <div className="text-xs" style={{ color: C.muted }}>{label}</div>
+      <div className="text-xs" style={{ color: C.muted }}>
+        {label}
+      </div>
     </GlassCard>
   );
 }

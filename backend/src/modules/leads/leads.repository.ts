@@ -9,15 +9,23 @@ export class LeadsRepository {
 
   private async resolveCountryByName(name?: string) {
     if (!name) return null;
-    return this.prisma.country.findFirst({ where: { OR: [{ nameEn: name }, { nameAr: name }] } });
+    return this.prisma.country.findFirst({
+      where: { OR: [{ nameEn: name }, { nameAr: name }] },
+    });
   }
 
   private async resolveUniversityBySlugOrName(value?: string) {
     if (!value) return null;
-    return this.prisma.university.findFirst({ where: { OR: [{ slug: value }, { name: value }] } });
+    return this.prisma.university.findFirst({
+      where: { OR: [{ slug: value }, { name: value }] },
+    });
   }
 
-  async createLead(dto: CreateLeadDto, ipAddress?: string | null, userAgent?: string | null) {
+  async createLead(
+    dto: CreateLeadDto,
+    ipAddress?: string | null,
+    userAgent?: string | null,
+  ) {
     const [country, preferredCountry, preferredUniversity] = await Promise.all([
       this.resolveCountryByName(dto.country),
       this.resolveCountryByName(dto.preferredCountry),
@@ -46,7 +54,13 @@ export class LeadsRepository {
         preferredCountryId: preferredCountry?.id,
         preferredUniversityId: preferredUniversity?.id,
       },
-      include: { preferredUniversity: true, assignedTo: true, notes: true, country: true, preferredCountry: true },
+      include: {
+        preferredUniversity: true,
+        assignedTo: true,
+        notes: true,
+        country: true,
+        preferredCountry: true,
+      },
     });
   }
 
@@ -67,7 +81,13 @@ export class LeadsRepository {
     const [items, total] = await Promise.all([
       this.prisma.lead.findMany({
         where,
-        include: { preferredUniversity: true, assignedTo: true, notes: { include: { user: true }, orderBy: { createdAt: "desc" } }, country: true, preferredCountry: true },
+        include: {
+          preferredUniversity: true,
+          assignedTo: true,
+          notes: { include: { user: true }, orderBy: { createdAt: "desc" } },
+          country: true,
+          preferredCountry: true,
+        },
         orderBy: { createdAt: "desc" },
         skip: (page - 1) * pageSize,
         take: pageSize,
@@ -85,7 +105,13 @@ export class LeadsRepository {
     return this.prisma.lead.update({
       where: { id },
       data: { status: dto.status, assignedToId: dto.assignedToId },
-      include: { preferredUniversity: true, assignedTo: true, notes: { include: { user: true }, orderBy: { createdAt: "desc" } }, country: true, preferredCountry: true },
+      include: {
+        preferredUniversity: true,
+        assignedTo: true,
+        notes: { include: { user: true }, orderBy: { createdAt: "desc" } },
+        country: true,
+        preferredCountry: true,
+      },
     });
   }
 

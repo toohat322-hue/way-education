@@ -10,18 +10,30 @@ import { apiFetch } from "../lib/api";
 export function DataProvider({ children }) {
   const [universities, setUniversities] = useState(BASE_UNIVERSITIES);
   const [directory, setDirectory] = useState(BASE_DIRECTORY);
-  const [majors, setMajors] = useState(BASE_MAJORS.map((major) => ({ ...major, id: major.id || major.name.en.toLowerCase().replace(/\s+/g, "-") })));
-  const [faqs, setFaqs] = useState(BASE_FAQS.map((faq, index) => ({ ...faq, id: faq.id || `faq-${index + 1}` })));
+  const [majors, setMajors] = useState(
+    BASE_MAJORS.map((major) => ({
+      ...major,
+      id: major.id || major.name.en.toLowerCase().replace(/\s+/g, "-"),
+    })),
+  );
+  const [faqs, setFaqs] = useState(
+    BASE_FAQS.map((faq, index) => ({
+      ...faq,
+      id: faq.id || `faq-${index + 1}`,
+    })),
+  );
   const [settings, setSettingsState] = useState(BASE_SETTINGS);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const applyBootstrap = useCallback((payload) => {
-    if (Array.isArray(payload?.universities)) setUniversities(payload.universities);
+    if (Array.isArray(payload?.universities))
+      setUniversities(payload.universities);
     if (Array.isArray(payload?.directory)) setDirectory(payload.directory);
     if (Array.isArray(payload?.majors)) setMajors(payload.majors);
     if (Array.isArray(payload?.faqs)) setFaqs(payload.faqs);
-    if (payload?.settings?.whatsapp) setSettingsState((prev) => ({ ...prev, ...payload.settings }));
+    if (payload?.settings?.whatsapp)
+      setSettingsState((prev) => ({ ...prev, ...payload.settings }));
   }, []);
 
   const refresh = useCallback(async () => {
@@ -66,7 +78,10 @@ export function DataProvider({ children }) {
     refresh,
     updateSettings,
 
-    getUniversityById: useCallback((id) => universities.find((u) => u.id === id), [universities]),
+    getUniversityById: useCallback(
+      (id) => universities.find((u) => u.id === id),
+      [universities],
+    ),
 
     // Public-facing views (Hero picks, PopularUniversities, the /universities
     // directory) should read from this instead of the raw `universities` list:
@@ -80,16 +95,22 @@ export function DataProvider({ children }) {
           .filter((u) => u.active !== false)
           .slice()
           .sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0)),
-      [universities]
+      [universities],
     ),
 
     addUniversity: async (u) => {
-      const created = await apiFetch("/api/cms/universities", { method: "POST", body: JSON.stringify(u) });
+      const created = await apiFetch("/api/cms/universities", {
+        method: "POST",
+        body: JSON.stringify(u),
+      });
       setUniversities((prev) => [created, ...prev]);
       return created;
     },
     updateUniversity: async (id, patch) => {
-      const updated = await apiFetch(`/api/cms/universities/${id}`, { method: "PATCH", body: JSON.stringify(patch) });
+      const updated = await apiFetch(`/api/cms/universities/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(patch),
+      });
       setUniversities((prev) => prev.map((u) => (u.id === id ? updated : u)));
       return updated;
     },
@@ -100,12 +121,18 @@ export function DataProvider({ children }) {
     },
 
     addDirectoryEntry: async (u) => {
-      const created = await apiFetch("/api/cms/directory", { method: "POST", body: JSON.stringify(u) });
+      const created = await apiFetch("/api/cms/directory", {
+        method: "POST",
+        body: JSON.stringify(u),
+      });
       setDirectory((prev) => [created, ...prev]);
       return created;
     },
     updateDirectoryEntry: async (id, patch) => {
-      const updated = await apiFetch(`/api/cms/directory/${id}`, { method: "PATCH", body: JSON.stringify(patch) });
+      const updated = await apiFetch(`/api/cms/directory/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(patch),
+      });
       setDirectory((prev) => prev.map((u) => (u.id === id ? updated : u)));
       return updated;
     },
@@ -116,12 +143,18 @@ export function DataProvider({ children }) {
     },
 
     addMajor: async (m) => {
-      const created = await apiFetch("/api/cms/majors", { method: "POST", body: JSON.stringify(m) });
+      const created = await apiFetch("/api/cms/majors", {
+        method: "POST",
+        body: JSON.stringify(m),
+      });
       setMajors((prev) => [...prev, created]);
       return created;
     },
     updateMajor: async (id, patch) => {
-      const updated = await apiFetch(`/api/cms/majors/${id}`, { method: "PATCH", body: JSON.stringify(patch) });
+      const updated = await apiFetch(`/api/cms/majors/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(patch),
+      });
       setMajors((prev) => prev.map((m) => (m.id === id ? updated : m)));
       return updated;
     },
@@ -132,12 +165,18 @@ export function DataProvider({ children }) {
     },
 
     addFaq: async (f) => {
-      const created = await apiFetch("/api/cms/faqs", { method: "POST", body: JSON.stringify(f) });
+      const created = await apiFetch("/api/cms/faqs", {
+        method: "POST",
+        body: JSON.stringify(f),
+      });
       setFaqs((prev) => [...prev, created]);
       return created;
     },
     updateFaq: async (id, patch) => {
-      const updated = await apiFetch(`/api/cms/faqs/${id}`, { method: "PATCH", body: JSON.stringify(patch) });
+      const updated = await apiFetch(`/api/cms/faqs/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(patch),
+      });
       setFaqs((prev) => prev.map((f) => (f.id === id ? updated : f)));
       return updated;
     },

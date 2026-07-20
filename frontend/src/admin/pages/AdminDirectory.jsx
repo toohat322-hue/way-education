@@ -4,7 +4,15 @@ import { C, grad } from "../../theme/tokens";
 import GlassCard from "../../components/GlassCard";
 import { useData } from "../useData";
 import { useToast } from "../useToast";
-import { PageHeader, Field, TextInput, Select, PrimaryButton, GhostButton, AdminModal } from "../ui";
+import {
+  PageHeader,
+  Field,
+  TextInput,
+  Select,
+  PrimaryButton,
+  GhostButton,
+  AdminModal,
+} from "../ui";
 import UniversityFormModal from "../UniversityFormModal";
 
 const COUNTRY_OPTIONS = ["Türkiye", "N. Cyprus"];
@@ -12,8 +20,21 @@ const TYPE_OPTIONS = ["Public", "Private"];
 const PAGE_SIZE = 40;
 
 function initFromEntry(entry) {
-  if (entry) return { name: entry.name, city: entry.city, country: entry.country, type: entry.type, founded: entry.founded };
-  return { name: "", city: "", country: "Türkiye", type: "Private", founded: String(new Date().getFullYear()) };
+  if (entry)
+    return {
+      name: entry.name,
+      city: entry.city,
+      country: entry.country,
+      type: entry.type,
+      founded: entry.founded,
+    };
+  return {
+    name: "",
+    city: "",
+    country: "Türkiye",
+    type: "Private",
+    founded: String(new Date().getFullYear()),
+  };
 }
 
 // Maps a directory-only entry onto the partner-university form's blank-form
@@ -39,7 +60,11 @@ function DirectoryFormModal({ entry, onClose }) {
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
   const guardedClose = () => {
-    if (dirty && !window.confirm("Discard unsaved changes? Your edits will be lost.")) return;
+    if (
+      dirty &&
+      !window.confirm("Discard unsaved changes? Your edits will be lost.")
+    )
+      return;
     onClose();
   };
 
@@ -60,26 +85,47 @@ function DirectoryFormModal({ entry, onClose }) {
   };
 
   return (
-    <AdminModal title={entry ? `Edit ${entry.name}` : "Add Directory Entry"} onClose={guardedClose}>
+    <AdminModal
+      title={entry ? `Edit ${entry.name}` : "Add Directory Entry"}
+      onClose={guardedClose}
+    >
       <form onSubmit={handleSubmit} className="space-y-4">
-        <Field label="Name" id="directory-name"><TextInput required value={form.name} onChange={set("name")} /></Field>
-        <Field label="City" id="directory-city"><TextInput required value={form.city} onChange={set("city")} /></Field>
+        <Field label="Name" id="directory-name">
+          <TextInput required value={form.name} onChange={set("name")} />
+        </Field>
+        <Field label="City" id="directory-city">
+          <TextInput required value={form.city} onChange={set("city")} />
+        </Field>
         <div className="grid grid-cols-2 gap-4">
           <Field label="Country" id="directory-country">
             <Select value={form.country} onChange={set("country")}>
-              {COUNTRY_OPTIONS.map((c) => <option key={c} value={c}>{c}</option>)}
+              {COUNTRY_OPTIONS.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
             </Select>
           </Field>
           <Field label="Type" id="directory-type">
             <Select value={form.type} onChange={set("type")}>
-              {TYPE_OPTIONS.map((t) => <option key={t} value={t}>{t}</option>)}
+              {TYPE_OPTIONS.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
             </Select>
           </Field>
         </div>
-        <Field label="Founded year" id="directory-founded"><TextInput value={form.founded} onChange={set("founded")} /></Field>
+        <Field label="Founded year" id="directory-founded">
+          <TextInput value={form.founded} onChange={set("founded")} />
+        </Field>
         <div className="flex items-center justify-end gap-3 pt-2">
-          <GhostButton type="button" onClick={guardedClose}>Cancel</GhostButton>
-          <PrimaryButton type="submit">{entry ? "Save changes" : "Add entry"}</PrimaryButton>
+          <GhostButton type="button" onClick={guardedClose}>
+            Cancel
+          </GhostButton>
+          <PrimaryButton type="submit">
+            {entry ? "Save changes" : "Add entry"}
+          </PrimaryButton>
         </div>
       </form>
     </AdminModal>
@@ -95,8 +141,11 @@ export default function AdminDirectory() {
   const [promoting, setPromoting] = useState(null);
 
   const filtered = useMemo(
-    () => directory.filter((d) => d.name.toLowerCase().includes(query.toLowerCase())),
-    [directory, query]
+    () =>
+      directory.filter((d) =>
+        d.name.toLowerCase().includes(query.toLowerCase()),
+      ),
+    [directory, query],
   );
   const shown = filtered.slice(0, visible);
 
@@ -112,12 +161,18 @@ export default function AdminDirectory() {
         }
       />
 
-      <GlassCard className="p-1 mb-6 flex items-center gap-2 px-4" style={{ background: "#fff" }}>
+      <GlassCard
+        className="p-1 mb-6 flex items-center gap-2 px-4"
+        style={{ background: "#fff" }}
+      >
         <Search size={16} color={C.muted} />
         <input
           id="directory-search"
           value={query}
-          onChange={(e) => { setQuery(e.target.value); setVisible(PAGE_SIZE); }}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setVisible(PAGE_SIZE);
+          }}
           placeholder="Search by name…"
           aria-label="Search directory"
           className="flex-1 outline-none text-sm bg-transparent py-2.5"
@@ -130,7 +185,11 @@ export default function AdminDirectory() {
             <thead>
               <tr style={{ borderBottom: `1px solid ${C.border}` }}>
                 {["Name", "City", "Country", "Type", "Founded", ""].map((h) => (
-                  <th key={h} className="text-left px-4 py-3 text-xs font-semibold whitespace-nowrap" style={{ color: C.muted }}>
+                  <th
+                    key={h}
+                    className="text-left px-4 py-3 text-xs font-semibold whitespace-nowrap"
+                    style={{ color: C.muted }}
+                  >
                     {h}
                   </th>
                 ))}
@@ -138,12 +197,40 @@ export default function AdminDirectory() {
             </thead>
             <tbody>
               {shown.map((d) => (
-                <tr key={d.id} style={{ borderBottom: `1px solid ${C.border}` }}>
-                  <td className="px-4 py-3 font-medium" style={{ color: C.ink }}>{d.name}</td>
-                  <td className="px-4 py-3 whitespace-nowrap" style={{ color: C.inkSoft }}>{d.city}</td>
-                  <td className="px-4 py-3 whitespace-nowrap" style={{ color: C.inkSoft }}>{d.country}</td>
-                  <td className="px-4 py-3 whitespace-nowrap" style={{ color: C.inkSoft }}>{d.type}</td>
-                  <td className="px-4 py-3 whitespace-nowrap" style={{ color: C.inkSoft }}>{d.founded}</td>
+                <tr
+                  key={d.id}
+                  style={{ borderBottom: `1px solid ${C.border}` }}
+                >
+                  <td
+                    className="px-4 py-3 font-medium"
+                    style={{ color: C.ink }}
+                  >
+                    {d.name}
+                  </td>
+                  <td
+                    className="px-4 py-3 whitespace-nowrap"
+                    style={{ color: C.inkSoft }}
+                  >
+                    {d.city}
+                  </td>
+                  <td
+                    className="px-4 py-3 whitespace-nowrap"
+                    style={{ color: C.inkSoft }}
+                  >
+                    {d.country}
+                  </td>
+                  <td
+                    className="px-4 py-3 whitespace-nowrap"
+                    style={{ color: C.inkSoft }}
+                  >
+                    {d.type}
+                  </td>
+                  <td
+                    className="px-4 py-3 whitespace-nowrap"
+                    style={{ color: C.inkSoft }}
+                  >
+                    {d.founded}
+                  </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2 justify-end">
                       <button
@@ -155,11 +242,28 @@ export default function AdminDirectory() {
                       >
                         <ArrowUpCircle size={14} />
                       </button>
-                      <button onClick={() => setEditing(d)} className="p-1.5 rounded-lg" style={{ color: C.blue }} aria-label={`Edit ${d.name}`}>
+                      <button
+                        onClick={() => setEditing(d)}
+                        className="p-1.5 rounded-lg"
+                        style={{ color: C.blue }}
+                        aria-label={`Edit ${d.name}`}
+                      >
                         <Pencil size={14} />
                       </button>
                       <button
-                        onClick={async () => { if (window.confirm(`Remove ${d.name}?`)) { try { await removeDirectoryEntry(d.id); showToast(`${d.name} removed`); } catch (err) { showToast(err.message || `Unable to remove ${d.name}`, "error"); } } }}
+                        onClick={async () => {
+                          if (window.confirm(`Remove ${d.name}?`)) {
+                            try {
+                              await removeDirectoryEntry(d.id);
+                              showToast(`${d.name} removed`);
+                            } catch (err) {
+                              showToast(
+                                err.message || `Unable to remove ${d.name}`,
+                                "error",
+                              );
+                            }
+                          }
+                        }}
                         className="p-1.5 rounded-lg"
                         style={{ color: C.orangeDark }}
                         aria-label={`Remove ${d.name}`}
@@ -176,7 +280,9 @@ export default function AdminDirectory() {
       </GlassCard>
 
       <div className="text-center mt-6">
-        <p className="text-xs mb-4" style={{ color: C.muted }}>Showing {shown.length} of {filtered.length}</p>
+        <p className="text-xs mb-4" style={{ color: C.muted }}>
+          Showing {shown.length} of {filtered.length}
+        </p>
         {visible < filtered.length && (
           <button
             onClick={() => setVisible((v) => v + PAGE_SIZE)}
@@ -188,7 +294,12 @@ export default function AdminDirectory() {
         )}
       </div>
 
-      {editing !== undefined && <DirectoryFormModal entry={editing} onClose={() => setEditing(undefined)} />}
+      {editing !== undefined && (
+        <DirectoryFormModal
+          entry={editing}
+          onClose={() => setEditing(undefined)}
+        />
+      )}
 
       {promoting && (
         <UniversityFormModal

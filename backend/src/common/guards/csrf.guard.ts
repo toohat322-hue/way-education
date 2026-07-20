@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@nestjs/common";
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+} from "@nestjs/common";
 import { Request } from "express";
 
 /**
@@ -30,7 +35,7 @@ export class CsrfGuard implements CanActivate {
     const header = request.headers["x-requested-with"];
     if (!header) {
       throw new ForbiddenException(
-        "Missing X-Requested-With header. This request was blocked by CSRF protection."
+        "Missing X-Requested-With header. This request was blocked by CSRF protection.",
       );
     }
 

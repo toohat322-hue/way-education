@@ -1,5 +1,13 @@
 import { Type } from "class-transformer";
-import { IsEmail, IsEnum, IsInt, IsOptional, IsString, Max, Min } from "class-validator";
+import {
+  IsEmail,
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from "class-validator";
 
 export class CreateLeadDto {
   @IsString()
@@ -97,8 +105,25 @@ export class LeadsQueryDto {
 
 export class UpdateLeadDto {
   @IsOptional()
-  @IsEnum(["NEW", "CONTACTED", "INTERESTED", "DOCUMENTS_PENDING", "APPLIED", "ACCEPTED", "REJECTED", "ARCHIVED"] as const)
-  status?: "NEW" | "CONTACTED" | "INTERESTED" | "DOCUMENTS_PENDING" | "APPLIED" | "ACCEPTED" | "REJECTED" | "ARCHIVED";
+  @IsEnum([
+    "NEW",
+    "CONTACTED",
+    "INTERESTED",
+    "DOCUMENTS_PENDING",
+    "APPLIED",
+    "ACCEPTED",
+    "REJECTED",
+    "ARCHIVED",
+  ] as const)
+  status?:
+    | "NEW"
+    | "CONTACTED"
+    | "INTERESTED"
+    | "DOCUMENTS_PENDING"
+    | "APPLIED"
+    | "ACCEPTED"
+    | "REJECTED"
+    | "ARCHIVED";
 
   @IsOptional()
   @IsString()

@@ -8,10 +8,16 @@ export default function NotFound() {
 
   return (
     <div className="max-w-3xl mx-auto px-5 sm:px-8 py-24 text-center">
-      <p className="text-xs uppercase tracking-wide mb-2" style={{ color: C.muted }}>
+      <p
+        className="text-xs uppercase tracking-wide mb-2"
+        style={{ color: C.muted }}
+      >
         404
       </p>
-      <h1 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: C.ink, fontFamily: "Poppins, sans-serif" }}>
+      <h1
+        className="text-3xl md:text-4xl font-bold mb-4"
+        style={{ color: C.ink, fontFamily: "Poppins, sans-serif" }}
+      >
         Page Not Found
       </h1>
       <p className="mb-8" style={{ color: C.inkSoft }}>

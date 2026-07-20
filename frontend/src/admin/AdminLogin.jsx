@@ -26,20 +26,38 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-5" style={{ background: grad.hero }}>
-      <GlassCard className="w-full max-w-sm p-8 fade-up" style={{ background: "#fff" }}>
-        <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-5" style={{ background: grad.primary }}>
+    <div
+      className="min-h-screen flex items-center justify-center p-5"
+      style={{ background: grad.hero }}
+    >
+      <GlassCard
+        className="w-full max-w-sm p-8 fade-up"
+        style={{ background: "#fff" }}
+      >
+        <div
+          className="w-12 h-12 rounded-2xl flex items-center justify-center mb-5"
+          style={{ background: grad.primary }}
+        >
           <GraduationCap size={22} color="#fff" />
         </div>
-        <h1 className="text-xl font-bold mb-1" style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}>
+        <h1
+          className="text-xl font-bold mb-1"
+          style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}
+        >
           Admin Dashboard
         </h1>
-        <p className="text-sm mb-2" style={{ color: C.muted }}>Sign in to manage Way Education content.</p>
+        <p className="text-sm mb-2" style={{ color: C.muted }}>
+          Sign in to manage Way Education content.
+        </p>
         <p className="text-[11px] mb-4" style={{ color: C.muted }}>
           Session is verified via backend auth endpoints.
         </p>
         <form onSubmit={handleSubmit}>
-          <label htmlFor={emailId} className="text-xs font-semibold mb-1.5 flex items-center gap-1.5" style={{ color: C.inkSoft }}>
+          <label
+            htmlFor={emailId}
+            className="text-xs font-semibold mb-1.5 flex items-center gap-1.5"
+            style={{ color: C.inkSoft }}
+          >
             <Mail size={13} /> Email
           </label>
           <input
@@ -54,7 +72,11 @@ export default function AdminLogin() {
             style={{ border: `1px solid ${C.border}` }}
             disabled={busy}
           />
-          <label htmlFor={passwordId} className="text-xs font-semibold mb-1.5 flex items-center gap-1.5" style={{ color: C.inkSoft }}>
+          <label
+            htmlFor={passwordId}
+            className="text-xs font-semibold mb-1.5 flex items-center gap-1.5"
+            style={{ color: C.inkSoft }}
+          >
             <Lock size={13} /> Password
           </label>
           <input
@@ -70,7 +92,11 @@ export default function AdminLogin() {
             autoFocus
             disabled={busy}
           />
-          {error && <p className="text-xs mb-3" style={{ color: C.orangeDark }}>{error}</p>}
+          {error && (
+            <p className="text-xs mb-3" style={{ color: C.orangeDark }}>
+              {error}
+            </p>
+          )}
           <button
             type="submit"
             disabled={busy}

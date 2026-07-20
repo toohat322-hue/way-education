@@ -18,7 +18,10 @@ export default function Home() {
     if (location.hash) {
       const el = document.querySelector(location.hash);
       if (el) {
-        timerId = setTimeout(() => el.scrollIntoView({ behavior: "smooth" }), 50);
+        timerId = setTimeout(
+          () => el.scrollIntoView({ behavior: "smooth" }),
+          50,
+        );
       }
     }
 
