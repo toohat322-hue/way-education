@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-label="Istanbul Beykent University campus">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#14213D"/>
+      <stop offset="50%" stop-color="#1B365D"/>
+      <stop offset="100%" stop-color="#3B6E8C"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#g)"/>
+  <circle cx="150" cy="140" r="80" fill="rgba(255,255,255,0.06)"/>
+  <rect x="120" y="240" width="960" height="320" rx="20" fill="rgba(255,255,255,0.08)"/>
+  <rect x="200" y="180" width="200" height="380" rx="14" fill="rgba(255,255,255,0.15)"/>
+  <rect x="440" y="220" width="320" height="340" rx="14" fill="rgba(255,255,255,0.18)"/>
+  <rect x="800" y="160" width="220" height="400" rx="14" fill="rgba(255,255,255,0.12)"/>
+  <text x="80" y="640" font-family="Arial, sans-serif" font-size="48" font-weight="700" fill="#fff">Istanbul Beykent University - Ayazağa Maslak Campus</text>
+</svg>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-label="Istanbul Arel University campus">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#001a33"/>
+      <stop offset="50%" stop-color="#003366"/>
+      <stop offset="100%" stop-color="#005b9f"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="700" fill="url(#g)"/>
+  <circle cx="1050" cy="120" r="90" fill="rgba(255,255,255,0.06)"/>
+  <rect x="140" y="220" width="920" height="340" rx="24" fill="rgba(255,255,255,0.08)"/>
+  <rect x="220" y="160" width="220" height="400" rx="16" fill="rgba(255,255,255,0.14)"/>
+  <rect x="480" y="200" width="240" height="360" rx="16" fill="rgba(255,255,255,0.18)"/>
+  <rect x="760" y="140" width="220" height="420" rx="16" fill="rgba(255,255,255,0.12)"/>
+  <text x="80" y="640" font-family="Arial, sans-serif" font-size="48" font-weight="700" fill="#fff">Istanbul Arel University</text>
+</svg>
