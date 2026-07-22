@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { ArrowRight, ArrowLeft } from "lucide-react";
 import { C, grad } from "../theme/tokens";
 import SectionHeader from "./SectionHeader";
 import UniversityCard from "./UniversityCard";
@@ -8,7 +6,7 @@ import { useLanguage } from "../context/useLanguage";
 import { useData } from "../admin/useData";
 
 export default function PopularUniversities() {
-  const { t, isRtl } = useLanguage();
+  const { t } = useLanguage();
   const { publicUniversities: universities } = useData();
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -40,32 +38,34 @@ export default function PopularUniversities() {
 
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12">
         <div className="flex items-center gap-2">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => {
-            const isActive = currentPage === pageNum;
-            return (
-              <button
-                key={pageNum}
-                onClick={() => setCurrentPage(pageNum)}
-                className="w-11 h-11 rounded-xl text-base font-bold transition-all flex items-center justify-center cursor-pointer shadow-sm hover:scale-105"
-                style={
-                  isActive
-                    ? {
-                        background: grad.primary,
-                        color: "#ffffff",
-                        boxShadow: "0 6px 16px rgba(31,95,158,0.35)",
-                      }
-                    : {
-                        background: "#ffffff",
-                        color: C.ink,
-                        border: `1px solid ${C.border}`,
-                      }
-                }
-                aria-label={`Page ${pageNum}`}
-              >
-                {pageNum}
-              </button>
-            );
-          })}
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+            (pageNum) => {
+              const isActive = currentPage === pageNum;
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => setCurrentPage(pageNum)}
+                  className="w-11 h-11 rounded-xl text-base font-bold transition-all flex items-center justify-center cursor-pointer shadow-sm hover:scale-105"
+                  style={
+                    isActive
+                      ? {
+                          background: grad.primary,
+                          color: "#ffffff",
+                          boxShadow: "0 6px 16px rgba(31,95,158,0.35)",
+                        }
+                      : {
+                          background: "#ffffff",
+                          color: C.ink,
+                          border: `1px solid ${C.border}`,
+                        }
+                  }
+                  aria-label={`Page ${pageNum}`}
+                >
+                  {pageNum}
+                </button>
+              );
+            },
+          )}
         </div>
       </div>
     </section>

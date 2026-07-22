@@ -958,7 +958,10 @@ export const UNIVERSITIES = [
         iconName: "Settings",
       },
       {
-        name: { en: "Molecular Biology and Genetics", ar: "علم الأحياء الجزيئي وعلم الوراثة" },
+        name: {
+          en: "Molecular Biology and Genetics",
+          ar: "علم الأحياء الجزيئي وعلم الوراثة",
+        },
         fee: 3500,
         iconName: "Dna",
       },
@@ -973,12 +976,18 @@ export const UNIVERSITIES = [
         iconName: "Globe",
       },
       {
-        name: { en: "Translation and Interpretation", ar: "الترجمة التحريرية والفورية" },
+        name: {
+          en: "Translation and Interpretation",
+          ar: "الترجمة التحريرية والفورية",
+        },
         fee: 3500,
         iconName: "Languages",
       },
       {
-        name: { en: "Electrical and Electronic Engineering", ar: "الهندسة الكهربائية والإلكترونية" },
+        name: {
+          en: "Electrical and Electronic Engineering",
+          ar: "الهندسة الكهربائية والإلكترونية",
+        },
         fee: 3500,
         iconName: "Zap",
       },
@@ -1065,7 +1074,10 @@ export const UNIVERSITIES = [
         iconName: "Heart",
       },
       {
-        name: { en: "Humanities & Social Sciences", ar: "العلوم الإنسانية والاجتماعية" },
+        name: {
+          en: "Humanities & Social Sciences",
+          ar: "العلوم الإنسانية والاجتماعية",
+        },
         fee: 3900,
         iconName: "Users",
       },
@@ -1145,7 +1157,10 @@ export const UNIVERSITIES = [
         iconName: "Settings",
       },
       {
-        name: { en: "Economics & Administrative Sciences", ar: "العلوم الاقتصادية والإدارية" },
+        name: {
+          en: "Economics & Administrative Sciences",
+          ar: "العلوم الاقتصادية والإدارية",
+        },
         fee: 2750,
         iconName: "PieChart",
       },
@@ -1160,7 +1175,10 @@ export const UNIVERSITIES = [
         iconName: "Palette",
       },
       {
-        name: { en: "Mathematical & Sports Sciences", ar: "العلوم الرياضية والرياضة" },
+        name: {
+          en: "Mathematical & Sports Sciences",
+          ar: "العلوم الرياضية والرياضة",
+        },
         fee: 2750,
         iconName: "Activity",
       },
