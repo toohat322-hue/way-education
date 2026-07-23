@@ -18,6 +18,7 @@ import {
   Mail,
   Link2,
   EyeOff,
+  X,
 } from "lucide-react";
 import { C, grad } from "../theme/tokens";
 import GlassCard from "../components/GlassCard";
@@ -166,6 +167,7 @@ export default function UniversityDetail() {
   const { unlocked } = useAdminAuth();
   const [tab, setTab] = useState("about");
   const [editOpen, setEditOpen] = useState(false);
+  const [activePhotoIndex, setActivePhotoIndex] = useState(null);
   const uni = getUniversityById(id);
 
   // Inactive universities are hidden from everyone except a logged-in admin
@@ -512,15 +514,24 @@ export default function UniversityDetail() {
               >
                 {t.galleryTitle}
               </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {uni.gallery && uni.gallery.length > 0
                   ? uni.gallery.map((src, i) => (
-                      <img
+                      <button
+                        type="button"
                         key={i}
-                        src={src}
-                        alt={`${uni.name} ${i + 1}`}
-                        className="h-28 sm:h-36 rounded-2xl w-full object-cover"
-                      />
+                        onClick={() => setActivePhotoIndex(i)}
+                        className="group relative h-36 sm:h-44 rounded-2xl w-full overflow-hidden border border-[#e0e0e0] cursor-pointer bg-[#f4f4f4] hover:shadow-lg transition-all"
+                      >
+                        <img
+                          src={src}
+                          alt={`${uni.name} photo ${i + 1}`}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <Camera className="w-6 h-6 text-white" />
+                        </div>
+                      </button>
                     ))
                   : [
                       grad.card1,
@@ -532,13 +543,70 @@ export default function UniversityDetail() {
                     ].map((g, i) => (
                       <div
                         key={i}
-                        className="h-28 sm:h-36 rounded-2xl flex items-center justify-center"
+                        className="h-36 sm:h-44 rounded-2xl flex items-center justify-center border border-[#e0e0e0]"
                         style={{ background: g }}
                       >
-                        <Camera size={22} color="rgba(255,255,255,0.75)" />
+                        <Camera size={24} color="rgba(255,255,255,0.75)" />
                       </div>
                     ))}
               </div>
+
+              {/* Lightbox Modal */}
+              {activePhotoIndex !== null && uni.gallery && (
+                <div
+                  className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 backdrop-blur-sm"
+                  onClick={() => setActivePhotoIndex(null)}
+                >
+                  <button
+                    onClick={() => setActivePhotoIndex(null)}
+                    className="absolute top-4 right-4 text-white p-2 hover:bg-white/10 rounded-full"
+                    aria-label="Close Lightbox"
+                  >
+                    <X size={24} />
+                  </button>
+                  {uni.gallery.length > 1 && (
+                    <>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActivePhotoIndex((prev) =>
+                            prev === 0 ? uni.gallery.length - 1 : prev - 1
+                          );
+                        }}
+                        className="absolute left-4 text-white p-3 hover:bg-white/10 rounded-full"
+                        aria-label="Previous Photo"
+                      >
+                        <ArrowLeft size={24} />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActivePhotoIndex((prev) =>
+                            prev === uni.gallery.length - 1 ? 0 : prev + 1
+                          );
+                        }}
+                        className="absolute right-4 text-white p-3 hover:bg-white/10 rounded-full"
+                        aria-label="Next Photo"
+                      >
+                        <ArrowRight size={24} />
+                      </button>
+                    </>
+                  )}
+                  <div
+                    className="max-w-4xl max-h-[85vh] p-2"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <img
+                      src={uni.gallery[activePhotoIndex]}
+                      alt={`${uni.name} expanded preview`}
+                      className="max-w-full max-h-[80vh] object-contain mx-auto rounded"
+                    />
+                    <p className="text-center text-white/80 text-xs mt-3">
+                      {activePhotoIndex + 1} of {uni.gallery.length} · {uni.name} Campus
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

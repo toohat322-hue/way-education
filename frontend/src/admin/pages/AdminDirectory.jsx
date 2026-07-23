@@ -1,7 +1,5 @@
 import React, { useMemo, useState } from "react";
 import { Plus, Pencil, Trash2, Search, ArrowUpCircle } from "lucide-react";
-import { C, grad } from "../../theme/tokens";
-import GlassCard from "../../components/GlassCard";
 import { useData } from "../useData";
 import { useToast } from "../useToast";
 import {
@@ -37,9 +35,6 @@ function initFromEntry(entry) {
   };
 }
 
-// Maps a directory-only entry onto the partner-university form's blank-form
-// shape, prefilling what we already know. Mirrors the manual workflow the
-// README describes: "move that entry from directory.js into universities.js".
 function directoryToPartnerInitial(entry) {
   return {
     name: entry.name,
@@ -89,7 +84,7 @@ function DirectoryFormModal({ entry, onClose }) {
       title={entry ? `Edit ${entry.name}` : "Add Directory Entry"}
       onClose={guardedClose}
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 font-body">
         <Field label="Name" id="directory-name">
           <TextInput required value={form.name} onChange={set("name")} />
         </Field>
@@ -119,7 +114,7 @@ function DirectoryFormModal({ entry, onClose }) {
         <Field label="Founded year" id="directory-founded">
           <TextInput value={form.founded} onChange={set("founded")} />
         </Field>
-        <div className="flex items-center justify-end gap-3 pt-2">
+        <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#e0e0e0]">
           <GhostButton type="button" onClick={guardedClose}>
             Cancel
           </GhostButton>
@@ -143,29 +138,26 @@ export default function AdminDirectory() {
   const filtered = useMemo(
     () =>
       directory.filter((d) =>
-        d.name.toLowerCase().includes(query.toLowerCase()),
+        d.name.toLowerCase().includes(query.toLowerCase())
       ),
-    [directory, query],
+    [directory, query]
   );
   const shown = filtered.slice(0, visible);
 
   return (
-    <div>
+    <div className="font-body">
       <PageHeader
         title="Directory"
-        sub={`${directory.length} universities in the public directory.`}
+        sub={`${directory.length} education institutions in the public master directory.`}
         action={
           <PrimaryButton onClick={() => setEditing(null)}>
-            <Plus size={15} className="inline -mt-0.5 me-1" /> Add entry
+            <Plus className="w-4 h-4 mr-1" /> Add Entry
           </PrimaryButton>
         }
       />
 
-      <GlassCard
-        className="p-1 mb-6 flex items-center gap-2 px-4"
-        style={{ background: "#fff" }}
-      >
-        <Search size={16} color={C.muted} />
+      <div className="mb-6 flex items-center bg-[#f4f4f4] border border-[#e0e0e0] px-4 py-2 text-sm">
+        <Search className="w-4 h-4 text-[#6f6f6f] mr-3 shrink-0" />
         <input
           id="directory-search"
           value={query}
@@ -173,82 +165,49 @@ export default function AdminDirectory() {
             setQuery(e.target.value);
             setVisible(PAGE_SIZE);
           }}
-          placeholder="Search by name…"
+          placeholder="Search institution by name…"
           aria-label="Search directory"
-          className="flex-1 outline-none text-sm bg-transparent py-2.5"
+          className="w-full bg-transparent border-none outline-none font-body text-[#161616]"
         />
-      </GlassCard>
+      </div>
 
-      <GlassCard className="overflow-hidden" style={{ background: "#fff" }}>
+      <div className="bg-white border border-[#e0e0e0] overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-left zebra-table">
             <thead>
-              <tr style={{ borderBottom: `1px solid ${C.border}` }}>
-                {["Name", "City", "Country", "Type", "Founded", ""].map((h) => (
-                  <th
-                    key={h}
-                    className="text-left px-4 py-3 text-xs font-semibold whitespace-nowrap"
-                    style={{ color: C.muted }}
-                  >
-                    {h}
-                  </th>
-                ))}
+              <tr className="bg-[#f4f4f4] text-[11px] uppercase tracking-wider text-[#6f6f6f] font-headline border-b border-[#e0e0e0]">
+                <th className="p-4 font-medium">Name</th>
+                <th className="p-4 font-medium">City</th>
+                <th className="p-4 font-medium">Country</th>
+                <th className="p-4 font-medium">Type</th>
+                <th className="p-4 font-medium">Founded</th>
+                <th className="p-4 font-medium text-right">Actions</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="text-sm font-body">
               {shown.map((d) => (
-                <tr
-                  key={d.id}
-                  style={{ borderBottom: `1px solid ${C.border}` }}
-                >
-                  <td
-                    className="px-4 py-3 font-medium"
-                    style={{ color: C.ink }}
-                  >
-                    {d.name}
-                  </td>
-                  <td
-                    className="px-4 py-3 whitespace-nowrap"
-                    style={{ color: C.inkSoft }}
-                  >
-                    {d.city}
-                  </td>
-                  <td
-                    className="px-4 py-3 whitespace-nowrap"
-                    style={{ color: C.inkSoft }}
-                  >
-                    {d.country}
-                  </td>
-                  <td
-                    className="px-4 py-3 whitespace-nowrap"
-                    style={{ color: C.inkSoft }}
-                  >
-                    {d.type}
-                  </td>
-                  <td
-                    className="px-4 py-3 whitespace-nowrap"
-                    style={{ color: C.inkSoft }}
-                  >
-                    {d.founded}
-                  </td>
-                  <td className="px-4 py-3">
+                <tr key={d.id} className="border-b border-[#e0e0e0] last:border-0">
+                  <td className="p-4 font-semibold text-[#161616]">{d.name}</td>
+                  <td className="p-4 text-[#525252]">{d.city}</td>
+                  <td className="p-4 text-[#525252]">{d.country}</td>
+                  <td className="p-4 text-[#525252]">{d.type}</td>
+                  <td className="p-4 text-[#525252]">{d.founded}</td>
+                  <td className="p-4 text-right">
                     <div className="flex items-center gap-2 justify-end">
                       <button
                         onClick={() => setPromoting(d)}
-                        className="p-1.5 rounded-lg"
-                        style={{ color: C.blue }}
-                        aria-label={`Promote ${d.name} to partner university`}
+                        className="p-1 text-[#0f62fe] hover:bg-[#f4f4f4] transition-colors"
                         title="Promote to partner university"
+                        aria-label={`Promote ${d.name} to partner university`}
                       >
-                        <ArrowUpCircle size={14} />
+                        <ArrowUpCircle className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => setEditing(d)}
-                        className="p-1.5 rounded-lg"
-                        style={{ color: C.blue }}
+                        className="p-1 text-[#0f62fe] hover:bg-[#f4f4f4] transition-colors"
                         aria-label={`Edit ${d.name}`}
                       >
-                        <Pencil size={14} />
+                        <Pencil className="w-4 h-4" />
                       </button>
                       <button
                         onClick={async () => {
@@ -259,16 +218,15 @@ export default function AdminDirectory() {
                             } catch (err) {
                               showToast(
                                 err.message || `Unable to remove ${d.name}`,
-                                "error",
+                                "error"
                               );
                             }
                           }
                         }}
-                        className="p-1.5 rounded-lg"
-                        style={{ color: C.orangeDark }}
+                        className="p-1 text-[#da1e28] hover:bg-[#fff1f1] transition-colors"
                         aria-label={`Remove ${d.name}`}
                       >
-                        <Trash2 size={14} />
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </td>
@@ -277,20 +235,19 @@ export default function AdminDirectory() {
             </tbody>
           </table>
         </div>
-      </GlassCard>
+      </div>
 
       <div className="text-center mt-6">
-        <p className="text-xs mb-4" style={{ color: C.muted }}>
-          Showing {shown.length} of {filtered.length}
+        <p className="text-xs text-[#6f6f6f] mb-4">
+          Showing {shown.length} of {filtered.length} entries
         </p>
         {visible < filtered.length && (
-          <button
+          <PrimaryButton
             onClick={() => setVisible((v) => v + PAGE_SIZE)}
-            className="px-6 py-3 rounded-full text-sm font-semibold text-white transition-transform hover:scale-105 active:scale-95"
-            style={{ background: grad.primary }}
+            className="mx-auto"
           >
-            Load more
-          </button>
+            Load More Entries
+          </PrimaryButton>
         )}
       </div>
 

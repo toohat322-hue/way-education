@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import { Plus, Pencil, Trash2 } from "lucide-react";
-import { C } from "../../theme/tokens";
-import GlassCard from "../../components/GlassCard";
+import { Plus, Pencil, Trash2, HelpCircle } from "lucide-react";
 import { useData } from "../useData";
 import { useToast } from "../useToast";
 import {
@@ -58,7 +56,7 @@ function FaqFormModal({ faq, onClose }) {
 
   return (
     <AdminModal title={faq ? "Edit FAQ" : "Add FAQ"} onClose={guardedClose}>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 font-body">
         <Field label="Question (English)" id="faq-question-en">
           <TextArea rows={2} required value={form.qEn} onChange={set("qEn")} />
         </Field>
@@ -83,7 +81,7 @@ function FaqFormModal({ faq, onClose }) {
             dir="rtl"
           />
         </Field>
-        <div className="flex items-center justify-end gap-3 pt-2">
+        <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#e0e0e0]">
           <GhostButton type="button" onClick={guardedClose}>
             Cancel
           </GhostButton>
@@ -102,40 +100,45 @@ export default function AdminFaqs() {
   const [editing, setEditing] = useState(undefined);
 
   return (
-    <div>
+    <div className="font-body">
       <PageHeader
-        title="FAQs"
-        sub={`${faqs.length} questions shown on the homepage.`}
+        title="Knowledge Repository (FAQs)"
+        sub={`${faqs.length} curated questions and answers shown on the public FAQ section.`}
         action={
           <PrimaryButton onClick={() => setEditing(null)}>
-            <Plus size={15} className="inline -mt-0.5 me-1" /> Add FAQ
+            <Plus className="w-4 h-4 mr-1" /> Add FAQ
           </PrimaryButton>
         }
       />
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {faqs.map((f) => (
-          <GlassCard key={f.id} className="p-5" style={{ background: "#fff" }}>
+          <div
+            key={f.id}
+            className="bg-white border border-[#e0e0e0] p-5 hover:border-[#0f62fe] transition-colors"
+          >
             <div className="flex items-start justify-between gap-4">
-              <div className="min-w-0">
-                <p
-                  className="font-semibold text-sm mb-1"
-                  style={{ color: C.ink }}
-                >
-                  {f.q.en}
-                </p>
-                <p className="text-sm" style={{ color: C.muted }}>
-                  {f.a.en}
-                </p>
+              <div className="flex items-start gap-3 min-w-0">
+                <div className="w-8 h-8 bg-[#f4f4f4] border border-[#e0e0e0] flex items-center justify-center shrink-0 mt-0.5">
+                  <HelpCircle className="w-4 h-4 text-[#0f62fe]" />
+                </div>
+                <div>
+                  <h3 className="font-headline font-semibold text-sm text-[#161616] mb-1">
+                    {f.q.en}
+                  </h3>
+                  <p className="text-xs text-[#525252] leading-relaxed">
+                    {f.a.en}
+                  </p>
+                </div>
               </div>
-              <div className="flex items-center gap-2 shrink-0">
+
+              <div className="flex items-center gap-1 shrink-0">
                 <button
                   onClick={() => setEditing(f)}
-                  className="p-2 rounded-lg"
-                  style={{ color: C.blue }}
+                  className="p-1 text-[#0f62fe] hover:bg-[#f4f4f4] transition-colors"
                   aria-label="Edit FAQ"
                 >
-                  <Pencil size={14} />
+                  <Pencil className="w-4 h-4" />
                 </button>
                 <button
                   onClick={async () => {
@@ -146,20 +149,19 @@ export default function AdminFaqs() {
                       } catch (err) {
                         showToast(
                           err.message || "Unable to remove FAQ",
-                          "error",
+                          "error"
                         );
                       }
                     }
                   }}
-                  className="p-2 rounded-lg"
-                  style={{ color: C.orangeDark }}
+                  className="p-1 text-[#da1e28] hover:bg-[#fff1f1] transition-colors"
                   aria-label="Remove FAQ"
                 >
-                  <Trash2 size={14} />
+                  <Trash2 className="w-4 h-4" />
                 </button>
               </div>
             </div>
-          </GlassCard>
+          </div>
         ))}
       </div>
 

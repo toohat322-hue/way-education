@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
-import { UploadCloud, RefreshCw, Trash2, X, Loader2 } from "lucide-react";
-import { C } from "../theme/tokens";
-import { Label } from "./ui";
+import { UploadCloud, RefreshCw, Trash2, X, Loader2, Plus, Sparkles, Image as ImageIcon } from "lucide-react";
+import { Label, TextInput, PrimaryButton } from "./ui";
 import {
   uploadImageFile,
   validateImageFile,
@@ -11,29 +10,23 @@ import {
 
 const ACCEPT = ALLOWED_IMAGE_TYPES.join(",");
 
-// Multi-image gallery manager: drag & drop (or click) to add photos, replace
-// or delete any existing one. Backs the "gallery" array on a university
-// (plain list of image URLs/data-URLs -- see src/data/universities.js).
-//
-// CUSTOMIZE:
-//   - Storage path / server upload: today `fileToResizedDataUrl` (imageUpload.js)
-//     just inlines a resized data URL, since this app has no backend. Swap it
-//     for a real upload call (see docs/laravel-university-backend-reference.md's
-//     UploadController) and this component doesn't need to change -- it only
-//     cares that each accepted file resolves to a URL string.
-//   - Validation rules: edit ALLOWED_IMAGE_TYPES / ALLOWED_MAX_SIZE_MB in
-//     imageUpload.js -- both this component and the error text below read
-//     from those constants, so they stay in sync automatically.
-//   - Grid/card styling: the thumbnail grid classes below are plain
-//     Tailwind, change `grid-cols-*` to resize the grid.
+const SAMPLE_CAMPUS_GALLERY = [
+  "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=800&q=80",
+];
+
 export default function GalleryUploadField({ value = [], onChange }) {
   const dropRef = useRef(null);
   const addInputRef = useRef(null);
   const replaceInputRef = useRef(null);
   const replaceIndexRef = useRef(null);
+
   const [dragActive, setDragActive] = useState(false);
   const [busy, setBusy] = useState(false);
   const [errors, setErrors] = useState([]);
+  const [urlInput, setUrlInput] = useState("");
 
   const processFiles = async (fileList) => {
     const files = Array.from(fileList || []);
@@ -67,7 +60,7 @@ export default function GalleryUploadField({ value = [], onChange }) {
 
   const handleAddInputChange = (e) => {
     processFiles(e.target.files);
-    e.target.value = ""; // allow re-selecting the same file(s) later
+    e.target.value = "";
   };
 
   const openReplace = (index) => {
@@ -100,15 +93,41 @@ export default function GalleryUploadField({ value = [], onChange }) {
 
   const removeAt = (index) => onChange(value.filter((_, i) => i !== index));
 
+  const handleAddUrl = (e) => {
+    e.preventDefault();
+    if (urlInput.trim()) {
+      onChange([...value, urlInput.trim()]);
+      setUrlInput("");
+    }
+  };
+
+  const handleAddSampleGallery = () => {
+    const next = [...value];
+    SAMPLE_CAMPUS_GALLERY.forEach((url) => {
+      if (!next.includes(url)) next.push(url);
+    });
+    onChange(next);
+  };
+
   return (
-    <div>
-      <div className="flex items-center justify-between mb-3">
-        <Label>Gallery</Label>
-        <span className="text-xs" style={{ color: C.muted }}>
-          {value.length} photo{value.length === 1 ? "" : "s"}
-        </span>
+    <div className="font-body">
+      <div className="flex items-center justify-between mb-2">
+        <Label>Campus Photo Gallery</Label>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={handleAddSampleGallery}
+            className="text-[11px] font-semibold text-[#0f62fe] flex items-center gap-1 hover:underline"
+          >
+            <Sparkles className="w-3 h-3" /> Add Sample Photos
+          </button>
+          <span className="text-xs text-[#6f6f6f]">
+            {value.length} photo{value.length === 1 ? "" : "s"}
+          </span>
+        </div>
       </div>
 
+      {/* Drag & Drop Upload Zone */}
       <div
         ref={dropRef}
         onClick={() => addInputRef.current?.click()}
@@ -118,24 +137,24 @@ export default function GalleryUploadField({ value = [], onChange }) {
         }}
         onDragLeave={() => setDragActive(false)}
         onDrop={handleDrop}
-        className="flex flex-col items-center justify-center gap-1.5 py-6 px-4 rounded-xl cursor-pointer text-center transition-colors"
-        style={{
-          border: `2px dashed ${dragActive ? C.blue : C.border}`,
-          background: dragActive ? "rgba(41,82,227,0.06)" : C.bgAlt,
-        }}
+        className={`flex flex-col items-center justify-center gap-1.5 py-6 px-4 border-2 border-dashed cursor-pointer text-center transition-colors ${
+          dragActive
+            ? "border-[#0f62fe] bg-[#d0e2ff]/30"
+            : "border-[#e0e0e0] bg-[#f4f4f4] hover:bg-[#e0e0e0]/50"
+        }`}
       >
         {busy ? (
-          <Loader2 size={20} color={C.blue} className="animate-spin" />
+          <Loader2 className="w-6 h-6 text-[#0f62fe] animate-spin" />
         ) : (
-          <UploadCloud size={20} color={C.blue} />
+          <UploadCloud className="w-6 h-6 text-[#0f62fe]" />
         )}
-        <p className="text-sm font-medium" style={{ color: C.ink }}>
+        <p className="text-xs font-semibold text-[#161616]">
           {busy
-            ? "Processing..."
-            : "Drag & drop photos here, or click to browse"}
+            ? "Processing images..."
+            : "Drag & drop campus photos here, or click to upload files"}
         </p>
-        <p className="text-xs" style={{ color: C.muted }}>
-          JPG, PNG or WEBP · up to {ALLOWED_MAX_SIZE_MB}MB each
+        <p className="text-[11px] text-[#6f6f6f]">
+          JPG, PNG, WEBP or SVG · up to {ALLOWED_MAX_SIZE_MB}MB each
         </p>
         <input
           ref={addInputRef}
@@ -145,8 +164,6 @@ export default function GalleryUploadField({ value = [], onChange }) {
           className="hidden"
           onChange={handleAddInputChange}
         />
-        {/* Single hidden input reused for every "Replace" click -- which
-            thumbnail it targets is tracked in replaceIndexRef. */}
         <input
           ref={replaceInputRef}
           type="file"
@@ -157,61 +174,66 @@ export default function GalleryUploadField({ value = [], onChange }) {
         />
       </div>
 
+      {/* URL Input Form */}
+      <div className="flex items-center gap-2 mt-2">
+        <TextInput
+          value={urlInput}
+          onChange={(e) => setUrlInput(e.target.value)}
+          placeholder="Or paste direct image URL (e.g. /universities/gallery/iau-1.jpg or https://...)"
+          className="text-xs flex-1"
+        />
+        <button
+          type="button"
+          onClick={handleAddUrl}
+          className="px-3 h-9 bg-white border border-[#e0e0e0] text-[#161616] hover:bg-[#f4f4f4] text-xs font-semibold flex items-center gap-1 shrink-0"
+        >
+          <Plus className="w-3.5 h-3.5" /> Add URL
+        </button>
+      </div>
+
       {errors.length > 0 && (
         <div className="mt-2 space-y-1">
           {errors.map((msg, i) => (
-            <p key={i} className="text-xs" style={{ color: C.orangeDark }}>
+            <p key={i} className="text-xs text-[#da1e28] font-medium">
               {msg}
             </p>
           ))}
         </div>
       )}
 
+      {/* Gallery Grid Preview */}
       {value.length > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mt-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 mt-4">
           {value.map((src, i) => (
             <div
               key={i}
-              className="group relative aspect-square rounded-xl overflow-hidden"
-              style={{ border: `1px solid ${C.border}` }}
+              className="group relative aspect-square bg-[#f4f4f4] border border-[#e0e0e0] overflow-hidden"
             >
               <img
                 src={src}
                 alt={`Gallery photo ${i + 1}`}
                 className="w-full h-full object-cover"
               />
-              <div
-                className="absolute inset-0 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                style={{ background: "rgba(11,18,48,0.55)" }}
-              >
+              <div className="absolute inset-0 bg-black/50 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   type="button"
                   onClick={() => openReplace(i)}
-                  className="w-8 h-8 rounded-full flex items-center justify-center"
-                  style={{ background: "rgba(255,255,255,0.9)" }}
+                  className="w-7 h-7 bg-white text-[#161616] flex items-center justify-center rounded"
+                  title="Replace photo"
                   aria-label={`Replace photo ${i + 1}`}
                 >
-                  <RefreshCw size={14} color={C.ink} />
+                  <RefreshCw className="w-3.5 h-3.5" />
                 </button>
                 <button
                   type="button"
                   onClick={() => removeAt(i)}
-                  className="w-8 h-8 rounded-full flex items-center justify-center"
-                  style={{ background: "rgba(255,255,255,0.9)" }}
+                  className="w-7 h-7 bg-[#da1e28] text-white flex items-center justify-center rounded"
+                  title="Delete photo"
                   aria-label={`Delete photo ${i + 1}`}
                 >
-                  <Trash2 size={14} color={C.orangeDark} />
+                  <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
-              <button
-                type="button"
-                onClick={() => removeAt(i)}
-                className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full flex items-center justify-center sm:hidden"
-                style={{ background: "rgba(11,18,48,0.6)" }}
-                aria-label={`Delete photo ${i + 1}`}
-              >
-                <X size={11} color="#fff" />
-              </button>
             </div>
           ))}
         </div>

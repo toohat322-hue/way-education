@@ -136,18 +136,35 @@ select:focus-visible {
   animation-delay: var(--delay, 0s);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .float-card,
-  .fade-up,
-  .route-dash {
-    animation: none !important;
-  }
-  .sa-bounce {
-    animation: none !important;
-  }
-  .sa-ring,
-  .sa-confetti {
-    animation: none !important;
-    opacity: 0 !important;
-  }
+
+/* Enterprise Admin Styles & Helpers */
+.font-headline, .font-display, .font-body, .font-label {
+  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 }
+
+.carbon-border {
+  border: 1px solid #e0e0e0;
+}
+
+.carbon-input {
+  background-color: #f4f4f4;
+  border: 1px solid #e0e0e0;
+  color: #161616;
+  font-family: 'IBM Plex Sans', sans-serif;
+  transition: border-color 0.15s ease-in-out;
+}
+
+.carbon-input:focus {
+  border-color: #0f62fe;
+  outline: 2px solid #0f62fe;
+  outline-offset: -2px;
+}
+
+.zebra-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.zebra-table tbody tr:hover {
+  background-color: #f4f4f4;
+}
+

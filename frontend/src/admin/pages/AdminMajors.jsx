@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { Plus, Pencil, Trash2 } from "lucide-react";
-import { C, grad } from "../../theme/tokens";
-import GlassCard from "../../components/GlassCard";
 import { useData } from "../useData";
 import { useToast } from "../useToast";
 import { resolveIcon, ICON_NAMES } from "../iconRegistry";
@@ -71,7 +69,7 @@ function MajorFormModal({ major, onClose }) {
       title={major ? "Edit Major" : "Add Major"}
       onClose={guardedClose}
     >
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 font-body">
         <Field label="Name (English)" id="major-name-en">
           <TextInput required value={form.nameEn} onChange={set("nameEn")} />
         </Field>
@@ -87,7 +85,7 @@ function MajorFormModal({ major, onClose }) {
           <TextInput type="number" value={form.count} onChange={set("count")} />
         </Field>
         <div>
-          <Label>Icon</Label>
+          <Label>Icon Symbol</Label>
           <div className="flex flex-wrap gap-2">
             {ICON_NAMES.map((name) => {
               const Icon = resolveIcon(name);
@@ -97,20 +95,20 @@ function MajorFormModal({ major, onClose }) {
                   type="button"
                   key={name}
                   onClick={() => setForm((f) => ({ ...f, iconName: name }))}
-                  className="w-9 h-9 rounded-lg flex items-center justify-center"
-                  style={{
-                    background: active ? grad.primary : "#fff",
-                    border: `1px solid ${active ? "transparent" : C.border}`,
-                  }}
+                  className={`w-9 h-9 border flex items-center justify-center transition-colors ${
+                    active
+                      ? "bg-[#0f62fe] text-white border-[#0f62fe]"
+                      : "bg-white text-[#525252] border-[#e0e0e0] hover:bg-[#f4f4f4]"
+                  }`}
                   aria-label={name}
                 >
-                  <Icon size={16} color={active ? "#fff" : C.inkSoft} />
+                  <Icon className="w-4 h-4" />
                 </button>
               );
             })}
           </div>
         </div>
-        <div className="flex items-center justify-end gap-3 pt-2">
+        <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#e0e0e0]">
           <GhostButton type="button" onClick={guardedClose}>
             Cancel
           </GhostButton>
@@ -129,47 +127,43 @@ export default function AdminMajors() {
   const [editing, setEditing] = useState(undefined);
 
   return (
-    <div>
+    <div className="font-body">
       <PageHeader
-        title="Majors"
-        sub={`${majors.length} majors shown in the homepage grid.`}
+        title="Degree Portfolios & Majors"
+        sub={`${majors.length} academic pathways featured on the homepage.`}
         action={
           <PrimaryButton onClick={() => setEditing(null)}>
-            <Plus size={15} className="inline -mt-0.5 me-1" /> Add major
+            <Plus className="w-4 h-4 mr-1" /> Add Major
           </PrimaryButton>
         }
       />
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {majors.map((m) => {
           const Icon = resolveIcon(m.iconName);
           return (
-            <GlassCard
+            <div
               key={m.id}
-              className="p-5"
-              style={{ background: "#fff" }}
+              className="bg-white border border-[#e0e0e0] p-5 flex flex-col justify-between hover:border-[#0f62fe] transition-colors"
             >
-              <div
-                className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
-                style={{ background: grad.primarySoft }}
-              >
-                <Icon size={20} color={C.blue} />
+              <div>
+                <div className="w-10 h-10 bg-[#f4f4f4] border border-[#e0e0e0] flex items-center justify-center mb-4">
+                  <Icon className="w-5 h-5 text-[#0f62fe]" />
+                </div>
+                <h3 className="font-headline font-semibold text-sm text-[#161616] mb-1">
+                  {m.name.en}
+                </h3>
+                <p className="text-xs text-[#6f6f6f] mb-4">
+                  {m.count} programs available
+                </p>
               </div>
-              <div
-                className="font-semibold text-sm mb-1"
-                style={{ color: C.ink }}
-              >
-                {m.name.en}
-              </div>
-              <div className="text-xs mb-3" style={{ color: C.muted }}>
-                {m.count} programs
-              </div>
-              <div className="flex items-center gap-2">
+
+              <div className="flex items-center gap-2 pt-3 border-t border-[#e0e0e0]">
                 <GhostButton
                   onClick={() => setEditing(m)}
-                  className="flex-1 flex items-center justify-center gap-1.5"
+                  className="flex-1"
                 >
-                  <Pencil size={13} /> Edit
+                  <Pencil className="w-3.5 h-3.5" /> Edit
                 </GhostButton>
                 <DangerButton
                   aria-label={`Delete ${m.name.en}`}
@@ -181,16 +175,16 @@ export default function AdminMajors() {
                       } catch (err) {
                         showToast(
                           err.message || `Unable to remove ${m.name.en}`,
-                          "error",
+                          "error"
                         );
                       }
                     }
                   }}
                 >
-                  <Trash2 size={13} />
+                  <Trash2 className="w-3.5 h-3.5" />
                 </DangerButton>
               </div>
-            </GlassCard>
+            </div>
           );
         })}
       </div>

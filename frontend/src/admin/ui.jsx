@@ -1,14 +1,11 @@
 import React, { useEffect } from "react";
 import { X } from "lucide-react";
-import { C, grad } from "../theme/tokens";
-import GlassCard from "../components/GlassCard";
 
 export function Label({ children, htmlFor }) {
   return (
     <label
       htmlFor={htmlFor}
-      className="text-xs font-semibold mb-1.5 block"
-      style={{ color: C.inkSoft }}
+      className="block text-xs text-[#525252] mb-2 font-medium font-body"
     >
       {children}
     </label>
@@ -20,8 +17,8 @@ export function TextInput(props) {
   return (
     <input
       {...rest}
-      className={`w-full px-3.5 py-2.5 rounded-xl text-sm outline-none bg-white ${className}`}
-      style={{ border: `1px solid ${C.border}`, color: C.ink, ...style }}
+      className={`carbon-input w-full px-3 py-2 text-sm border border-[#e0e0e0] bg-[#f4f4f4] text-[#161616] font-body focus:bg-white focus:border-[#0f62fe] focus:outline-none transition-all ${className}`}
+      style={style}
     />
   );
 }
@@ -31,8 +28,8 @@ export function TextArea(props) {
   return (
     <textarea
       {...rest}
-      className={`w-full px-3.5 py-2.5 rounded-xl text-sm outline-none bg-white ${className}`}
-      style={{ border: `1px solid ${C.border}`, color: C.ink, ...style }}
+      className={`carbon-input w-full px-3 py-2 text-sm border border-[#e0e0e0] bg-[#f4f4f4] text-[#161616] font-body focus:bg-white focus:border-[#0f62fe] focus:outline-none transition-all ${className}`}
+      style={style}
     />
   );
 }
@@ -41,8 +38,8 @@ export function Select({ children, className = "", style = {}, ...rest }) {
   return (
     <select
       {...rest}
-      className={`w-full px-3.5 py-2.5 rounded-xl text-sm outline-none bg-white ${className}`}
-      style={{ border: `1px solid ${C.border}`, color: C.ink, ...style }}
+      className={`carbon-input w-full px-3 py-2 text-sm border border-[#e0e0e0] bg-[#f4f4f4] text-[#161616] font-body focus:bg-white focus:border-[#0f62fe] focus:outline-none transition-all ${className}`}
+      style={style}
     >
       {children}
     </select>
@@ -69,8 +66,8 @@ export function PrimaryButton({
   return (
     <button
       {...rest}
-      className={`px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-transform hover:scale-[1.02] active:scale-95 ${className}`}
-      style={{ background: grad.primary, ...style }}
+      className={`px-4 h-10 bg-[#0f62fe] text-white text-xs font-semibold flex items-center justify-center gap-2 hover:bg-[#0353e9] active:bg-[#002d9c] transition-colors font-body ${className}`}
+      style={style}
     >
       {children}
     </button>
@@ -81,51 +78,10 @@ export function GhostButton({ children, className = "", style = {}, ...rest }) {
   return (
     <button
       {...rest}
-      className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition-transform hover:scale-[1.02] active:scale-95 ${className}`}
-      style={{
-        border: `1px solid ${C.border}`,
-        color: C.inkSoft,
-        background: "#fff",
-        ...style,
-      }}
+      className={`px-4 h-10 bg-white text-[#161616] border border-[#e0e0e0] hover:bg-[#f4f4f4] active:bg-[#e0e0e0] transition-colors text-xs font-medium flex items-center justify-center gap-2 font-body ${className}`}
+      style={style}
     >
       {children}
-    </button>
-  );
-}
-
-// Simple controlled on/off switch for boolean settings (e.g. "Featured",
-// "Active"). Pass `checked` + `onChange(nextBoolean)`; it's not a native
-// <input type="checkbox"> under the hood so it can be styled as a pill.
-export function Toggle({ checked, onChange, label, sub }) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      onClick={() => onChange(!checked)}
-      className="w-full flex items-center justify-between gap-3 p-3.5 rounded-xl text-start"
-      style={{ background: C.bgAlt, border: `1px solid ${C.border}` }}
-    >
-      <span>
-        <span className="block text-sm font-semibold" style={{ color: C.ink }}>
-          {label}
-        </span>
-        {sub && (
-          <span className="block text-xs mt-0.5" style={{ color: C.muted }}>
-            {sub}
-          </span>
-        )}
-      </span>
-      <span
-        className="relative w-11 h-6 rounded-full shrink-0 transition-colors duration-200"
-        style={{ background: checked ? grad.primary : C.border }}
-      >
-        <span
-          className="absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all duration-200"
-          style={{ insetInlineStart: checked ? "calc(100% - 22px)" : "2px" }}
-        />
-      </span>
     </button>
   );
 }
@@ -139,10 +95,42 @@ export function DangerButton({
   return (
     <button
       {...rest}
-      className={`px-4 py-2 rounded-xl text-xs font-semibold transition-transform hover:scale-[1.02] active:scale-95 ${className}`}
-      style={{ background: "#FFF1EE", color: "#E8501A", ...style }}
+      className={`px-4 h-9 bg-[#fff1f1] text-[#da1e28] border border-[#ffb3b8] hover:bg-[#da1e28] hover:text-white transition-colors text-xs font-semibold flex items-center justify-center gap-1.5 font-body ${className}`}
+      style={style}
     >
       {children}
+    </button>
+  );
+}
+
+export function Toggle({ checked, onChange, label, sub }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={() => onChange(!checked)}
+      className="w-full flex items-center justify-between gap-3 p-3 bg-[#f4f4f4] border border-[#e0e0e0] text-left transition-colors hover:border-[#0f62fe]"
+    >
+      <span>
+        <span className="block text-xs font-semibold text-[#161616]">
+          {label}
+        </span>
+        {sub && (
+          <span className="block text-[11px] text-[#6f6f6f] mt-0.5">
+            {sub}
+          </span>
+        )}
+      </span>
+      <span
+        className="relative w-10 h-5 rounded-full shrink-0 transition-colors duration-200"
+        style={{ background: checked ? "#0f62fe" : "#c6c6c6" }}
+      >
+        <span
+          className="absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all duration-200"
+          style={{ insetInlineStart: checked ? "calc(100% - 18px)" : "2px" }}
+        />
+      </span>
     </button>
   );
 }
@@ -156,83 +144,71 @@ export function AdminModal({ title, onClose, children, wide = false }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [onClose]);
 
-  // Centering a taller-than-viewport flex item (sm:items-center) makes the
-  // portion above the fold permanently unreachable by scrolling -- a well
-  // known flexbox quirk. `wide` modals (currently just the University editor)
-  // can get tall enough to hit this, so they stay top-aligned instead; the
-  // shorter modals keep the nicer vertically-centered look.
   return (
     <div
-      className={`fixed inset-0 z-100 flex ${wide ? "items-start" : "items-start sm:items-center"} justify-center p-4 overflow-y-auto`}
-      style={{ background: "rgba(11,18,48,0.5)", backdropFilter: "blur(4px)" }}
+      className={`fixed inset-0 z-50 flex ${
+        wide ? "items-start" : "items-start sm:items-center"
+      } justify-center p-4 overflow-y-auto bg-black/40 backdrop-blur-sm`}
       onClick={onClose}
     >
-      <GlassCard
-        className={`w-full ${wide ? "max-w-3xl" : "max-w-lg"} p-6 my-8 relative fade-up`}
-        style={{ background: "#fff" }}
+      <div
+        className={`w-full ${
+          wide ? "max-w-3xl" : "max-w-lg"
+        } p-6 my-8 relative bg-white border border-[#e0e0e0] shadow-xl`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between mb-5">
-          <h3
-            className="font-semibold text-lg"
-            style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}
-          >
+        <div className="flex items-center justify-between mb-5 pb-3 border-b border-[#e0e0e0]">
+          <h3 className="font-semibold text-base text-[#161616] font-headline">
             {title}
           </h3>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-full"
-            style={{ background: C.bgAlt }}
+            className="p-1 hover:bg-[#f4f4f4] text-[#525252] hover:text-[#161616] transition-colors"
             aria-label="Close"
           >
-            <X size={16} color={C.inkSoft} />
+            <X className="w-5 h-5" />
           </button>
         </div>
         {children}
-      </GlassCard>
+      </div>
     </div>
   );
 }
 
 export function PageHeader({ title, sub, action }) {
   return (
-    <div className="flex flex-wrap items-start justify-between gap-4 mb-8">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
       <div>
-        <h1
-          className="text-2xl md:text-3xl font-bold mb-1"
-          style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}
-        >
+        <h1 className="text-2xl sm:text-32px font-light text-[#161616] font-headline leading-tight">
           {title}
         </h1>
         {sub && (
-          <p className="text-sm" style={{ color: C.muted }}>
+          <p className="text-xs sm:text-sm text-[#6f6f6f] mt-1 font-body">
             {sub}
           </p>
         )}
       </div>
-      {action}
+      {action && <div className="shrink-0">{action}</div>}
     </div>
   );
 }
 
-export function StatTile({ icon: Icon, label, value }) {
+export function StatTile({ icon: Icon, label, value, subtext }) {
   return (
-    <GlassCard className="p-5" style={{ background: "#fff" }}>
-      <div
-        className="w-10 h-10 rounded-xl flex items-center justify-center mb-3"
-        style={{ background: grad.primarySoft }}
-      >
-        <Icon size={18} color={C.blue} />
-      </div>
-      <div
-        className="text-2xl font-extrabold mb-0.5"
-        style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}
-      >
-        {value}
-      </div>
-      <div className="text-xs" style={{ color: C.muted }}>
+    <div className="bg-white p-4 border border-[#e0e0e0]">
+      <span className="text-xs text-[#6f6f6f] font-medium uppercase tracking-wider font-body">
         {label}
+      </span>
+      <div className="flex items-baseline gap-2 mt-2">
+        <span className="text-24px font-semibold text-[#0f62fe] font-headline">
+          {value}
+        </span>
+        {subtext && (
+          <span className="text-[10px] text-[#198038] flex items-center gap-1 font-body">
+            {subtext}
+          </span>
+        )}
       </div>
-    </GlassCard>
+    </div>
   );
 }

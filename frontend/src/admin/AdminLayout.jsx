@@ -10,11 +10,11 @@ import {
   Inbox,
   LogOut,
   ExternalLink,
-  GraduationCap,
   FileText,
   Search,
+  Bell,
+  Settings,
 } from "lucide-react";
-import { C, grad } from "../theme/tokens";
 import { useAdminAuth } from "./useAdminAuth";
 
 const NAV = [
@@ -34,21 +34,18 @@ function NavItem({ item, compact }) {
     <NavLink
       to={item.to}
       end={item.end}
-      className={compact ? "shrink-0" : ""}
-      style={({ isActive }) => ({
-        display: "flex",
-        alignItems: "center",
-        gap: 10,
-        padding: compact ? "8px 14px" : "10px 14px",
-        borderRadius: 12,
-        fontSize: 14,
-        fontWeight: 500,
-        whiteSpace: "nowrap",
-        background: isActive ? "rgba(255,255,255,0.14)" : "transparent",
-        color: isActive ? "#fff" : "rgba(255,255,255,0.65)",
-      })}
+      className={({ isActive }) =>
+        `flex items-center px-4 py-3 text-sm transition-all duration-150 cursor-pointer ${
+          compact ? "shrink-0 rounded-lg" : ""
+        } ${
+          isActive
+            ? "text-[#0f62fe] font-semibold border-r-4 border-[#0f62fe] bg-[#f4f4f4]"
+            : "text-[#525252] hover:text-[#161616] hover:bg-[#f4f4f4]"
+        }`
+      }
     >
-      <item.icon size={16} /> {item.label}
+      <item.icon className="w-4 h-4 mr-3 shrink-0" />
+      <span className="font-body whitespace-nowrap">{item.label}</span>
     </NavLink>
   );
 }
@@ -57,74 +54,124 @@ export default function AdminLayout({ children }) {
   const { logout } = useAdminAuth();
 
   return (
-    <div className="min-h-screen flex" style={{ background: C.bg }}>
-      <aside
-        className="w-64 shrink-0 hidden md:flex flex-col p-5"
-        style={{ background: grad.navy }}
-      >
-        <Link to="/" className="flex items-center gap-2 mb-8">
-          <div
-            className="w-9 h-9 rounded-2xl flex items-center justify-center"
-            style={{ background: grad.primary }}
-          >
-            <GraduationCap size={18} color="#fff" />
+    <div className="bg-[#ffffff] text-[#161616] flex min-h-screen font-body">
+      {/* SideNavBar */}
+      <aside className="flex flex-col h-screen left-0 w-64 bg-white border-r border-[#e0e0e0] flex-shrink-0 z-50 overflow-y-auto fixed lg:static">
+        {/* Logo & Brand Header */}
+        <div className="px-4 py-6 flex items-center gap-3 border-b border-[#e0e0e0]">
+          <img
+            src="/brand/logo.jpeg"
+            alt="Way Education Logo"
+            className="w-9 h-9 object-contain rounded-md border border-[#e0e0e0]"
+          />
+          <div className="flex flex-col">
+            <span className="text-lg font-headline font-bold text-[#161616] leading-tight">
+              Way Education
+            </span>
+            <span className="font-body text-[10px] font-medium text-[#6f6f6f] uppercase tracking-wider">
+              Enterprise Admin
+            </span>
           </div>
-          <span
-            className="text-lg font-bold text-white"
-            style={{ fontFamily: "Poppins, sans-serif" }}
-          >
-            Way <span style={{ color: C.cyan }}>Education</span>
-          </span>
-        </Link>
-        <nav className="flex-1 flex flex-col gap-1">
+        </div>
+
+        {/* Navigation items */}
+        <nav className="flex-1 mt-4 space-y-0.5">
           {NAV.map((item) => (
             <NavItem key={item.to} item={item} />
           ))}
         </nav>
-        <div
-          className="flex flex-col gap-1 pt-4 mt-4"
-          style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}
-        >
-          <a
-            href="/"
-            className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-medium"
-            style={{ color: "rgba(255,255,255,0.65)" }}
+
+        {/* User profile footer */}
+        <div className="p-4 border-t border-[#e0e0e0] bg-[#f4f4f4]/50">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-[#0f62fe] text-white flex items-center justify-center font-bold text-xs">
+              AD
+            </div>
+            <div className="flex flex-col">
+              <span className="text-xs font-semibold text-[#161616]">Admin User</span>
+              <span className="text-[10px] text-[#6f6f6f]">System Controller</span>
+            </div>
+          </div>
+        </div>
+
+        {/* View Site & Logout */}
+        <div className="p-4 border-t border-[#e0e0e0] flex flex-col gap-2 mt-auto">
+          <Link
+            to="/"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center justify-between w-full px-3 py-2 text-xs font-body text-[#6f6f6f] hover:text-[#161616] hover:bg-[#f4f4f4] transition-colors"
           >
-            <ExternalLink size={16} /> View site
-          </a>
+            <span>View site</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </Link>
           <button
             onClick={logout}
-            className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-medium text-left"
-            style={{ color: "rgba(255,255,255,0.65)" }}
+            className="flex items-center justify-between w-full px-3 py-2 text-xs font-body text-[#da1e28] hover:bg-[#fff1f1] transition-colors font-medium text-left"
           >
-            <LogOut size={16} /> Log out
+            <span>Log out</span>
+            <LogOut className="w-3.5 h-3.5" />
           </button>
         </div>
       </aside>
 
-      <div className="flex-1 min-w-0 flex flex-col">
-        <div
-          className="md:hidden sticky top-0 z-40 flex items-center gap-2 px-4 py-3 overflow-x-auto hide-scroll"
-          style={{ background: grad.navy }}
-        >
+      {/* Main Content Area */}
+      <main className="flex-1 flex flex-col min-w-0 bg-[#ffffff]">
+        {/* TopNavBar Header */}
+        <header className="flex justify-between items-center w-full px-6 h-14 sticky top-0 z-40 bg-white border-b border-[#e0e0e0]">
+          {/* Header Title & Search */}
+          <div className="flex items-center gap-6 flex-1 max-w-2xl">
+            <div className="flex items-center gap-2">
+              <img
+                src="/brand/logo.jpeg"
+                alt="Way Education Logo"
+                className="w-7 h-7 object-contain rounded border border-[#e0e0e0] lg:hidden"
+              />
+              <h1 className="text-base sm:text-lg font-semibold text-[#161616] tracking-tight whitespace-nowrap">
+                Way Education Admin Dashboard
+              </h1>
+            </div>
+
+            <div className="hidden sm:flex items-center bg-[#f4f4f4] px-3 h-8 w-full max-w-md border border-[#e0e0e0] focus-within:ring-1 focus-within:ring-[#0f62fe] transition-all">
+              <Search className="w-4 h-4 text-[#6f6f6f] mr-2 shrink-0" />
+              <input
+                type="text"
+                placeholder="Global search entities..."
+                className="bg-transparent border-none focus:outline-none text-xs w-full font-body text-[#161616]"
+              />
+            </div>
+          </div>
+
+          {/* Right Header Actions */}
+          <div className="flex items-center gap-4 ml-4">
+            <button className="flex items-center justify-center w-8 h-8 hover:bg-[#f4f4f4] transition-colors text-[#525252] rounded" aria-label="Notifications">
+              <Bell className="w-4 h-4" />
+            </button>
+            <button className="flex items-center justify-center w-8 h-8 hover:bg-[#f4f4f4] transition-colors text-[#525252] rounded" aria-label="Settings">
+              <Settings className="w-4 h-4" />
+            </button>
+            <div className="h-8 w-8 bg-[#e0e0e0] overflow-hidden border border-[#e0e0e0] flex items-center justify-center shrink-0">
+              <img
+                src="/brand/logo.jpeg"
+                alt="Admin Profile"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </header>
+
+        {/* Mobile Nav Bar */}
+        <div className="lg:hidden sticky top-14 z-30 flex items-center gap-1 px-4 py-2 bg-[#f4f4f4] border-b border-[#e0e0e0] overflow-x-auto hide-scroll">
           {NAV.map((item) => (
             <NavItem key={item.to} item={item} compact />
           ))}
-          <button
-            onClick={logout}
-            className="shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-sm font-medium"
-            style={{ color: "rgba(255,255,255,0.65)" }}
-          >
-            <LogOut size={15} />
-          </button>
         </div>
 
-        <main className="flex-1 min-w-0">
-          <div className="max-w-6xl mx-auto px-5 sm:px-8 py-8 md:py-10">
-            {children}
-          </div>
-        </main>
-      </div>
+        {/* Scrollable Canvas Page Content */}
+        <div className="p-6 md:p-8 overflow-y-auto flex-1">
+          {children}
+        </div>
+      </main>
     </div>
   );
 }
