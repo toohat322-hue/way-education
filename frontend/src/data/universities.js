@@ -26,7 +26,6 @@ export const UNIVERSITIES = [
     grad: grad.card1,
     initial: "A",
     image: "/universities/heroes/iau-real.jpg",
-    logo: "/universities/logos/iau.webp",
     gallery: [
       "/universities/gallery/iau-1.jpg",
       "/universities/gallery/iau-2.png",
@@ -100,11 +99,12 @@ export const UNIVERSITIES = [
     id: "nisantasi",
     grad: grad.card2,
     initial: "N",
-    image: "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=1200&q=80",
-    logo: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=300&q=80",
+    image: "/universities/heroes/nisantasi-real.jpg",
     gallery: [
-      "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80"
+      "/universities/heroes/nisantasi-real.jpg",
+      "/universities/gallery/nisantasi-1.jpg",
+      "/universities/gallery/nisantasi-2.jpg",
+      "/universities/gallery/nisantasi-3.jpg"
     ],
     name: "Istanbul Nişantaşı University",
     city: { en: "Istanbul", ar: "إسطنبول" },
@@ -199,7 +199,6 @@ export const UNIVERSITIES = [
     grad: grad.card3,
     initial: "B",
     image: "/universities/heroes/beykent-real.jpg",
-    logo: "/universities/logos/beykent-logo.png",
     gallery: [
       "/universities/heroes/beykent-real.jpg",
       "/universities/gallery/beykent-taksim.jpg",
@@ -303,11 +302,9 @@ export const UNIVERSITIES = [
     id: "topkapi",
     grad: grad.card1,
     initial: "T",
-    image: "https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=1200&q=80",
-    logo: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=300&q=80",
+    image: "/universities/heroes/topkapi-real.jpeg",
     gallery: [
-      "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=800&q=80"
+      "/universities/heroes/topkapi-real.jpeg"
     ],
     name: "Istanbul Topkapi University",
     city: { en: "Istanbul", ar: "إسطنبول" },
@@ -403,11 +400,12 @@ export const UNIVERSITIES = [
     id: "istinye",
     grad: grad.card2,
     initial: "I",
-    image: "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1200&q=80",
-    logo: "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?auto=format&fit=crop&w=300&q=80",
+    image: "/universities/heroes/istinye-real.png",
     gallery: [
-      "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80"
+      "/universities/heroes/istinye-real.png",
+      "/universities/gallery/istinye-topkapi.png",
+      "/universities/gallery/istinye-bahcesehir.png",
+      "/universities/gallery/istinye-gop.png"
     ],
     name: "Istinye University",
     city: { en: "Istanbul", ar: "إسطنبول" },
@@ -465,7 +463,6 @@ export const UNIVERSITIES = [
     grad: grad.card1,
     initial: "A",
     image: "/universities/heroes/atlas-real.jpg",
-    logo: "/universities/logos/atlas-logo.png",
     gallery: [
       "/universities/heroes/atlas-real.jpg",
       "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=800&q=80",
@@ -531,7 +528,6 @@ export const UNIVERSITIES = [
     grad: grad.card2,
     initial: "B",
     image: "/universities/heroes/bau-real.png",
-    logo: "/universities/logos/bau-logo.svg",
     gallery: [
       "/universities/heroes/bau-real.png",
       "/universities/gallery/bau-1.jpg",
@@ -600,7 +596,6 @@ export const UNIVERSITIES = [
     grad: grad.card3,
     initial: "M",
     image: "/universities/heroes/medipol-real.png",
-    logo: "/universities/logos/medipol-logo.png",
     gallery: [
       "/universities/heroes/medipol-real.png",
       "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80",
@@ -659,7 +654,6 @@ export const UNIVERSITIES = [
     grad: grad.card1,
     initial: "K",
     image: "/universities/heroes/kultur-real.png",
-    logo: "/universities/logos/kultur-logo.jpg",
     gallery: [
       "/universities/heroes/kultur-real.png",
       "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=800&q=80",
@@ -765,7 +759,6 @@ export const UNIVERSITIES = [
     grad: grad.card2,
     initial: "G",
     image: "/universities/heroes/gelisim-real.png",
-    logo: "/universities/logos/gelisim-logo.png",
     gallery: [
       "/universities/heroes/gelisim-real.png",
       "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=800&q=80",
@@ -868,7 +861,6 @@ export const UNIVERSITIES = [
     grad: grad.card3,
     initial: "A",
     image: "/universities/heroes/altinbas-real.jpg",
-    logo: "/universities/logos/altinbas-logo.png",
     gallery: [
       "/universities/gallery/altinbas-1.jpg",
       "/universities/gallery/altinbas-2.jpg",
@@ -984,7 +976,6 @@ export const UNIVERSITIES = [
     grad: grad.card1,
     initial: "A",
     image: "/universities/heroes/arel-real.png",
-    logo: "/universities/logos/arel-logo.png",
     gallery: [
       "/universities/gallery/arel-1.jpg",
       "/universities/gallery/arel-2.jpg",
@@ -1099,7 +1090,6 @@ export const UNIVERSITIES = [
     grad: grad.card2,
     initial: "Ü",
     image: "/universities/heroes/uskudar-real.jpg",
-    logo: "/universities/logos/uskudar-logo.webp",
     gallery: [
       "/universities/gallery/uskudar-1.jpg",
       "/universities/gallery/uskudar-2.jpg",
@@ -1207,7 +1197,6 @@ export const UNIVERSITIES = [
     grad: grad.card1,
     initial: "G",
     image: "/universities/heroes/gedik-real.webp",
-    logo: "/universities/logos/gedik-logo.webp",
     gallery: [
       "/universities/gallery/gedik-1.webp",
       "/universities/gallery/gedik-2.webp",

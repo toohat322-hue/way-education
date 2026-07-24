@@ -35,20 +35,6 @@ function UniversityPhoto({ u, badgeLabel }) {
         </>
       )}
       <div
-        className="absolute top-3 left-3 w-9 h-9 rounded-xl bg-white/90 flex items-center justify-center font-bold text-sm overflow-hidden"
-        style={{ color: C.blue }}
-      >
-        {u.logo ? (
-          <img
-            src={u.logo}
-            alt={`${u.name} logo`}
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          u.initial
-        )}
-      </div>
-      <div
         className="absolute top-3 right-3 px-2 py-0.5 rounded-full text-[10px] font-semibold text-white"
         style={{ background: u.featured ? grad.cta : "rgba(11,18,48,0.55)" }}
       >
@@ -77,14 +63,17 @@ export default function UniversityCard({ u }) {
       className="p-4 min-w-[280px] sm:min-w-0 transition-transform hover:-translate-y-1.5 duration-300"
       style={{ background: "#fff" }}
     >
-      <UniversityPhoto
-        u={u}
-        badgeLabel={{ partner: t.partnerBadge, featured: t.featuredBadge }}
-      />
+      <div onClick={goDetail} className="cursor-pointer">
+        <UniversityPhoto
+          u={u}
+          badgeLabel={{ partner: t.partnerBadge, featured: t.featuredBadge }}
+        />
+      </div>
       <div className="pt-4">
         <div className="flex items-start justify-between gap-2 mb-1">
           <h3
-            className="font-semibold text-base leading-snug"
+            onClick={goDetail}
+            className="font-semibold text-base leading-snug cursor-pointer hover:text-[#0f62fe] transition-colors"
             style={{ fontFamily: "Poppins, sans-serif", color: C.ink }}
           >
             {u.name}
@@ -120,7 +109,7 @@ export default function UniversityCard({ u }) {
             onClick={goDetail}
             aria-label={`${t.viewDetails}: ${u.name}`}
             data-testid={`university-detail-${u.id}`}
-            className="text-xs font-semibold flex items-center gap-1"
+            className="text-xs font-semibold flex items-center gap-1 cursor-pointer hover:underline"
             style={{ color: C.blue }}
           >
             {t.viewDetails}{" "}
@@ -133,7 +122,7 @@ export default function UniversityCard({ u }) {
         <button
           type="button"
           onClick={goApply}
-          className="w-full py-2.5 rounded-xl text-sm font-semibold text-white transition-transform hover:scale-[1.02] active:scale-95"
+          className="w-full py-2.5 rounded-xl text-sm font-semibold text-white cursor-pointer transition-transform hover:scale-[1.02] active:scale-95"
           style={{ background: grad.cta }}
         >
           {t.quickApply}

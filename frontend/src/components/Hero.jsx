@@ -6,6 +6,7 @@ import {
   ArrowLeft,
   ShieldCheck,
   Plane,
+  GraduationCap,
 } from "lucide-react";
 import { C, grad } from "../theme/tokens";
 import { Eyebrow } from "./SectionHeader";
@@ -168,15 +169,7 @@ export default function Hero() {
                   className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold overflow-hidden"
                   style={{ background: grad.card1 }}
                 >
-                  {heroLeftUni.logo ? (
-                    <img
-                      src={heroLeftUni.logo}
-                      alt={`${heroLeftUni.name} logo`}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    heroLeftUni.initial
-                  )}
+                  <GraduationCap className="w-5 h-5 text-white" />
                 </div>
                 <div>
                   <div
@@ -205,15 +198,7 @@ export default function Hero() {
                   className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold overflow-hidden"
                   style={{ background: grad.card4 }}
                 >
-                  {heroRightUni.logo ? (
-                    <img
-                      src={heroRightUni.logo}
-                      alt={`${heroRightUni.name} logo`}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    heroRightUni.initial
-                  )}
+                  <GraduationCap className="w-5 h-5 text-white" />
                 </div>
                 <div>
                   <div

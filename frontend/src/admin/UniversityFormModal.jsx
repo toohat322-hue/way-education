@@ -34,7 +34,6 @@ function initFromUni(uni) {
     return {
       name: uni.name,
       image: uni.image || "",
-      logo: uni.logo || "",
       gallery: uni.gallery || [],
       cityEn: uni.city.en,
       cityAr: uni.city.ar,
@@ -80,7 +79,6 @@ function initFromUni(uni) {
   return {
     name: "",
     image: "",
-    logo: "",
     gallery: [],
     cityEn: "",
     cityAr: "",
@@ -216,7 +214,6 @@ export default function UniversityFormModal({
     const payload = {
       name: form.name,
       image: form.image || undefined,
-      logo: form.logo || undefined,
       gallery: form.gallery,
       city: { en: form.cityEn, ar: form.cityAr },
       country,
@@ -332,20 +329,12 @@ export default function UniversityFormModal({
           </Field>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-4">
-          <ImageUploadField
-            label="Cover / hero image"
-            value={form.image}
-            onChange={setValue("image")}
-            shape="wide"
-          />
-          <ImageUploadField
-            label="Logo"
-            value={form.logo}
-            onChange={setValue("logo")}
-            shape="square"
-          />
-        </div>
+        <ImageUploadField
+          label="Cover / hero image"
+          value={form.image}
+          onChange={setValue("image")}
+          shape="wide"
+        />
 
         <GalleryUploadField
           value={form.gallery}

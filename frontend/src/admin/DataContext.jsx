@@ -44,7 +44,6 @@ function loadStoredUniversities(fallback) {
           return {
             ...item,
             image: item.image && !item.image.endsWith(".svg") && !item.image.includes("unsplash") ? item.image : base.image,
-            logo: item.logo && !item.logo.endsWith(".svg") && !item.logo.includes("unsplash") ? item.logo : base.logo,
             gallery: Array.isArray(item.gallery) && item.gallery.length > 0 ? item.gallery : base.gallery,
           };
         });

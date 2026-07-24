@@ -10,11 +10,6 @@ const PRESET_HEROES = [
   { name: "Student Quad 4", url: "https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=1200&q=80" },
 ];
 
-const PRESET_LOGOS = [
-  { name: "University Crest A", url: "https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?auto=format&fit=crop&w=300&q=80" },
-  { name: "Academic Shield B", url: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=300&q=80" },
-];
-
 export default function ImageUploadField({
   label,
   value,
@@ -26,7 +21,7 @@ export default function ImageUploadField({
   const [error, setError] = useState("");
   const [showPresets, setShowPresets] = useState(false);
 
-  const presets = shape === "square" ? PRESET_LOGOS : PRESET_HEROES;
+  const presets = PRESET_HEROES;
 
   const handleFile = async (e) => {
     const file = e.target.files?.[0];
@@ -132,7 +127,7 @@ export default function ImageUploadField({
             <TextInput
               value={value || ""}
               onChange={(e) => onChange(e.target.value)}
-              placeholder="Or paste image URL (e.g. /universities/logos/iau.webp or https://...)"
+              placeholder="Or paste image URL (e.g. /universities/heroes/iau-real.jpg or https://...)"
               className="text-xs pr-8"
             />
             <Link2 className="w-3.5 h-3.5 text-[#6f6f6f] absolute right-2.5 top-2.5 pointer-events-none" />

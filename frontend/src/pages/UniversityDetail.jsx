@@ -259,20 +259,6 @@ export default function UniversityDetail() {
             )}
           </div>
           <div className="flex items-end gap-4">
-            <div
-              className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-white flex items-center justify-center font-bold text-2xl shrink-0 overflow-hidden"
-              style={{ color: C.blue }}
-            >
-              {uni.logo ? (
-                <img
-                  src={uni.logo}
-                  alt={`${uni.name} logo`}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                uni.initial
-              )}
-            </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <h1
