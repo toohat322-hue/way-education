@@ -23,21 +23,24 @@ export function AdminAuthProvider({ children }) {
             setUnlocked(true);
             setUser(data.user || null);
             sessionStorage.setItem(STORAGE_KEY, "true");
-          } else if (localUnlocked) {
-            setUnlocked(true);
-            setUser({ email: "admin@wayeducation.com", role: "SUPER_ADMIN" });
           } else {
+            sessionStorage.removeItem(STORAGE_KEY);
             setUnlocked(false);
             setUser(null);
           }
         }
-      } catch {
+      } catch (err) {
         if (!cancelled) {
-          // If backend auth/me endpoint is down/offline, preserve local session if unlocked previously or set to true
-          setUnlocked(localUnlocked);
-          if (localUnlocked) {
+          // Only keep the cached session when the backend is unreachable
+          // (no HTTP status at all). A real 401/403 means the session is
+          // genuinely gone and must not be masked as "still logged in".
+          const isNetworkFailure = !err.status;
+          if (isNetworkFailure && localUnlocked) {
+            setUnlocked(true);
             setUser({ email: "admin@wayeducation.com", role: "SUPER_ADMIN" });
           } else {
+            sessionStorage.removeItem(STORAGE_KEY);
+            setUnlocked(false);
             setUser(null);
           }
         }
@@ -65,15 +68,7 @@ export function AdminAuthProvider({ children }) {
         return true;
       }
     } catch (err) {
-      console.warn("Backend auth unavailable, utilizing local admin session:", err.message);
-    }
-
-    // Fallback: If backend is offline or dev mode, grant access with non-empty password
-    if (password && password.trim().length > 0) {
-      setUnlocked(true);
-      setUser({ email: email || "admin@wayeducation.com", role: "SUPER_ADMIN" });
-      sessionStorage.setItem(STORAGE_KEY, "true");
-      return true;
+      console.warn("Login failed:", err.message);
     }
 
     setUnlocked(false);

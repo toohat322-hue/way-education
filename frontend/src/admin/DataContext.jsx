@@ -137,19 +137,19 @@ export function DataProvider({ children }) {
     setError("");
     try {
       const payload = await apiFetch("/api/cms/bootstrap");
-      if (Array.isArray(payload?.universities) && !localStorage.getItem(KEYS.UNIVERSITIES)) {
+      if (Array.isArray(payload?.universities)) {
         setUniversities(payload.universities);
       }
-      if (Array.isArray(payload?.directory) && !localStorage.getItem(KEYS.DIRECTORY)) {
+      if (Array.isArray(payload?.directory)) {
         setDirectory(payload.directory);
       }
-      if (Array.isArray(payload?.majors) && !localStorage.getItem(KEYS.MAJORS)) {
+      if (Array.isArray(payload?.majors)) {
         setMajors(payload.majors);
       }
-      if (Array.isArray(payload?.faqs) && !localStorage.getItem(KEYS.FAQS)) {
+      if (Array.isArray(payload?.faqs)) {
         setFaqs(payload.faqs);
       }
-      if (payload?.settings?.whatsapp && !localStorage.getItem(KEYS.SETTINGS)) {
+      if (payload?.settings?.whatsapp) {
         updateSettingsState(payload.settings);
       }
     } catch (err) {
@@ -165,19 +165,15 @@ export function DataProvider({ children }) {
 
   const updateSettings = useCallback(
     async (patch) => {
-      try {
-        await apiFetch("/api/cms/settings", {
-          method: "PATCH",
-          body: JSON.stringify({
-            whatsapp: patch.whatsapp,
-            websiteName: patch.websiteName,
-            supportEmail: patch.supportEmail,
-            supportPhone: patch.supportPhone,
-          }),
-        });
-      } catch (err) {
-        console.warn("Settings API update bypassed:", err.message);
-      }
+      await apiFetch("/api/cms/settings", {
+        method: "PATCH",
+        body: JSON.stringify({
+          whatsapp: patch.whatsapp,
+          websiteName: patch.websiteName,
+          supportEmail: patch.supportEmail,
+          supportPhone: patch.supportPhone,
+        }),
+      });
       updateSettingsState(patch);
       return patch;
     },
@@ -231,157 +227,101 @@ export function DataProvider({ children }) {
     ),
 
     addUniversity: async (u) => {
-      let created = { ...u, id: u.id || `uni-${Date.now()}` };
-      try {
-        const res = await apiFetch("/api/cms/universities", {
-          method: "POST",
-          body: JSON.stringify(u),
-        });
-        if (res && res.id) created = res;
-      } catch (err) {
-        console.warn("Backend API skipped, adding university locally:", err.message);
-      }
+      const res = await apiFetch("/api/cms/universities", {
+        method: "POST",
+        body: JSON.stringify(u),
+      });
+      const created = res && res.id ? res : { ...u, id: u.id || `uni-${Date.now()}` };
       setUniversities((prev) => [created, ...prev]);
       return created;
     },
     updateUniversity: async (id, patch) => {
-      let updated;
-      try {
-        updated = await apiFetch(`/api/cms/universities/${id}`, {
-          method: "PATCH",
-          body: JSON.stringify(patch),
-        });
-      } catch (err) {
-        console.warn("Backend API skipped, updating university locally:", err.message);
-      }
+      const updated = await apiFetch(`/api/cms/universities/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(patch),
+      });
       setUniversities((prev) =>
         prev.map((u) => (u.id === id ? { ...u, ...(updated || patch) } : u))
       );
       return updated || patch;
     },
     removeUniversity: async (id) => {
-      try {
-        await apiFetch(`/api/cms/universities/${id}`, { method: "DELETE" });
-      } catch (err) {
-        console.warn("Backend API auth guard bypassed, removing university locally:", err.message);
-      }
+      await apiFetch(`/api/cms/universities/${id}`, { method: "DELETE" });
       setUniversities((prev) => prev.filter((u) => u.id !== id));
       return true;
     },
 
     addDirectoryEntry: async (u) => {
-      let created = { ...u, id: u.id || `dir-${Date.now()}` };
-      try {
-        const res = await apiFetch("/api/cms/directory", {
-          method: "POST",
-          body: JSON.stringify(u),
-        });
-        if (res && res.id) created = res;
-      } catch (err) {
-        console.warn("Backend API skipped, adding directory entry locally:", err.message);
-      }
+      const res = await apiFetch("/api/cms/directory", {
+        method: "POST",
+        body: JSON.stringify(u),
+      });
+      const created = res && res.id ? res : { ...u, id: u.id || `dir-${Date.now()}` };
       setDirectory((prev) => [created, ...prev]);
       return created;
     },
     updateDirectoryEntry: async (id, patch) => {
-      let updated;
-      try {
-        updated = await apiFetch(`/api/cms/directory/${id}`, {
-          method: "PATCH",
-          body: JSON.stringify(patch),
-        });
-      } catch (err) {
-        console.warn("Backend API skipped, updating directory entry locally:", err.message);
-      }
+      const updated = await apiFetch(`/api/cms/directory/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(patch),
+      });
       setDirectory((prev) =>
         prev.map((u) => (u.id === id ? { ...u, ...(updated || patch) } : u))
       );
       return updated || patch;
     },
     removeDirectoryEntry: async (id) => {
-      try {
-        await apiFetch(`/api/cms/directory/${id}`, { method: "DELETE" });
-      } catch (err) {
-        console.warn("Backend API auth guard bypassed, removing directory entry locally:", err.message);
-      }
+      await apiFetch(`/api/cms/directory/${id}`, { method: "DELETE" });
       setDirectory((prev) => prev.filter((u) => u.id !== id));
       return true;
     },
 
     addMajor: async (m) => {
-      let created = { ...m, id: m.id || `major-${Date.now()}` };
-      try {
-        const res = await apiFetch("/api/cms/majors", {
-          method: "POST",
-          body: JSON.stringify(m),
-        });
-        if (res && res.id) created = res;
-      } catch (err) {
-        console.warn("Backend API skipped, adding major locally:", err.message);
-      }
+      const res = await apiFetch("/api/cms/majors", {
+        method: "POST",
+        body: JSON.stringify(m),
+      });
+      const created = res && res.id ? res : { ...m, id: m.id || `major-${Date.now()}` };
       setMajors((prev) => [...prev, created]);
       return created;
     },
     updateMajor: async (id, patch) => {
-      let updated;
-      try {
-        updated = await apiFetch(`/api/cms/majors/${id}`, {
-          method: "PATCH",
-          body: JSON.stringify(patch),
-        });
-      } catch (err) {
-        console.warn("Backend API skipped, updating major locally:", err.message);
-      }
+      const updated = await apiFetch(`/api/cms/majors/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(patch),
+      });
       setMajors((prev) =>
         prev.map((m) => (m.id === id ? { ...m, ...(updated || patch) } : m))
       );
       return updated || patch;
     },
     removeMajor: async (id) => {
-      try {
-        await apiFetch(`/api/cms/majors/${id}`, { method: "DELETE" });
-      } catch (err) {
-        console.warn("Backend API auth guard bypassed, removing major locally:", err.message);
-      }
+      await apiFetch(`/api/cms/majors/${id}`, { method: "DELETE" });
       setMajors((prev) => prev.filter((m) => m.id !== id));
       return true;
     },
 
     addFaq: async (f) => {
-      let created = { ...f, id: f.id || `faq-${Date.now()}` };
-      try {
-        const res = await apiFetch("/api/cms/faqs", {
-          method: "POST",
-          body: JSON.stringify(f),
-        });
-        if (res && res.id) created = res;
-      } catch (err) {
-        console.warn("Backend API skipped, adding FAQ locally:", err.message);
-      }
+      const res = await apiFetch("/api/cms/faqs", {
+        method: "POST",
+        body: JSON.stringify(f),
+      });
+      const created = res && res.id ? res : { ...f, id: f.id || `faq-${Date.now()}` };
       setFaqs((prev) => [...prev, created]);
       return created;
     },
     updateFaq: async (id, patch) => {
-      let updated;
-      try {
-        updated = await apiFetch(`/api/cms/faqs/${id}`, {
-          method: "PATCH",
-          body: JSON.stringify(patch),
-        });
-      } catch (err) {
-        console.warn("Backend API skipped, updating FAQ locally:", err.message);
-      }
+      const updated = await apiFetch(`/api/cms/faqs/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(patch),
+      });
       setFaqs((prev) =>
         prev.map((f) => (f.id === id ? { ...f, ...(updated || patch) } : f))
       );
       return updated || patch;
     },
     removeFaq: async (id) => {
-      try {
-        await apiFetch(`/api/cms/faqs/${id}`, { method: "DELETE" });
-      } catch (err) {
-        console.warn("Backend API auth guard bypassed, removing FAQ locally:", err.message);
-      }
+      await apiFetch(`/api/cms/faqs/${id}`, { method: "DELETE" });
       setFaqs((prev) => prev.filter((f) => f.id !== id));
       return true;
     },

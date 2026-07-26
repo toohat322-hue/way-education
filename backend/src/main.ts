@@ -11,7 +11,12 @@ import { PrismaService } from "./common/prisma/prisma.service";
 import { PrismaExceptionFilter } from "./common/filters/prisma-exception.filter";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: false });
+  const app = await NestFactory.create(AppModule, {
+    cors: false,
+    bodyParser: false,
+  });
+  app.use(express.json({ limit: "15mb" }));
+  app.use(express.urlencoded({ extended: true, limit: "15mb" }));
   const config = app.get(ConfigService);
   const origins = String(config.get<string>("FRONTEND_ORIGINS") || "")
     .split(",")
