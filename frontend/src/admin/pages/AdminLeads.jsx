@@ -89,20 +89,33 @@ export default function AdminLeads() {
     }
   };
 
+  const handleExportCsv = async () => {
+    try {
+      const csvText = await apiFetch("/api/leads/export/csv");
+      const blob = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `leads-export-${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      showToast("CSV report downloaded successfully");
+    } catch (err) {
+      showToast(err.message || "Failed to export CSV", "error");
+    }
+  };
+
   return (
     <div className="font-body">
       <PageHeader
         title="Prospect Pipeline & Leads"
         sub="Track incoming student applications, update CRM pipeline statuses, and export CSV reports."
         action={
-          <a
-            href={`${getApiBase()}/api/leads/export/csv`}
-            className="inline-flex"
-          >
-            <PrimaryButton>
-              <Download className="w-4 h-4 mr-1" /> Export CSV
-            </PrimaryButton>
-          </a>
+          <PrimaryButton onClick={handleExportCsv}>
+            <Download className="w-4 h-4 mr-1" /> Export CSV
+          </PrimaryButton>
         }
       />
 

@@ -61,9 +61,14 @@ export class AuthRepository {
     });
   }
 
-  createPasswordResetToken(userId: string, tokenHash: string, expiresAt: Date) {
+  createPasswordResetToken(
+    userId: string,
+    tokenHash: string,
+    tokenPrefix: string,
+    expiresAt: Date,
+  ) {
     return this.prisma.passwordResetToken.create({
-      data: { userId, tokenHash, expiresAt },
+      data: { userId, tokenHash, tokenPrefix, expiresAt },
     });
   }
 
@@ -74,9 +79,18 @@ export class AuthRepository {
     });
   }
 
-  findAllActivePasswordResetTokens() {
+  /**
+   * Look up active password reset tokens by their prefix (first 8 chars).
+   * This avoids loading the entire token table — only a small subset is
+   * checked against the provided hash.
+   */
+  findActivePasswordResetTokensByPrefix(prefix: string) {
     return this.prisma.passwordResetToken.findMany({
-      where: { usedAt: null, expiresAt: { gt: new Date() } },
+      where: {
+        tokenPrefix: prefix,
+        usedAt: null,
+        expiresAt: { gt: new Date() },
+      },
       orderBy: { createdAt: "desc" },
     });
   }
@@ -91,10 +105,11 @@ export class AuthRepository {
   createEmailVerificationToken(
     userId: string,
     tokenHash: string,
+    tokenPrefix: string,
     expiresAt: Date,
   ) {
     return this.prisma.emailVerificationToken.create({
-      data: { userId, tokenHash, expiresAt },
+      data: { userId, tokenHash, tokenPrefix, expiresAt },
     });
   }
 
@@ -114,7 +129,9 @@ export class AuthRepository {
 
   async ensureInitialAdmin(email: string, passwordHash: string): Promise<User> {
     const existing = await this.findUserByEmail(email);
-    if (existing) return existing;
+    if (existing) {
+      return this.updateUser(existing.id, { passwordHash });
+    }
     return this.createUser({
       email,
       passwordHash,

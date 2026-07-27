@@ -174,6 +174,10 @@ export class CmsService {
     };
   }
 
+  getPublicStats() {
+    return this.repository.getPublicStats();
+  }
+
   async getBootstrap() {
     const [universities, directory, majors, faqs, settings, siteCopy] =
       await this.repository.getBootstrap();
@@ -187,8 +191,18 @@ export class CmsService {
     };
   }
 
-  async listUniversities() {
-    const universities = await this.repository.listUniversities();
+  async getUniversityBySlug(slug: string) {
+    const uni = await this.repository.findUniversityBySlug(slug);
+    if (!uni) throw new NotFoundException(`University "${slug}" not found`);
+    return this.serializeUniversity(uni);
+  }
+
+  async listUniversities(query?: {
+    page?: number;
+    pageSize?: number;
+    search?: string;
+  }) {
+    const universities = await this.repository.listUniversities(query);
     return universities.map((uni) => this.serializeUniversity(uni));
   }
 

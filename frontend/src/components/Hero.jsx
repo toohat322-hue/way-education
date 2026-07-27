@@ -105,7 +105,7 @@ export default function Hero() {
 
             <div className="grid grid-cols-3 gap-4 max-w-lg">
               {[
-                ["100+", t.heroStat1],
+                [`${universities.length || 100}+`, t.heroStat1],
                 ["5,000+", t.heroStat2],
                 ["95%", t.heroStat3],
               ].map(([n, l], i) => (

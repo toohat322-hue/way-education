@@ -332,9 +332,11 @@ export class AuthService {
     }
 
     const token = randomUUID();
+    const tokenPrefix = token.slice(0, 8);
     await this.authRepository.createPasswordResetToken(
       user.id,
       await argon2.hash(token),
+      tokenPrefix,
       new Date(Date.now() + 60 * 60_000),
     );
     await this.mailerService.sendPasswordReset(user.email, token);
@@ -354,7 +356,9 @@ export class AuthService {
     ipAddress?: string,
     userAgent?: string,
   ) {
-    const tokens = await this.authRepository.findAllActivePasswordResetTokens();
+    const prefix = dto.token.slice(0, 8);
+    const tokens =
+      await this.authRepository.findActivePasswordResetTokensByPrefix(prefix);
     for (const token of tokens) {
       if (await argon2.verify(token.tokenHash, dto.token)) {
         const user = await this.authRepository.findUserById(token.userId);
@@ -393,9 +397,11 @@ export class AuthService {
       throw new UnauthorizedException("User not found");
     }
     const token = randomUUID();
+    const tokenPrefix = token.slice(0, 8);
     await this.authRepository.createEmailVerificationToken(
       user.id,
       await argon2.hash(token),
+      tokenPrefix,
       new Date(Date.now() + 24 * 60 * 60_000),
     );
     await this.mailerService.sendEmailVerification(user.email, token);

@@ -3,10 +3,12 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   HttpCode,
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from "@nestjs/common";
@@ -34,32 +36,54 @@ import { CmsService } from "./cms.service";
 export class CmsController {
   constructor(private readonly cmsService: CmsService) {}
 
+  @Get("public-stats")
+  @Header("Cache-Control", "public, max-age=300, s-maxage=600")
+  getPublicStats() {
+    return this.cmsService.getPublicStats();
+  }
+
   @Get("bootstrap")
+  @Header("Cache-Control", "public, max-age=180, s-maxage=300")
   getBootstrap() {
     return this.cmsService.getBootstrap();
   }
 
   @Get("settings")
+  @Header("Cache-Control", "public, max-age=300, s-maxage=600")
   getSettings() {
     return this.cmsService.getSettings();
   }
 
   @Get("site-copy")
+  @Header("Cache-Control", "public, max-age=300, s-maxage=600")
   getSiteCopy() {
     return this.cmsService.getSiteCopy();
   }
 
   @Get("universities")
-  getUniversities() {
-    return this.cmsService.listUniversities();
+  @Header("Cache-Control", "public, max-age=300, s-maxage=600")
+  getUniversities(
+    @Query("page") page?: number,
+    @Query("pageSize") pageSize?: number,
+    @Query("search") search?: string,
+  ) {
+    return this.cmsService.listUniversities({ page, pageSize, search });
+  }
+
+  @Get("universities/:slug")
+  @Header("Cache-Control", "public, max-age=300, s-maxage=600")
+  getUniversityBySlug(@Param("slug") slug: string) {
+    return this.cmsService.getUniversityBySlug(slug);
   }
 
   @Get("majors")
+  @Header("Cache-Control", "public, max-age=600, s-maxage=1200")
   getMajors() {
     return this.cmsService.listMajors();
   }
 
   @Get("faqs")
+  @Header("Cache-Control", "public, max-age=600, s-maxage=1200")
   getFaqs() {
     return this.cmsService.listFaqs();
   }

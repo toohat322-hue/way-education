@@ -216,11 +216,8 @@ export default function AdminDashboard() {
     reader.readAsText(file);
   };
 
-  // Compute lead sources/traffic breakdown
-  const totalLeadsCount = Object.values(leadStats).reduce((acc, curr) => acc + (typeof curr === "number" ? curr : 0), 0) || recentLeads.length || 1;
-  const organicPercent = Math.min(100, Math.max(10, Math.round(((leadStats.NEW || 0) + (leadStats.INTERESTED || 0)) / totalLeadsCount * 100) || 68));
-  const directPercent = Math.min(100 - organicPercent, Math.round(((leadStats.CONTACTED || 0) + (leadStats.DOCUMENTS_PENDING || 0)) / totalLeadsCount * 100) || 22);
-  const campaignPercent = Math.max(0, 100 - organicPercent - directPercent) || 10;
+  // Calculate pipeline status counts from real backend lead stats
+  const totalLeads = (leadStats.NEW || 0) + (leadStats.CONTACTED || 0) + (leadStats.INTERESTED || 0) + (leadStats.APPLIED || 0) + (leadStats.ACCEPTED || 0);
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -433,50 +430,34 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Lead Performance Visual */}
+          {/* Lead Pipeline Visual */}
           <div className="bg-white border border-[#e0e0e0] p-6 flex-1">
             <h3 className="text-sm font-semibold uppercase tracking-wider text-[#161616] mb-4 font-headline">
-              Lead Traffic Breakdown
+              Pipeline Status Breakdown
             </h3>
             <div className="space-y-4">
-              <div>
-                <div className="flex justify-between items-center text-xs mb-1 font-body">
-                  <span className="text-[#6f6f6f]">Organic Search</span>
-                  <span className="font-semibold text-[#161616]">{organicPercent}%</span>
-                </div>
-                <div className="w-full bg-[#f4f4f4] h-1.5">
-                  <div
-                    className="bg-[#0f62fe] h-full"
-                    style={{ width: `${organicPercent}%` }}
-                  ></div>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between items-center text-xs mb-1 font-body">
-                  <span className="text-[#6f6f6f]">Direct Referrals</span>
-                  <span className="font-semibold text-[#161616]">{directPercent}%</span>
-                </div>
-                <div className="w-full bg-[#f4f4f4] h-1.5">
-                  <div
-                    className="bg-[#0f62fe] h-full opacity-60"
-                    style={{ width: `${directPercent}%` }}
-                  ></div>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between items-center text-xs mb-1 font-body">
-                  <span className="text-[#6f6f6f]">Email Campaigns</span>
-                  <span className="font-semibold text-[#161616]">{campaignPercent}%</span>
-                </div>
-                <div className="w-full bg-[#f4f4f4] h-1.5">
-                  <div
-                    className="bg-[#0f62fe] h-full opacity-30"
-                    style={{ width: `${campaignPercent}%` }}
-                  ></div>
-                </div>
-              </div>
+              {[
+                { label: "New Prospects", count: leadStats.NEW || 0, color: "bg-[#0f62fe]" },
+                { label: "In Contact / Pending", count: (leadStats.CONTACTED || 0) + (leadStats.DOCUMENTS_PENDING || 0), color: "bg-[#8a3ffc]" },
+                { label: "Applications Submitted", count: leadStats.APPLIED || 0, color: "bg-[#0043ce]" },
+                { label: "Accepted / Enrolled", count: leadStats.ACCEPTED || 0, color: "bg-[#198038]" },
+              ].map((stage) => {
+                const pct = totalLeads > 0 ? Math.round((stage.count / totalLeads) * 100) : 0;
+                return (
+                  <div key={stage.label}>
+                    <div className="flex justify-between items-center text-xs mb-1 font-body">
+                      <span className="text-[#6f6f6f]">{stage.label}</span>
+                      <span className="font-semibold text-[#161616]">{stage.count} ({pct}%)</span>
+                    </div>
+                    <div className="w-full bg-[#f4f4f4] h-1.5">
+                      <div
+                        className={`${stage.color} h-full transition-all duration-300`}
+                        style={{ width: `${Math.max(pct, stage.count > 0 ? 5 : 0)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

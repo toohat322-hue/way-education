@@ -150,8 +150,17 @@ export class CmsRepository {
   // ─── Existence finders (used by service for 404 checks) ─────────────
 
   findUniversityBySlug(slug: string) {
-    return this.prisma.university.findUnique({
+    return this.prisma.university.findFirst({
       where: { slug, deletedAt: null },
+      include: {
+        city: true,
+        country: true,
+        programs: { orderBy: { sortOrder: "asc" } },
+        admissions: true,
+        reviews: true,
+        scholarships: true,
+        gallery: { orderBy: { sortOrder: "asc" } },
+      },
     });
   }
 
@@ -185,7 +194,20 @@ export class CmsRepository {
     return this.prisma.blogPost.findUnique({ where: { slug } });
   }
 
-  // ─── Bootstrap & Lists ────────────────────────────────────────────
+  async getPublicStats() {
+    const [partnerCount, directoryCount, majorsCount] = await Promise.all([
+      this.prisma.university.count({ where: { active: true, deletedAt: null } }),
+      this.prisma.directoryEntry.count(),
+      this.prisma.major.count(),
+    ]);
+    return {
+      partnerCount,
+      directoryCount,
+      majorsCount,
+      studentsPlaced: 5300,
+      successRate: 95,
+    };
+  }
 
   getBootstrap() {
     return Promise.all([
@@ -213,9 +235,25 @@ export class CmsRepository {
     ]);
   }
 
-  listUniversities() {
+  listUniversities(options?: {
+    page?: number;
+    pageSize?: number;
+    search?: string;
+  }) {
+    const page = options?.page || 1;
+    const pageSize = options?.pageSize ? Math.min(options.pageSize, 100) : undefined;
+    const skip = pageSize ? (page - 1) * pageSize : undefined;
+
     return this.prisma.university.findMany({
-      where: { deletedAt: null },
+      where: {
+        deletedAt: null,
+        OR: options?.search
+          ? [
+              { name: { contains: options.search, mode: "insensitive" } },
+              { slug: { contains: options.search, mode: "insensitive" } },
+            ]
+          : undefined,
+      },
       include: {
         city: true,
         country: true,
@@ -226,6 +264,8 @@ export class CmsRepository {
         gallery: { orderBy: { sortOrder: "asc" } },
       },
       orderBy: [{ featured: "desc" }, { name: "asc" }],
+      ...(skip !== undefined && { skip }),
+      ...(pageSize !== undefined && { take: pageSize }),
     });
   }
 
@@ -719,81 +759,136 @@ export class CmsRepository {
   async importSnapshot(dto: ImportSnapshotDto) {
     const snapshot = (dto.snapshot || {}) as Record<string, any>;
 
-    // Clear relations and core entities to allow clean insert
-    await this.prisma.universityVersion.deleteMany();
-    await this.prisma.universityProgram.deleteMany();
-    await this.prisma.universityAdmission.deleteMany();
-    await this.prisma.universityReview.deleteMany();
-    await this.prisma.universityScholarship.deleteMany();
-    await this.prisma.universityGallery.deleteMany();
-    await this.prisma.university.deleteMany();
-    await this.prisma.directoryEntry.deleteMany();
-    await this.prisma.city.deleteMany();
-    await this.prisma.country.deleteMany();
-    await this.prisma.major.deleteMany();
-    await this.prisma.faq.deleteMany();
+    return this.prisma.$transaction(
+      async (tx) => {
+        // Clear relations and core entities to allow clean insert
+        await tx.universityVersion.deleteMany();
+        await tx.universityProgram.deleteMany();
+        await tx.universityAdmission.deleteMany();
+        await tx.universityReview.deleteMany();
+        await tx.universityScholarship.deleteMany();
+        await tx.universityGallery.deleteMany();
+        await tx.university.deleteMany();
+        await tx.directoryEntry.deleteMany();
+        await tx.city.deleteMany();
+        await tx.country.deleteMany();
+        await tx.major.deleteMany();
+        await tx.faq.deleteMany();
 
-    if (Array.isArray(snapshot.majors)) {
-      for (const major of snapshot.majors) {
-        await this.createMajor(major as unknown as CreateMajorDto);
-      }
-    }
-    if (Array.isArray(snapshot.faqs)) {
-      for (const faq of snapshot.faqs) {
-        await this.createFaq(faq as unknown as CreateFaqDto);
-      }
-    }
-    if (Array.isArray(snapshot.directory)) {
-      for (const entry of snapshot.directory) {
-        await this.createDirectoryEntry(
-          entry as unknown as CreateDirectoryEntryDto,
-        );
-      }
-    }
-    if (Array.isArray(snapshot.universities)) {
-      for (const uni of snapshot.universities) {
-        await this.createUniversity(uni as unknown as CreateUniversityDto);
-      }
-    }
+        if (Array.isArray(snapshot.majors)) {
+          for (const major of snapshot.majors) {
+            const nameEn = major.name?.en || major.nameEn || "";
+            const nameAr = major.name?.ar || major.nameAr || "";
+            const slug =
+              major.slug ||
+              nameEn.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+            await tx.major.upsert({
+              where: { slug },
+              update: {
+                iconName: major.iconName || "BookOpen",
+                nameEn,
+                nameAr,
+                count: Number(major.count || 0),
+              },
+              create: {
+                slug,
+                iconName: major.iconName || "BookOpen",
+                nameEn,
+                nameAr,
+                count: Number(major.count || 0),
+              },
+            });
+          }
+        }
 
-    await this.prisma.$transaction(async (tx) => {
-      if (snapshot.settings) {
-        await tx.siteSettings.upsert({
-          where: { id: snapshot.settings.id || "site-settings" },
-          update: snapshot.settings as Prisma.SiteSettingsUpdateInput,
-          create: snapshot.settings as Prisma.SiteSettingsCreateInput,
-        });
-      }
-      if (snapshot.siteCopy) {
-        await tx.siteCopy.upsert({
-          where: { id: snapshot.siteCopy.id || "site-copy" },
-          update: { data: snapshot.siteCopy.data as Prisma.InputJsonValue },
-          create: {
-            id: snapshot.siteCopy.id || "site-copy",
-            data: snapshot.siteCopy.data as Prisma.InputJsonValue,
-          },
-        });
-      }
-      if (Array.isArray(snapshot.blogPosts)) {
-        await tx.blogPost.deleteMany();
-        for (const post of snapshot.blogPosts) {
-          await tx.blogPost.create({
-            data: { ...post, tags: post.tags as Prisma.InputJsonValue },
+        if (Array.isArray(snapshot.faqs)) {
+          for (const faq of snapshot.faqs) {
+            await tx.faq.create({
+              data: {
+                questionEn: faq.q?.en || faq.questionEn || "",
+                questionAr: faq.q?.ar || faq.questionAr || "",
+                answerEn: faq.a?.en || faq.answerEn || "",
+                answerAr: faq.a?.ar || faq.answerAr || "",
+              },
+            });
+          }
+        }
+
+        if (Array.isArray(snapshot.directory)) {
+          for (const entry of snapshot.directory) {
+            const countryNameEn = entry.country?.en || entry.country || "Türkiye";
+            const countryNameAr = entry.country?.ar || entry.country || "تركيا";
+            const countryCode = countryNameEn.toLowerCase().slice(0, 2);
+
+            let country = await tx.country.findUnique({
+              where: { code: countryCode },
+            });
+            if (!country) {
+              country = await tx.country.create({
+                data: {
+                  code: countryCode,
+                  nameEn: countryNameEn,
+                  nameAr: countryNameAr,
+                },
+              });
+            }
+
+            const cityNameEn = entry.city?.en || entry.city || "Istanbul";
+            const cityNameAr = entry.city?.ar || entry.city || "إسطنبول";
+
+            let city = await tx.city.findFirst({
+              where: { countryId: country.id, nameEn: cityNameEn },
+            });
+            if (!city) {
+              city = await tx.city.create({
+                data: {
+                  countryId: country.id,
+                  nameEn: cityNameEn,
+                  nameAr: cityNameAr,
+                },
+              });
+            }
+
+            const slug =
+              entry.slug ||
+              entry.name
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/^-|-$/g, "");
+
+            await tx.directoryEntry.create({
+              data: {
+                slug,
+                name: entry.name,
+                type: entry.type || "Public",
+                founded: entry.founded ? String(entry.founded) : null,
+                countryId: country.id,
+                cityId: city.id,
+              },
+            });
+          }
+        }
+
+        if (snapshot.settings) {
+          await tx.siteSettings.upsert({
+            where: { id: snapshot.settings.id || "site-settings" },
+            update: snapshot.settings as Prisma.SiteSettingsUpdateInput,
+            create: snapshot.settings as Prisma.SiteSettingsCreateInput,
           });
         }
-      }
-      if (Array.isArray(snapshot.seoPages)) {
-        await tx.seoPage.deleteMany();
-        for (const page of snapshot.seoPages) {
-          await tx.seoPage.create({
-            data: {
-              ...page,
-              schemaMarkup: page.schemaMarkup as Prisma.InputJsonValue,
+        if (snapshot.siteCopy) {
+          await tx.siteCopy.upsert({
+            where: { id: snapshot.siteCopy.id || "site-copy" },
+            update: { data: snapshot.siteCopy.data as Prisma.InputJsonValue },
+            create: {
+              id: snapshot.siteCopy.id || "site-copy",
+              data: snapshot.siteCopy.data as Prisma.InputJsonValue,
             },
           });
         }
-      }
-    });
-    return { ok: true };
+        return { ok: true };
+      },
+      { timeout: 30000 },
+    );
   }
 }

@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import express from "express";
@@ -30,10 +31,27 @@ async function bootstrap() {
     "/media",
     express.static(path.resolve(process.cwd(), "storage", "media")),
   );
+
+  // Serve static frontend assets in production if frontend-dist exists
+  const frontendDistPath = path.resolve(process.cwd(), "frontend-dist");
+  if (fs.existsSync(frontendDistPath)) {
+    app.use(express.static(frontendDistPath));
+  }
   app.use(
     helmet({
       crossOriginResourcePolicy: false,
-      contentSecurityPolicy: false,
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'"],
+          styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+          fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
+          imgSrc: ["'self'", "data:", "blob:", "https:"],
+          connectSrc: ["'self'", ...origins],
+          objectSrc: ["'none'"],
+          upgradeInsecureRequests: [],
+        },
+      },
     }),
   );
   app.enableCors({

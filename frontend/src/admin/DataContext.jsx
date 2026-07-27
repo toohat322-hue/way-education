@@ -38,15 +38,7 @@ function loadStoredUniversities(fallback) {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed.map((item) => {
-          const base = fallback.find((b) => b.id === item.id);
-          if (!base) return item;
-          return {
-            ...item,
-            image: item.image && !item.image.endsWith(".svg") && !item.image.includes("unsplash") ? item.image : base.image,
-            gallery: Array.isArray(item.gallery) && item.gallery.length > 0 ? item.gallery : base.gallery,
-          };
-        });
+        return parsed;
       }
     }
   } catch (err) {

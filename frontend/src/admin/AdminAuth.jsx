@@ -31,18 +31,10 @@ export function AdminAuthProvider({ children }) {
         }
       } catch (err) {
         if (!cancelled) {
-          // Only keep the cached session when the backend is unreachable
-          // (no HTTP status at all). A real 401/403 means the session is
-          // genuinely gone and must not be masked as "still logged in".
-          const isNetworkFailure = !err.status;
-          if (isNetworkFailure && localUnlocked) {
-            setUnlocked(true);
-            setUser({ email: "admin@wayeducation.com", role: "SUPER_ADMIN" });
-          } else {
-            sessionStorage.removeItem(STORAGE_KEY);
-            setUnlocked(false);
-            setUser(null);
-          }
+          // Any failure (network or auth error) means the session cannot be verified.
+          sessionStorage.removeItem(STORAGE_KEY);
+          setUnlocked(false);
+          setUser(null);
         }
       } finally {
         if (!cancelled) setBooting(false);
