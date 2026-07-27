@@ -104,7 +104,7 @@ export const UNIVERSITIES = [
       "/universities/heroes/nisantasi-real.jpg",
       "/universities/gallery/nisantasi-1.jpg",
       "/universities/gallery/nisantasi-2.jpg",
-      "/universities/gallery/nisantasi-3.jpg"
+      "/universities/gallery/nisantasi-3.jpg",
     ],
     name: "Istanbul Nişantaşı University",
     city: { en: "Istanbul", ar: "إسطنبول" },
@@ -202,7 +202,7 @@ export const UNIVERSITIES = [
     gallery: [
       "/universities/heroes/beykent-real.jpg",
       "/universities/gallery/beykent-taksim.jpg",
-      "/universities/gallery/beykent-beylikduzu.jpg"
+      "/universities/gallery/beykent-beylikduzu.jpg",
     ],
     name: "Istanbul Beykent University",
     city: { en: "Istanbul", ar: "إسطنبول" },
@@ -303,9 +303,7 @@ export const UNIVERSITIES = [
     grad: grad.card1,
     initial: "T",
     image: "/universities/heroes/topkapi-real.jpeg",
-    gallery: [
-      "/universities/heroes/topkapi-real.jpeg"
-    ],
+    gallery: ["/universities/heroes/topkapi-real.jpeg"],
     name: "Istanbul Topkapi University",
     city: { en: "Istanbul", ar: "إسطنبول" },
     country: { en: "Türkiye", ar: "تركيا" },
@@ -405,7 +403,7 @@ export const UNIVERSITIES = [
       "/universities/heroes/istinye-real.png",
       "/universities/gallery/istinye-topkapi.png",
       "/universities/gallery/istinye-bahcesehir.png",
-      "/universities/gallery/istinye-gop.png"
+      "/universities/gallery/istinye-gop.png",
     ],
     name: "Istinye University",
     city: { en: "Istanbul", ar: "إسطنبول" },
@@ -467,7 +465,7 @@ export const UNIVERSITIES = [
       "/universities/heroes/atlas-real.jpg",
       "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=800&q=80"
+      "https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=800&q=80",
     ],
     name: "Istanbul Atlas University",
     city: { en: "Istanbul", ar: "إسطنبول" },
@@ -600,7 +598,7 @@ export const UNIVERSITIES = [
       "/universities/heroes/medipol-real.png",
       "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=800&q=80"
+      "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=800&q=80",
     ],
     name: "Istanbul Medipol University",
     city: { en: "Istanbul", ar: "إسطنبول" },
@@ -658,7 +656,7 @@ export const UNIVERSITIES = [
       "/universities/heroes/kultur-real.png",
       "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80"
+      "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80",
     ],
     name: "Istanbul Kültür University",
     city: { en: "Istanbul", ar: "إسطنبول" },
@@ -763,7 +761,7 @@ export const UNIVERSITIES = [
       "/universities/heroes/gelisim-real.png",
       "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=800&q=80"
+      "https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=800&q=80",
     ],
     name: "Istanbul Gelişim University",
     city: { en: "Istanbul", ar: "إسطنبول" },

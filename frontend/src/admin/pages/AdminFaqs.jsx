@@ -149,7 +149,7 @@ export default function AdminFaqs() {
                       } catch (err) {
                         showToast(
                           err.message || "Unable to remove FAQ",
-                          "error"
+                          "error",
                         );
                       }
                     }

@@ -1,13 +1,32 @@
 import React, { useRef, useState } from "react";
-import { Image as ImageIcon, Upload, X, Loader2, Link2, Sparkles } from "lucide-react";
+import {
+  Image as ImageIcon,
+  Upload,
+  X,
+  Loader2,
+  Link2,
+  Sparkles,
+} from "lucide-react";
 import { Label, TextInput } from "./ui";
 import { uploadImageFile } from "./imageUpload";
 
 const PRESET_HEROES = [
-  { name: "Modern Campus 1", url: "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1200&q=80" },
-  { name: "University Hall 2", url: "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=1200&q=80" },
-  { name: "Academic Library 3", url: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80" },
-  { name: "Student Quad 4", url: "https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=1200&q=80" },
+  {
+    name: "Modern Campus 1",
+    url: "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "University Hall 2",
+    url: "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "Academic Library 3",
+    url: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80",
+  },
+  {
+    name: "Student Quad 4",
+    url: "https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?auto=format&fit=crop&w=1200&q=80",
+  },
 ];
 
 export default function ImageUploadField({
@@ -48,7 +67,8 @@ export default function ImageUploadField({
           onClick={() => setShowPresets(!showPresets)}
           className="text-[11px] font-semibold text-[#0f62fe] flex items-center gap-1 hover:underline"
         >
-          <Sparkles className="w-3 h-3" /> {showPresets ? "Hide Presets" : "Pick Sample Preset"}
+          <Sparkles className="w-3 h-3" />{" "}
+          {showPresets ? "Hide Presets" : "Pick Sample Preset"}
         </button>
       </div>
 
@@ -64,7 +84,11 @@ export default function ImageUploadField({
               }}
               className="group relative border border-[#e0e0e0] hover:border-[#0f62fe] bg-white overflow-hidden text-left"
             >
-              <img src={preset.url} alt={preset.name} className="w-full h-14 object-cover" />
+              <img
+                src={preset.url}
+                alt={preset.name}
+                className="w-full h-14 object-cover"
+              />
               <span className="block p-1 text-[10px] text-[#161616] truncate font-medium">
                 {preset.name}
               </span>

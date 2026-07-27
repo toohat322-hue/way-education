@@ -1,12 +1,18 @@
 import { getApiUrl } from "../lib/api";
 
-export const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/svg+xml"];
+export const ALLOWED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/jpg",
+  "image/png",
+  "image/webp",
+  "image/svg+xml",
+];
 export const ALLOWED_MAX_SIZE_MB = 10;
 
 // Returns an error string if `file` fails the type/size check, or null if valid.
 export function validateImageFile(
   file,
-  { types = ALLOWED_IMAGE_TYPES, maxSizeMB = ALLOWED_MAX_SIZE_MB } = {}
+  { types = ALLOWED_IMAGE_TYPES, maxSizeMB = ALLOWED_MAX_SIZE_MB } = {},
 ) {
   if (!types.includes(file.type)) {
     return `${file.name}: unsupported file type (use JPG, PNG, WEBP, or SVG).`;
@@ -54,7 +60,7 @@ export function fileToDataUrl(file, maxWidth = 1920, maxHeight = 1080) {
         // Convert to webp/jpeg with high quality compression
         const dataUrl = canvas.toDataURL(
           file.type === "image/png" ? "image/png" : "image/jpeg",
-          0.88
+          0.88,
         );
         resolve(dataUrl);
       };
@@ -83,7 +89,10 @@ export async function uploadImageFile(file) {
       if (payload?.url) return payload.url;
     }
   } catch (err) {
-    console.warn("Backend media server offline, using optimized client image data:", err.message);
+    console.warn(
+      "Backend media server offline, using optimized client image data:",
+      err.message,
+    );
   }
 
   // Fallback to optimized Data URL so image upload ALWAYS succeeds for user

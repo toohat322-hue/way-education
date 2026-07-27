@@ -88,8 +88,12 @@ export default function AdminLayout({ children }) {
               AD
             </div>
             <div className="flex flex-col">
-              <span className="text-xs font-semibold text-[#161616]">Admin User</span>
-              <span className="text-[10px] text-[#6f6f6f]">System Controller</span>
+              <span className="text-xs font-semibold text-[#161616]">
+                Admin User
+              </span>
+              <span className="text-[10px] text-[#6f6f6f]">
+                System Controller
+              </span>
             </div>
           </div>
         </div>
@@ -144,10 +148,16 @@ export default function AdminLayout({ children }) {
 
           {/* Right Header Actions */}
           <div className="flex items-center gap-4 ml-4">
-            <button className="flex items-center justify-center w-8 h-8 hover:bg-[#f4f4f4] transition-colors text-[#525252] rounded" aria-label="Notifications">
+            <button
+              className="flex items-center justify-center w-8 h-8 hover:bg-[#f4f4f4] transition-colors text-[#525252] rounded"
+              aria-label="Notifications"
+            >
               <Bell className="w-4 h-4" />
             </button>
-            <button className="flex items-center justify-center w-8 h-8 hover:bg-[#f4f4f4] transition-colors text-[#525252] rounded" aria-label="Settings">
+            <button
+              className="flex items-center justify-center w-8 h-8 hover:bg-[#f4f4f4] transition-colors text-[#525252] rounded"
+              aria-label="Settings"
+            >
               <Settings className="w-4 h-4" />
             </button>
             <div className="h-8 w-8 bg-[#e0e0e0] overflow-hidden border border-[#e0e0e0] flex items-center justify-center shrink-0">
@@ -168,9 +178,7 @@ export default function AdminLayout({ children }) {
         </div>
 
         {/* Scrollable Canvas Page Content */}
-        <div className="p-6 md:p-8 overflow-y-auto flex-1">
-          {children}
-        </div>
+        <div className="p-6 md:p-8 overflow-y-auto flex-1">{children}</div>
       </main>
     </div>
   );

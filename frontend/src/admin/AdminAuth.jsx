@@ -13,9 +13,6 @@ export function AdminAuthProvider({ children }) {
     let cancelled = false;
 
     const bootstrap = async () => {
-      // Check local session storage first for immediate offline/dev access
-      const localUnlocked = sessionStorage.getItem(STORAGE_KEY) === "true";
-
       try {
         const data = await apiFetch("/api/auth/me");
         if (!cancelled) {
@@ -29,7 +26,7 @@ export function AdminAuthProvider({ children }) {
             setUser(null);
           }
         }
-      } catch (err) {
+      } catch {
         if (!cancelled) {
           // Any failure (network or auth error) means the session cannot be verified.
           sessionStorage.removeItem(STORAGE_KEY);

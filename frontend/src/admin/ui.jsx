@@ -117,9 +117,7 @@ export function Toggle({ checked, onChange, label, sub }) {
           {label}
         </span>
         {sub && (
-          <span className="block text-[11px] text-[#6f6f6f] mt-0.5">
-            {sub}
-          </span>
+          <span className="block text-[11px] text-[#6f6f6f] mt-0.5">{sub}</span>
         )}
       </span>
       <span

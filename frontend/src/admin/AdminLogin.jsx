@@ -20,7 +20,9 @@ export default function AdminLogin() {
       setError("");
       return;
     }
-    setError("Login failed. Please check credentials or backend authentication.");
+    setError(
+      "Login failed. Please check credentials or backend authentication.",
+    );
   };
 
   return (

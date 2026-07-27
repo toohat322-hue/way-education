@@ -1,5 +1,13 @@
 import React, { useRef, useState } from "react";
-import { UploadCloud, RefreshCw, Trash2, X, Loader2, Plus, Sparkles, Image as ImageIcon } from "lucide-react";
+import {
+  UploadCloud,
+  RefreshCw,
+  Trash2,
+  Loader2,
+  Plus,
+  Sparkles,
+  Image as ImageIcon,
+} from "lucide-react";
 import { Label, TextInput, PrimaryButton } from "./ui";
 import {
   uploadImageFile,

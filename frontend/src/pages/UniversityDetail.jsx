@@ -556,7 +556,7 @@ export default function UniversityDetail() {
                         onClick={(e) => {
                           e.stopPropagation();
                           setActivePhotoIndex((prev) =>
-                            prev === 0 ? uni.gallery.length - 1 : prev - 1
+                            prev === 0 ? uni.gallery.length - 1 : prev - 1,
                           );
                         }}
                         className="absolute left-4 text-white p-3 hover:bg-white/10 rounded-full"
@@ -568,7 +568,7 @@ export default function UniversityDetail() {
                         onClick={(e) => {
                           e.stopPropagation();
                           setActivePhotoIndex((prev) =>
-                            prev === uni.gallery.length - 1 ? 0 : prev + 1
+                            prev === uni.gallery.length - 1 ? 0 : prev + 1,
                           );
                         }}
                         className="absolute right-4 text-white p-3 hover:bg-white/10 rounded-full"
@@ -588,7 +588,8 @@ export default function UniversityDetail() {
                       className="max-w-full max-h-[80vh] object-contain mx-auto rounded"
                     />
                     <p className="text-center text-white/80 text-xs mt-3">
-                      {activePhotoIndex + 1} of {uni.gallery.length} · {uni.name} Campus
+                      {activePhotoIndex + 1} of {uni.gallery.length} ·{" "}
+                      {uni.name} Campus
                     </p>
                   </div>
                 </div>

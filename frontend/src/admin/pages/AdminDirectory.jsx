@@ -138,9 +138,9 @@ export default function AdminDirectory() {
   const filtered = useMemo(
     () =>
       directory.filter((d) =>
-        d.name.toLowerCase().includes(query.toLowerCase())
+        d.name.toLowerCase().includes(query.toLowerCase()),
       ),
-    [directory, query]
+    [directory, query],
   );
   const shown = filtered.slice(0, visible);
 
@@ -186,7 +186,10 @@ export default function AdminDirectory() {
             </thead>
             <tbody className="text-sm font-body">
               {shown.map((d) => (
-                <tr key={d.id} className="border-b border-[#e0e0e0] last:border-0">
+                <tr
+                  key={d.id}
+                  className="border-b border-[#e0e0e0] last:border-0"
+                >
                   <td className="p-4 font-semibold text-[#161616]">{d.name}</td>
                   <td className="p-4 text-[#525252]">{d.city}</td>
                   <td className="p-4 text-[#525252]">{d.country}</td>
@@ -218,7 +221,7 @@ export default function AdminDirectory() {
                             } catch (err) {
                               showToast(
                                 err.message || `Unable to remove ${d.name}`,
-                                "error"
+                                "error",
                               );
                             }
                           }

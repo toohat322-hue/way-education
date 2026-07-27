@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Download, MessageSquarePlus, Search } from "lucide-react";
 import { PageHeader, PrimaryButton, GhostButton } from "../ui";
 import { useToast } from "../useToast";
-import { apiFetch, getApiBase } from "../../lib/api";
+import { apiFetch } from "../../lib/api";
 
 const STATUS_OPTIONS = [
   "NEW",
@@ -57,7 +57,7 @@ export default function AdminLeads() {
 
   const pages = useMemo(
     () => Math.max(1, Math.ceil(total / pageSize)),
-    [total]
+    [total],
   );
 
   const handleStatusChange = async (id, nextStatus) => {
@@ -96,7 +96,10 @@ export default function AdminLeads() {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", `leads-export-${new Date().toISOString().slice(0, 10)}.csv`);
+      link.setAttribute(
+        "download",
+        `leads-export-${new Date().toISOString().slice(0, 10)}.csv`,
+      );
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -189,26 +192,41 @@ export default function AdminLeads() {
             <tbody className="text-sm font-body">
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="p-6 text-center text-xs text-[#6f6f6f]">
+                  <td
+                    colSpan={6}
+                    className="p-6 text-center text-xs text-[#6f6f6f]"
+                  >
                     Loading leads data...
                   </td>
                 </tr>
               ) : items.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="p-6 text-center text-xs text-[#6f6f6f]">
+                  <td
+                    colSpan={6}
+                    className="p-6 text-center text-xs text-[#6f6f6f]"
+                  >
                     No matching leads found.
                   </td>
                 </tr>
               ) : (
                 items.map((lead) => (
-                  <tr key={lead.id} className="border-b border-[#e0e0e0] last:border-0">
+                  <tr
+                    key={lead.id}
+                    className="border-b border-[#e0e0e0] last:border-0"
+                  >
                     <td className="p-4 min-w-[200px]">
-                      <div className="font-semibold text-[#161616]">{lead.name}</div>
+                      <div className="font-semibold text-[#161616]">
+                        {lead.name}
+                      </div>
                       <div className="text-xs text-[#6f6f6f]">{lead.email}</div>
                       <div className="text-xs text-[#6f6f6f]">{lead.phone}</div>
                     </td>
-                    <td className="p-4 text-[#525252]">{lead.program || "-"}</td>
-                    <td className="p-4 text-[#525252]">{lead.preferredUniversity || "-"}</td>
+                    <td className="p-4 text-[#525252]">
+                      {lead.program || "-"}
+                    </td>
+                    <td className="p-4 text-[#525252]">
+                      {lead.preferredUniversity || "-"}
+                    </td>
                     <td className="p-4">
                       <select
                         value={lead.status}
@@ -247,7 +265,9 @@ export default function AdminLeads() {
 
       <div className="flex items-center justify-between mt-6">
         <div className="text-xs text-[#6f6f6f]">
-          {loading ? "Loading leads…" : `Showing ${items.length} of ${total} leads`}
+          {loading
+            ? "Loading leads…"
+            : `Showing ${items.length} of ${total} leads`}
         </div>
         <div className="flex items-center gap-2">
           <GhostButton

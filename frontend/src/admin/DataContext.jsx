@@ -49,11 +49,11 @@ function loadStoredUniversities(fallback) {
 
 export function DataProvider({ children }) {
   const [universities, setUniversitiesState] = useState(() =>
-    loadStoredUniversities(BASE_UNIVERSITIES)
+    loadStoredUniversities(BASE_UNIVERSITIES),
   );
 
   const [directory, setDirectoryState] = useState(() =>
-    loadStored(KEYS.DIRECTORY, BASE_DIRECTORY)
+    loadStored(KEYS.DIRECTORY, BASE_DIRECTORY),
   );
 
   const [majors, setMajorsState] = useState(() =>
@@ -62,8 +62,8 @@ export function DataProvider({ children }) {
       BASE_MAJORS.map((major) => ({
         ...major,
         id: major.id || major.name.en.toLowerCase().replace(/\s+/g, "-"),
-      }))
-    )
+      })),
+    ),
   );
 
   const [faqs, setFaqsState] = useState(() =>
@@ -72,12 +72,12 @@ export function DataProvider({ children }) {
       BASE_FAQS.map((faq, index) => ({
         ...faq,
         id: faq.id || `faq-${index + 1}`,
-      }))
-    )
+      })),
+    ),
   );
 
   const [settings, setSettingsState] = useState(() =>
-    loadStored(KEYS.SETTINGS, BASE_SETTINGS)
+    loadStored(KEYS.SETTINGS, BASE_SETTINGS),
   );
 
   const [loading, setLoading] = useState(false);
@@ -169,7 +169,7 @@ export function DataProvider({ children }) {
       updateSettingsState(patch);
       return patch;
     },
-    [updateSettingsState]
+    [updateSettingsState],
   );
 
   // Clear local storage and reset to seed defaults
@@ -181,13 +181,13 @@ export function DataProvider({ children }) {
       BASE_MAJORS.map((major) => ({
         ...major,
         id: major.id || major.name.en.toLowerCase().replace(/\s+/g, "-"),
-      }))
+      })),
     );
     setFaqsState(
       BASE_FAQS.map((faq, index) => ({
         ...faq,
         id: faq.id || `faq-${index + 1}`,
-      }))
+      })),
     );
     setSettingsState(BASE_SETTINGS);
   }, []);
@@ -206,7 +206,7 @@ export function DataProvider({ children }) {
 
     getUniversityById: useCallback(
       (id) => universities.find((u) => u.id === id),
-      [universities]
+      [universities],
     ),
 
     publicUniversities: useMemo(
@@ -215,7 +215,7 @@ export function DataProvider({ children }) {
           .filter((u) => u.active !== false)
           .slice()
           .sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0)),
-      [universities]
+      [universities],
     ),
 
     addUniversity: async (u) => {
@@ -223,7 +223,8 @@ export function DataProvider({ children }) {
         method: "POST",
         body: JSON.stringify(u),
       });
-      const created = res && res.id ? res : { ...u, id: u.id || `uni-${Date.now()}` };
+      const created =
+        res && res.id ? res : { ...u, id: u.id || `uni-${Date.now()}` };
       setUniversities((prev) => [created, ...prev]);
       return created;
     },
@@ -233,7 +234,7 @@ export function DataProvider({ children }) {
         body: JSON.stringify(patch),
       });
       setUniversities((prev) =>
-        prev.map((u) => (u.id === id ? { ...u, ...(updated || patch) } : u))
+        prev.map((u) => (u.id === id ? { ...u, ...(updated || patch) } : u)),
       );
       return updated || patch;
     },
@@ -248,7 +249,8 @@ export function DataProvider({ children }) {
         method: "POST",
         body: JSON.stringify(u),
       });
-      const created = res && res.id ? res : { ...u, id: u.id || `dir-${Date.now()}` };
+      const created =
+        res && res.id ? res : { ...u, id: u.id || `dir-${Date.now()}` };
       setDirectory((prev) => [created, ...prev]);
       return created;
     },
@@ -258,7 +260,7 @@ export function DataProvider({ children }) {
         body: JSON.stringify(patch),
       });
       setDirectory((prev) =>
-        prev.map((u) => (u.id === id ? { ...u, ...(updated || patch) } : u))
+        prev.map((u) => (u.id === id ? { ...u, ...(updated || patch) } : u)),
       );
       return updated || patch;
     },
@@ -273,7 +275,8 @@ export function DataProvider({ children }) {
         method: "POST",
         body: JSON.stringify(m),
       });
-      const created = res && res.id ? res : { ...m, id: m.id || `major-${Date.now()}` };
+      const created =
+        res && res.id ? res : { ...m, id: m.id || `major-${Date.now()}` };
       setMajors((prev) => [...prev, created]);
       return created;
     },
@@ -283,7 +286,7 @@ export function DataProvider({ children }) {
         body: JSON.stringify(patch),
       });
       setMajors((prev) =>
-        prev.map((m) => (m.id === id ? { ...m, ...(updated || patch) } : m))
+        prev.map((m) => (m.id === id ? { ...m, ...(updated || patch) } : m)),
       );
       return updated || patch;
     },
@@ -298,7 +301,8 @@ export function DataProvider({ children }) {
         method: "POST",
         body: JSON.stringify(f),
       });
-      const created = res && res.id ? res : { ...f, id: f.id || `faq-${Date.now()}` };
+      const created =
+        res && res.id ? res : { ...f, id: f.id || `faq-${Date.now()}` };
       setFaqs((prev) => [...prev, created]);
       return created;
     },
@@ -308,7 +312,7 @@ export function DataProvider({ children }) {
         body: JSON.stringify(patch),
       });
       setFaqs((prev) =>
-        prev.map((f) => (f.id === id ? { ...f, ...(updated || patch) } : f))
+        prev.map((f) => (f.id === id ? { ...f, ...(updated || patch) } : f)),
       );
       return updated || patch;
     },

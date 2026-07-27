@@ -159,10 +159,7 @@ export default function AdminMajors() {
               </div>
 
               <div className="flex items-center gap-2 pt-3 border-t border-[#e0e0e0]">
-                <GhostButton
-                  onClick={() => setEditing(m)}
-                  className="flex-1"
-                >
+                <GhostButton onClick={() => setEditing(m)} className="flex-1">
                   <Pencil className="w-3.5 h-3.5" /> Edit
                 </GhostButton>
                 <DangerButton
@@ -175,7 +172,7 @@ export default function AdminMajors() {
                       } catch (err) {
                         showToast(
                           err.message || `Unable to remove ${m.name.en}`,
-                          "error"
+                          "error",
                         );
                       }
                     }

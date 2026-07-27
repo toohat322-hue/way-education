@@ -1,6 +1,6 @@
 import React from "react";
-import { PageHeader, PrimaryButton, TextInput, TextArea, Select } from "../ui";
-import { FileText, Plus, Search, Globe, Tag } from "lucide-react";
+import { PageHeader, PrimaryButton } from "../ui";
+import { Plus, Tag } from "lucide-react";
 
 export default function AdminBlog() {
   return (
@@ -27,10 +27,14 @@ export default function AdminBlog() {
                   Complete 2026 Guide to Studying Engineering in Türkiye
                 </h3>
               </div>
-              <span className="text-xs text-[#6f6f6f] whitespace-nowrap">Published</span>
+              <span className="text-xs text-[#6f6f6f] whitespace-nowrap">
+                Published
+              </span>
             </div>
             <p className="text-xs text-[#525252] leading-relaxed mb-4">
-              Comprehensive breakdown of accreditation, top universities, tuition fees, and visa requirements for MENA international students.
+              Comprehensive breakdown of accreditation, top universities,
+              tuition fees, and visa requirements for MENA international
+              students.
             </p>
             <div className="flex items-center justify-between pt-3 border-t border-[#e0e0e0] text-xs text-[#6f6f6f]">
               <span>Author: Admissions Team</span>
@@ -48,10 +52,13 @@ export default function AdminBlog() {
                   Northern Cyprus University Scholarships for Fall Semester
                 </h3>
               </div>
-              <span className="text-xs text-[#6f6f6f] whitespace-nowrap">Draft</span>
+              <span className="text-xs text-[#6f6f6f] whitespace-nowrap">
+                Draft
+              </span>
             </div>
             <p className="text-xs text-[#525252] leading-relaxed mb-4">
-              Detailed list of up to 50% tuition waiver grants available for international students applying through Way Education.
+              Detailed list of up to 50% tuition waiver grants available for
+              international students applying through Way Education.
             </p>
             <div className="flex items-center justify-between pt-3 border-t border-[#e0e0e0] text-xs text-[#6f6f6f]">
               <span>Author: Media Desk</span>
@@ -65,7 +72,8 @@ export default function AdminBlog() {
             <Tag className="w-4 h-4 text-[#0f62fe]" /> Content Staging
           </h3>
           <p className="text-xs text-[#6f6f6f] leading-relaxed mb-4">
-            Published articles automatically sync to the public blog feed and SEO indexing schemas.
+            Published articles automatically sync to the public blog feed and
+            SEO indexing schemas.
           </p>
           <div className="space-y-3 text-xs text-[#525252]">
             <div className="flex justify-between py-2 border-b border-[#e0e0e0]">

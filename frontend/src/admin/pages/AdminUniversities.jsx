@@ -41,7 +41,9 @@ export default function AdminUniversities() {
                   />
                 ) : (
                   <div className="flex flex-col items-center gap-1 text-white/60">
-                    <span className="text-xs font-semibold uppercase tracking-wider">No Cover Image</span>
+                    <span className="text-xs font-semibold uppercase tracking-wider">
+                      No Cover Image
+                    </span>
                   </div>
                 )}
                 <div className="absolute top-2 right-2 flex items-center gap-1.5">
@@ -68,26 +70,26 @@ export default function AdminUniversities() {
                     {u.name}
                   </h3>
                   <div className="flex items-center gap-1 shrink-0 px-2 py-0.5 bg-[#f4f4f4] border border-[#e0e0e0] text-xs font-semibold text-[#161616]">
-                    <Star className="w-3 h-3 text-[#0f62fe] fill-[#0f62fe]" /> {u.rating}
+                    <Star className="w-3 h-3 text-[#0f62fe] fill-[#0f62fe]" />{" "}
+                    {u.rating}
                   </div>
                 </div>
 
                 <p className="text-xs text-[#6f6f6f] leading-relaxed">
                   <span className="inline-flex items-center gap-1 mr-3">
-                    <MapPin className="w-3 h-3 text-[#525252]" /> {u.city?.en || u.city}, {u.country?.en || u.country}
+                    <MapPin className="w-3 h-3 text-[#525252]" />{" "}
+                    {u.city?.en || u.city}, {u.country?.en || u.country}
                   </span>
                   <span className="inline-flex items-center gap-1">
-                    <DollarSign className="w-3 h-3 text-[#525252]" /> ${u.tuition ? u.tuition.toLocaleString() : 0}/yr
+                    <DollarSign className="w-3 h-3 text-[#525252]" /> $
+                    {u.tuition ? u.tuition.toLocaleString() : 0}/yr
                   </span>
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-2 pt-3 border-t border-[#e0e0e0]">
-              <GhostButton
-                onClick={() => setEditing(u)}
-                className="flex-1"
-              >
+              <GhostButton onClick={() => setEditing(u)} className="flex-1">
                 <Pencil className="w-3.5 h-3.5" /> Edit
               </GhostButton>
               <DangerButton
@@ -99,7 +101,7 @@ export default function AdminUniversities() {
                     } catch (err) {
                       showToast(
                         err.message || `Unable to remove ${u.name}`,
-                        "error"
+                        "error",
                       );
                     }
                   }

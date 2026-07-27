@@ -92,7 +92,9 @@ export default function AdminDashboard() {
   const fileInputRef = useRef(null);
 
   const [whatsapp, setWhatsapp] = useState(settings.whatsapp || "");
-  const [supportEmail, setSupportEmail] = useState(settings.supportEmail || "contact@wayeducations.com");
+  const [supportEmail, setSupportEmail] = useState(
+    settings.supportEmail || "contact@wayeducations.com",
+  );
   const [savingWhatsapp, setSavingWhatsapp] = useState(false);
   const [savingEmail, setSavingEmail] = useState(false);
 
@@ -181,7 +183,7 @@ export default function AdminDashboard() {
     if (!file) return;
     if (
       !window.confirm(
-        "Importing will replace all live backend data with the snapshot file. Continue?"
+        "Importing will replace all live backend data with the snapshot file. Continue?",
       )
     )
       return;
@@ -217,7 +219,12 @@ export default function AdminDashboard() {
   };
 
   // Calculate pipeline status counts from real backend lead stats
-  const totalLeads = (leadStats.NEW || 0) + (leadStats.CONTACTED || 0) + (leadStats.INTERESTED || 0) + (leadStats.APPLIED || 0) + (leadStats.ACCEPTED || 0);
+  const totalLeads =
+    (leadStats.NEW || 0) +
+    (leadStats.CONTACTED || 0) +
+    (leadStats.INTERESTED || 0) +
+    (leadStats.APPLIED || 0) +
+    (leadStats.ACCEPTED || 0);
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -273,7 +280,9 @@ export default function AdminDashboard() {
             <span className="text-24px font-semibold text-[#161616] font-headline">
               {directory.length}
             </span>
-            <span className="text-[10px] text-[#6f6f6f] font-body">Total global count</span>
+            <span className="text-[10px] text-[#6f6f6f] font-body">
+              Total global count
+            </span>
           </div>
         </div>
 
@@ -285,7 +294,9 @@ export default function AdminDashboard() {
             <span className="text-24px font-semibold text-[#161616] font-headline">
               {String(majors.length).padStart(2, "0")}
             </span>
-            <span className="text-[10px] text-[#6f6f6f] font-body">Accredited pathways</span>
+            <span className="text-[10px] text-[#6f6f6f] font-body">
+              Accredited pathways
+            </span>
           </div>
         </div>
 
@@ -297,7 +308,9 @@ export default function AdminDashboard() {
             <span className="text-24px font-semibold text-[#161616] font-headline">
               {String(faqs.length).padStart(2, "0")}
             </span>
-            <span className="text-[10px] text-[#198038] font-body">100% active</span>
+            <span className="text-[10px] text-[#198038] font-body">
+              100% active
+            </span>
           </div>
         </div>
       </div>
@@ -379,7 +392,8 @@ export default function AdminDashboard() {
           {/* Communication Channel Section */}
           <div className="bg-white border border-[#e0e0e0] p-6">
             <h3 className="text-sm font-semibold uppercase tracking-wider text-[#161616] mb-6 flex items-center gap-2 font-headline">
-              <Settings2 className="w-4 h-4 text-[#0f62fe]" /> Communication Channels
+              <Settings2 className="w-4 h-4 text-[#0f62fe]" /> Communication
+              Channels
             </h3>
             <div className="space-y-6">
               {/* Field 1: WhatsApp */}
@@ -437,22 +451,47 @@ export default function AdminDashboard() {
             </h3>
             <div className="space-y-4">
               {[
-                { label: "New Prospects", count: leadStats.NEW || 0, color: "bg-[#0f62fe]" },
-                { label: "In Contact / Pending", count: (leadStats.CONTACTED || 0) + (leadStats.DOCUMENTS_PENDING || 0), color: "bg-[#8a3ffc]" },
-                { label: "Applications Submitted", count: leadStats.APPLIED || 0, color: "bg-[#0043ce]" },
-                { label: "Accepted / Enrolled", count: leadStats.ACCEPTED || 0, color: "bg-[#198038]" },
+                {
+                  label: "New Prospects",
+                  count: leadStats.NEW || 0,
+                  color: "bg-[#0f62fe]",
+                },
+                {
+                  label: "In Contact / Pending",
+                  count:
+                    (leadStats.CONTACTED || 0) +
+                    (leadStats.DOCUMENTS_PENDING || 0),
+                  color: "bg-[#8a3ffc]",
+                },
+                {
+                  label: "Applications Submitted",
+                  count: leadStats.APPLIED || 0,
+                  color: "bg-[#0043ce]",
+                },
+                {
+                  label: "Accepted / Enrolled",
+                  count: leadStats.ACCEPTED || 0,
+                  color: "bg-[#198038]",
+                },
               ].map((stage) => {
-                const pct = totalLeads > 0 ? Math.round((stage.count / totalLeads) * 100) : 0;
+                const pct =
+                  totalLeads > 0
+                    ? Math.round((stage.count / totalLeads) * 100)
+                    : 0;
                 return (
                   <div key={stage.label}>
                     <div className="flex justify-between items-center text-xs mb-1 font-body">
                       <span className="text-[#6f6f6f]">{stage.label}</span>
-                      <span className="font-semibold text-[#161616]">{stage.count} ({pct}%)</span>
+                      <span className="font-semibold text-[#161616]">
+                        {stage.count} ({pct}%)
+                      </span>
                     </div>
                     <div className="w-full bg-[#f4f4f4] h-1.5">
                       <div
                         className={`${stage.color} h-full transition-all duration-300`}
-                        style={{ width: `${Math.max(pct, stage.count > 0 ? 5 : 0)}%` }}
+                        style={{
+                          width: `${Math.max(pct, stage.count > 0 ? 5 : 0)}%`,
+                        }}
                       ></div>
                     </div>
                   </div>
@@ -490,33 +529,49 @@ export default function AdminDashboard() {
             <tbody className="text-sm font-body">
               {loadingLeads ? (
                 <tr>
-                  <td colSpan={5} className="p-6 text-center text-xs text-[#6f6f6f]">
+                  <td
+                    colSpan={5}
+                    className="p-6 text-center text-xs text-[#6f6f6f]"
+                  >
                     Loading recent prospect pipeline...
                   </td>
                 </tr>
               ) : recentLeads.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="p-6 text-center text-xs text-[#6f6f6f]">
-                    No leads recorded yet. Submissions from contact forms will appear here.
+                  <td
+                    colSpan={5}
+                    className="p-6 text-center text-xs text-[#6f6f6f]"
+                  >
+                    No leads recorded yet. Submissions from contact forms will
+                    appear here.
                   </td>
                 </tr>
               ) : (
                 recentLeads.map((lead) => (
-                  <tr key={lead.id} className="border-b border-[#e0e0e0] last:border-0">
+                  <tr
+                    key={lead.id}
+                    className="border-b border-[#e0e0e0] last:border-0"
+                  >
                     <td className="p-4 text-xs font-mono text-[#6f6f6f]">
-                      {lead.preferredUniversity ? "University_Form" : "SEO_Search"}
+                      {lead.preferredUniversity
+                        ? "University_Form"
+                        : "SEO_Search"}
                     </td>
                     <td className="p-4">
-                      <div className="font-semibold text-[#161616]">{lead.name}</div>
+                      <div className="font-semibold text-[#161616]">
+                        {lead.name}
+                      </div>
                       <div className="text-xs text-[#6f6f6f]">{lead.email}</div>
                     </td>
                     <td className="p-4 text-[#525252]">
-                      {lead.program || lead.preferredUniversity || "General Admission"}
+                      {lead.program ||
+                        lead.preferredUniversity ||
+                        "General Admission"}
                     </td>
                     <td className="p-4">
                       <span
                         className={`text-[10px] px-2 py-1 font-bold uppercase ${getStatusBadge(
-                          lead.status
+                          lead.status,
                         )}`}
                       >
                         {lead.status ? lead.status.replace(/_/g, " ") : "NEW"}

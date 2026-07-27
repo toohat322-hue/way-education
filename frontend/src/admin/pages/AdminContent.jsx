@@ -10,9 +10,9 @@ export default function AdminContent() {
   const keys = useMemo(
     () =>
       Object.keys(strings.en).filter(
-        (k) => k !== "dir" && k.toLowerCase().includes(query.toLowerCase())
+        (k) => k !== "dir" && k.toLowerCase().includes(query.toLowerCase()),
       ),
-    [strings, query]
+    [strings, query],
   );
 
   return (
@@ -25,7 +25,7 @@ export default function AdminContent() {
             onClick={() => {
               if (
                 window.confirm(
-                  "Reset all site copy to defaults? This discards your edits."
+                  "Reset all site copy to defaults? This discards your edits.",
                 )
               )
                 resetStrings();

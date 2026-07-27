@@ -19,7 +19,8 @@ export default function AdminSeo() {
         <div className="lg:col-span-8 space-y-6">
           <div className="bg-white border border-[#e0e0e0] p-6">
             <h3 className="text-sm font-semibold uppercase tracking-wider text-[#161616] mb-4 font-headline flex items-center gap-2">
-              <Globe className="w-4 h-4 text-[#0f62fe]" /> Global Title & Description
+              <Globe className="w-4 h-4 text-[#0f62fe]" /> Global Title &
+              Description
             </h3>
             <div className="space-y-4">
               <div>
@@ -43,7 +44,8 @@ export default function AdminSeo() {
 
           <div className="bg-white border border-[#e0e0e0] p-6">
             <h3 className="text-sm font-semibold uppercase tracking-wider text-[#161616] mb-4 font-headline flex items-center gap-2">
-              <Share2 className="w-4 h-4 text-[#0f62fe]" /> OpenGraph & Social Sharing
+              <Share2 className="w-4 h-4 text-[#0f62fe]" /> OpenGraph & Social
+              Sharing
             </h3>
             <div className="space-y-4">
               <div>
@@ -79,7 +81,9 @@ export default function AdminSeo() {
           <div className="space-y-4 text-xs">
             <div className="flex justify-between py-2 border-b border-[#e0e0e0]">
               <span className="text-[#6f6f6f]">Sitemap Index Status</span>
-              <span className="font-semibold text-[#198038]">Indexed (200 OK)</span>
+              <span className="font-semibold text-[#198038]">
+                Indexed (200 OK)
+              </span>
             </div>
             <div className="flex justify-between py-2 border-b border-[#e0e0e0]">
               <span className="text-[#6f6f6f]">Robots.txt</span>
@@ -87,11 +91,15 @@ export default function AdminSeo() {
             </div>
             <div className="flex justify-between py-2 border-b border-[#e0e0e0]">
               <span className="text-[#6f6f6f]">Canonical Target</span>
-              <span className="font-semibold text-[#161616]">https://wayeducation.com</span>
+              <span className="font-semibold text-[#161616]">
+                https://wayeducation.com
+              </span>
             </div>
             <div className="flex justify-between py-2">
               <span className="text-[#6f6f6f]">Structured Data</span>
-              <span className="font-semibold text-[#0f62fe]">EducationalOrganization</span>
+              <span className="font-semibold text-[#0f62fe]">
+                EducationalOrganization
+              </span>
             </div>
           </div>
         </div>

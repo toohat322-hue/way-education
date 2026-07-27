@@ -84,7 +84,11 @@ export class MediaService {
    * Validate file MIME type against whitelist and check magic bytes
    * to ensure the file content matches the declared type.
    */
-  private validateFile(file: { mimetype: string; originalname: string; buffer: Buffer }) {
+  private validateFile(file: {
+    mimetype: string;
+    originalname: string;
+    buffer: Buffer;
+  }) {
     // Check MIME whitelist
     const allowedEntry = ALLOWED_MIME_TYPES[file.mimetype];
     if (!allowedEntry) {
@@ -142,7 +146,8 @@ export class MediaService {
     }
     this.validateFile(file);
 
-    const { dir: folderPath, sanitizedFolder } = await this.ensureFolder(folder);
+    const { dir: folderPath, sanitizedFolder } =
+      await this.ensureFolder(folder);
     const safeName = `${Date.now()}-${file.originalname.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
     const absolutePath = path.join(folderPath, safeName);
     await fs.writeFile(absolutePath, file.buffer);

@@ -136,10 +136,16 @@ select:focus-visible {
   animation-delay: var(--delay, 0s);
 }
 
-
 /* Enterprise Admin Styles & Helpers */
-.font-headline, .font-display, .font-body, .font-label {
-  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+.font-headline,
+.font-display,
+.font-body,
+.font-label {
+  font-family:
+    "IBM Plex Sans",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
 }
 
 .carbon-border {
@@ -150,7 +156,7 @@ select:focus-visible {
   background-color: #f4f4f4;
   border: 1px solid #e0e0e0;
   color: #161616;
-  font-family: 'IBM Plex Sans', sans-serif;
+  font-family: "IBM Plex Sans", sans-serif;
   transition: border-color 0.15s ease-in-out;
 }
 
@@ -167,4 +173,3 @@ select:focus-visible {
 .zebra-table tbody tr:hover {
   background-color: #f4f4f4;
 }
-

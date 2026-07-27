@@ -196,7 +196,9 @@ export class CmsRepository {
 
   async getPublicStats() {
     const [partnerCount, directoryCount, majorsCount] = await Promise.all([
-      this.prisma.university.count({ where: { active: true, deletedAt: null } }),
+      this.prisma.university.count({
+        where: { active: true, deletedAt: null },
+      }),
       this.prisma.directoryEntry.count(),
       this.prisma.major.count(),
     ]);
@@ -241,7 +243,9 @@ export class CmsRepository {
     search?: string;
   }) {
     const page = options?.page || 1;
-    const pageSize = options?.pageSize ? Math.min(options.pageSize, 100) : undefined;
+    const pageSize = options?.pageSize
+      ? Math.min(options.pageSize, 100)
+      : undefined;
     const skip = pageSize ? (page - 1) * pageSize : undefined;
 
     return this.prisma.university.findMany({
@@ -781,7 +785,10 @@ export class CmsRepository {
             const nameAr = major.name?.ar || major.nameAr || "";
             const slug =
               major.slug ||
-              nameEn.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+              nameEn
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, "-")
+                .replace(/^-|-$/g, "");
             await tx.major.upsert({
               where: { slug },
               update: {
@@ -816,7 +823,8 @@ export class CmsRepository {
 
         if (Array.isArray(snapshot.directory)) {
           for (const entry of snapshot.directory) {
-            const countryNameEn = entry.country?.en || entry.country || "Türkiye";
+            const countryNameEn =
+              entry.country?.en || entry.country || "Türkiye";
             const countryNameAr = entry.country?.ar || entry.country || "تركيا";
             const countryCode = countryNameEn.toLowerCase().slice(0, 2);
 
