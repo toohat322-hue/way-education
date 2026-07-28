@@ -13,7 +13,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "e2e": "npm run build && playwright test",
+    "e2e": "node ../scripts/run-e2e.js",
     "e2e:ui": "playwright test --ui",
     "format:check": "prettier --ignore-path ../.gitignore --ignore-path ../.prettierignore --check . ../backend ../docs ../README.md ../docker-compose.yml ../.github",
     "format:write": "prettier --ignore-path ../.gitignore --ignore-path ../.prettierignore --write . ../backend ../docs ../README.md ../docker-compose.yml ../.github",

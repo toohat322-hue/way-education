@@ -48,6 +48,13 @@ export class CmsController {
     return this.cmsService.getBootstrap();
   }
 
+  @Get("admin/bootstrap")
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles("SUPER_ADMIN", "ADMIN", "EDITOR")
+  getAdminBootstrap() {
+    return this.cmsService.getAdminBootstrap();
+  }
+
   @Get("settings")
   @Header("Cache-Control", "public, max-age=300, s-maxage=600")
   getSettings() {

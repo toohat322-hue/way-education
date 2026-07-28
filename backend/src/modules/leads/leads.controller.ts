@@ -12,6 +12,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { Request, Response } from "express";
+import { Throttle } from "@nestjs/throttler";
 import { CurrentUser } from "../../common/decorators/current-user.decorator";
 import { Roles } from "../../common/decorators/roles.decorator";
 import { AuthGuard } from "../../common/guards/auth.guard";
@@ -29,6 +30,7 @@ export class LeadsController {
   constructor(private readonly leadsService: LeadsService) {}
 
   @Post()
+  @Throttle({ default: { limit: 5, ttl: 15 * 60_000 } })
   createLead(@Body() dto: CreateLeadDto, @Req() request: Request) {
     return this.leadsService.createLead(
       dto,

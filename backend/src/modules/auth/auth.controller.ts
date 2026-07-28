@@ -9,6 +9,7 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { Request, Response } from "express";
+import { Throttle } from "@nestjs/throttler";
 import { CurrentUser } from "../../common/decorators/current-user.decorator";
 import { AuthGuard } from "../../common/guards/auth.guard";
 import { AuthService } from "./auth.service";
@@ -24,6 +25,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post("login")
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @HttpCode(200)
   login(
     @Body() dto: LoginDto,
@@ -76,6 +78,7 @@ export class AuthController {
   }
 
   @Post("password-reset/request")
+  @Throttle({ default: { limit: 3, ttl: 15 * 60_000 } })
   @HttpCode(200)
   requestPasswordReset(
     @Body() dto: RequestPasswordResetDto,
@@ -89,6 +92,7 @@ export class AuthController {
   }
 
   @Post("password-reset/reset")
+  @Throttle({ default: { limit: 5, ttl: 15 * 60_000 } })
   @HttpCode(200)
   resetPassword(@Body() dto: ResetPasswordDto, @Req() request: Request) {
     return this.authService.resetPassword(

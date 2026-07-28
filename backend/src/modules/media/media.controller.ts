@@ -13,7 +13,6 @@ import {
 } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import multer from "multer";
-import { CurrentUser } from "../../common/decorators/current-user.decorator";
 import { Roles } from "../../common/decorators/roles.decorator";
 import { AuthGuard } from "../../common/guards/auth.guard";
 import { RolesGuard } from "../../common/guards/roles.guard";
@@ -38,7 +37,7 @@ export class MediaController {
       limits: { fileSize: 25 * 1024 * 1024 },
     }),
   )
-  upload(@UploadedFile() file: any, @Query("folder") folder?: string) {
+  upload(@UploadedFile() file: unknown, @Query("folder") folder?: string) {
     return this.mediaService.upload(file, folder || "root");
   }
 
@@ -46,7 +45,6 @@ export class MediaController {
   update(
     @Param("id") id: string,
     @Body() dto: UpdateMediaDto,
-    @CurrentUser() _user: any,
   ) {
     return this.mediaService.update(id, dto);
   }
@@ -58,7 +56,7 @@ export class MediaController {
       limits: { fileSize: 25 * 1024 * 1024 },
     }),
   )
-  replace(@Param("id") id: string, @UploadedFile() file: any) {
+  replace(@Param("id") id: string, @UploadedFile() file: unknown) {
     return this.mediaService.replace(id, file);
   }
 

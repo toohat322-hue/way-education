@@ -1,40 +1,38 @@
-# Dockerfile for Way Education
-# Builds both frontend (static) and backend (NestJS)
+# syntax=docker/dockerfile:1
 
-# 1. Build Frontend
+# Build the client separately so public visitors do not download admin source
+# files or development tooling at runtime.
 FROM node:22-alpine AS frontend-builder
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm ci
-COPY frontend/ .
+COPY frontend/ ./
 RUN npm run build
 
-# 2. Build Backend
 FROM node:22-alpine AS backend-builder
 WORKDIR /app/backend
 COPY backend/package*.json ./
-COPY backend/prisma ./prisma/
+COPY backend/prisma ./prisma
 RUN npm ci
-COPY backend/ .
-RUN npm run build
+COPY backend/ ./
+RUN npm run build && npm prune --omit=dev
 
-# 3. Production runtime
-FROM node:22-alpine
+FROM node:22-alpine AS runtime
 WORKDIR /app
+ENV NODE_ENV=production \
+    PORT=8000
 
-# Copy backend dependencies
-COPY --from=backend-builder /app/backend/node_modules ./node_modules
-COPY --from=backend-builder /app/backend/dist ./dist
-COPY --from=backend-builder /app/backend/package*.json ./
-COPY --from=backend-builder /app/backend/prisma ./prisma
+COPY --from=backend-builder --chown=node:node /app/backend/node_modules ./node_modules
+COPY --from=backend-builder --chown=node:node /app/backend/dist ./dist
+COPY --from=backend-builder --chown=node:node /app/backend/package*.json ./
+COPY --from=backend-builder --chown=node:node /app/backend/prisma ./prisma
+COPY --from=frontend-builder --chown=node:node /app/frontend/dist ./frontend-dist
+RUN mkdir -p /app/storage/media && chown -R node:node /app
 
-# Copy frontend build output (can be served by NestJS or another server like Nginx)
-COPY --from=frontend-builder /app/frontend/dist ./frontend-dist
-
-ENV NODE_ENV=production
-ENV PORT=8000
-
+USER node
 EXPOSE 8000
 
-# Start the NestJS application
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD node -e "fetch('http://127.0.0.1:' + (process.env.PORT || 8000) + '/api/health/live').then((response) => { if (!response.ok) process.exit(1); }).catch(() => process.exit(1))"
+
 CMD ["npm", "run", "start:prod"]

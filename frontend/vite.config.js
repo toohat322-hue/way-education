@@ -3,10 +3,13 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig(({ command }) => {
+  const apiBaseUrl = process.env.VITE_API_BASE_URL?.trim().replace(/\/$/, "");
   const connectSrc =
     command === "serve"
       ? "'self' http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*"
-      : "'self'";
+      : apiBaseUrl
+        ? `'self' ${apiBaseUrl}`
+        : "'self'";
 
   return {
     plugins: [

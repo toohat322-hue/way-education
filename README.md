@@ -84,8 +84,10 @@ npm run build
 
 ## Deployment
 
-- **Frontend**: from `frontend/`, run `npm run build`. The output is written to `frontend/dist/`.
-- **Backend**: from `backend/`, run `npm run build` and start with `node dist/main`. Ensure the production database is migrated and environment variables are set.
+Production deployment targets Vercel (frontend), Render (API), and Neon
+PostgreSQL. The complete environment-variable reference, migration procedure,
+custom-domain requirement for cookie-based admin sessions, and release
+checklist are in [docs/deployment.md](docs/deployment.md).
 
 ## CI/CD
 

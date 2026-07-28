@@ -1,21 +1,17 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Admin CMS Flows", () => {
+  test.describe.configure({ mode: "serial" });
   // We seeded the test DB with these credentials via our orchestrator script
   const ADMIN_EMAIL = "admin@wayeducation.com";
   const ADMIN_PASSWORD = "adminpassword";
 
   test.beforeEach(async ({ page }) => {
-    // 1. Login before each test
     await page.goto("/admin");
-
-    // Check if we are already logged in (if a previous test leaked session, though Playwright isolates them)
-    if (page.url().includes("/login")) {
-      await page.fill('input[type="email"]', ADMIN_EMAIL);
-      await page.fill('input[type="password"]', ADMIN_PASSWORD);
-      await page.click('button[type="submit"]');
-      await page.waitForURL("**/admin");
-    }
+    await page.locator("#admin-email").fill(ADMIN_EMAIL);
+    await page.locator("#admin-password").fill(ADMIN_PASSWORD);
+    await page.locator('button[type="submit"]').click();
+    await expect(page.locator("h1", { hasText: "Dashboard" })).toBeVisible();
   });
 
   test("should login successfully and view dashboard", async ({ page }) => {
@@ -75,6 +71,15 @@ test.describe("Admin CMS Flows", () => {
   });
 
   test("should add a note to a lead", async ({ page }) => {
+    await page.request.post("http://localhost:8001/api/leads", {
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+      data: {
+        name: "E2E Lead",
+        phone: "+905551234567",
+        email: "e2e.lead@example.test",
+      },
+    });
+
     // Navigate to Leads
     await page.click('a[href="/admin/leads"]');
     await expect(page.locator("h1", { hasText: "Leads" })).toBeVisible();

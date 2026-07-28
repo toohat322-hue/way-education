@@ -14,13 +14,6 @@ import {
   ArrowRight,
   TrendingUp,
   Settings2,
-  Filter,
-  CheckCircle2,
-  Clock,
-  Send,
-  GraduationCap,
-  Layers,
-  Sparkles,
 } from "lucide-react";
 import { useData } from "../useData";
 import { useToast } from "../useToast";

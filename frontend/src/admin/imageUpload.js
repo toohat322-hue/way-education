@@ -2,10 +2,8 @@ import { getApiUrl } from "../lib/api";
 
 export const ALLOWED_IMAGE_TYPES = [
   "image/jpeg",
-  "image/jpg",
   "image/png",
   "image/webp",
-  "image/svg+xml",
 ];
 export const ALLOWED_MAX_SIZE_MB = 10;
 
@@ -15,7 +13,7 @@ export function validateImageFile(
   { types = ALLOWED_IMAGE_TYPES, maxSizeMB = ALLOWED_MAX_SIZE_MB } = {},
 ) {
   if (!types.includes(file.type)) {
-    return `${file.name}: unsupported file type (use JPG, PNG, WEBP, or SVG).`;
+    return `${file.name}: unsupported file type (use JPG, PNG, or WEBP).`;
   }
   if (file.size > maxSizeMB * 1024 * 1024) {
     return `${file.name}: file size exceeds ${maxSizeMB}MB limit.`;
@@ -26,15 +24,6 @@ export function validateImageFile(
 // Converts a File object to an optimized Data URL
 export function fileToDataUrl(file, maxWidth = 1920, maxHeight = 1080) {
   return new Promise((resolve, reject) => {
-    // If file is SVG, read directly as Data URL
-    if (file.type === "image/svg+xml") {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (err) => reject(err);
-      reader.readAsDataURL(file);
-      return;
-    }
-
     const reader = new FileReader();
     reader.onload = (e) => {
       const img = new Image();
@@ -81,6 +70,7 @@ export async function uploadImageFile(file) {
     const response = await fetch(getApiUrl("/api/media"), {
       method: "POST",
       credentials: "include",
+      headers: { "X-Requested-With": "XMLHttpRequest" },
       body: formData,
     });
 

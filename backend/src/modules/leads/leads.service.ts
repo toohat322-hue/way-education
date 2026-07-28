@@ -65,6 +65,14 @@ export class LeadsService {
     };
   }
 
+  private csvCell(value: unknown) {
+    const text = String(value ?? "");
+    // Spreadsheet applications evaluate values that begin with these
+    // characters as formulas, even when the CSV field is quoted.
+    const safeText = /^[=+\-@]/.test(text.trim()) ? `'${text}` : text;
+    return `"${safeText.replace(/"/g, '""')}"`;
+  }
+
   async createLead(
     dto: CreateLeadDto,
     ipAddress?: string | null,
@@ -210,11 +218,7 @@ export class LeadsService {
       lead.createdAt.toISOString(),
     ]);
     return [header, ...lines]
-      .map((row) =>
-        row
-          .map((value) => `"${String(value ?? "").replace(/"/g, '""')}"`)
-          .join(","),
-      )
+      .map((row) => row.map((value) => this.csvCell(value)).join(","))
       .join("\n");
   }
 }

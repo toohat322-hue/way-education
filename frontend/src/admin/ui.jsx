@@ -194,9 +194,10 @@ export function PageHeader({ title, sub, action }) {
 export function StatTile({ icon: Icon, label, value, subtext }) {
   return (
     <div className="bg-white p-4 border border-[#e0e0e0]">
-      <span className="text-xs text-[#6f6f6f] font-medium uppercase tracking-wider font-body">
-        {label}
-      </span>
+      <div className="flex items-center gap-1.5 text-xs text-[#6f6f6f] font-medium uppercase tracking-wider font-body">
+        {Icon && <Icon className="h-3.5 w-3.5" aria-hidden="true" />}
+        <span>{label}</span>
+      </div>
       <div className="flex items-baseline gap-2 mt-2">
         <span className="text-24px font-semibold text-[#0f62fe] font-headline">
           {value}

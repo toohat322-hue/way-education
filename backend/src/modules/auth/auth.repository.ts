@@ -130,7 +130,7 @@ export class AuthRepository {
   async ensureInitialAdmin(email: string, passwordHash: string): Promise<User> {
     const existing = await this.findUserByEmail(email);
     if (existing) {
-      return this.updateUser(existing.id, { passwordHash });
+      return existing;
     }
     return this.createUser({
       email,

@@ -8,20 +8,29 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, "..");
 const backendDir = path.resolve(rootDir, "backend");
 const frontendDir = path.resolve(rootDir, "frontend");
+const playwrightArgs = process.argv.slice(2);
 
 const testEnv = {
   ...process.env,
-  DATABASE_URL: "postgresql://postgres:postgres@localhost:5433/way_education_test?schema=public",
+  DATABASE_URL: "postgresql://postgres:postgres@localhost:5434/way_education_test?schema=public",
   NODE_ENV: "test",
   PORT: "8001",
-  JWT_ACCESS_SECRET: "test-secret-access",
-  JWT_REFRESH_SECRET: "test-secret-refresh",
+  FRONTEND_ORIGINS: "http://localhost:4174",
+  PUBLIC_API_URL: "http://localhost:8001",
+  TRUST_PROXY: "false",
+  JWT_ACCESS_SECRET: "test-access-secret-that-is-long-enough-for-production-checks",
+  JWT_REFRESH_SECRET: "test-refresh-secret-that-is-long-enough-for-production-checks",
   ADMIN_EMAIL: "admin@wayeducation.com",
   ADMIN_PASSWORD: "adminpassword",
   JWT_ACCESS_TTL: "15m",
   JWT_REFRESH_TTL: "7d",
   COOKIE_DOMAIN: "localhost",
-  VITE_API_BASE_URL: "http://localhost:8001"
+  SMTP_HOST: "localhost",
+  SMTP_PORT: "1025",
+  SMTP_USER: "test",
+  SMTP_PASS: "test",
+  SMTP_FROM: "Way Education <noreply@example.test>",
+  VITE_API_BASE_URL: "http://localhost:8001",
 };
 
 const runCommand = (command, args, cwd, env = process.env) => {
@@ -69,7 +78,7 @@ async function main() {
   let backendProc, frontendProc;
   try {
     console.log("Starting test database...");
-    await runCommand("docker-compose", ["-f", "docker-compose.test.yml", "up", "-d", "--wait"], rootDir);
+    await runCommand("docker", ["compose", "-f", "docker-compose.test.yml", "up", "-d", "--wait"], rootDir);
 
     console.log("Resetting database and seeding...");
     await runCommand("npx", ["prisma", "migrate", "reset", "--force"], backendDir, testEnv);
@@ -79,11 +88,12 @@ async function main() {
     await waitForUrl("http://localhost:8001/api/health");
 
     console.log("Starting frontend...");
+    await runCommand("npm", ["run", "build"], frontendDir, testEnv);
     frontendProc = startProcess("npm", ["run", "preview", "--", "--port", "4174"], frontendDir, testEnv);
     await waitForUrl("http://localhost:4174");
 
     console.log("Running Playwright tests...");
-    await runCommand("npx", ["playwright", "test"], frontendDir, { ...testEnv, PLAYWRIGHT_TEST_BASE_URL: "http://localhost:4174" });
+    await runCommand("npx", ["playwright", "test", ...playwrightArgs], frontendDir, { ...testEnv, PLAYWRIGHT_TEST_BASE_URL: "http://localhost:4174" });
 
     console.log("E2E tests passed successfully!");
   } catch (err) {
@@ -93,7 +103,7 @@ async function main() {
     console.log("Tearing down...");
     if (backendProc) backendProc.kill();
     if (frontendProc) frontendProc.kill();
-    await runCommand("docker-compose", ["-f", "docker-compose.test.yml", "down", "-v"], rootDir).catch(() => {});
+    await runCommand("docker", ["compose", "-f", "docker-compose.test.yml", "down", "-v"], rootDir).catch(() => {});
   }
 }
 

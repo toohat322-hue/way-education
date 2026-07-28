@@ -1,6 +1,6 @@
 import React from "react";
 import { PageHeader, PrimaryButton, TextInput, TextArea } from "../ui";
-import { Search, Globe, Share2, CheckCircle2 } from "lucide-react";
+import { Globe, Share2, CheckCircle2 } from "lucide-react";
 
 export default function AdminSeo() {
   return (

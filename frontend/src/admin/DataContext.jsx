@@ -124,11 +124,13 @@ export function DataProvider({ children }) {
     });
   }, []);
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async ({ admin = false } = {}) => {
     setLoading(true);
     setError("");
     try {
-      const payload = await apiFetch("/api/cms/bootstrap");
+      const payload = await apiFetch(
+        admin ? "/api/cms/admin/bootstrap" : "/api/cms/bootstrap",
+      );
       if (Array.isArray(payload?.universities)) {
         setUniversities(payload.universities);
       }

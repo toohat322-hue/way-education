@@ -191,6 +191,19 @@ export class CmsService {
     };
   }
 
+  async getAdminBootstrap() {
+    const [universities, directory, majors, faqs, settings, siteCopy] =
+      await this.repository.getBootstrap(true);
+    return {
+      universities: universities.map((uni) => this.serializeUniversity(uni)),
+      directory: directory.map((entry) => this.serializeDirectoryEntry(entry)),
+      majors: majors.map((major) => this.serializeMajor(major)),
+      faqs: faqs.map((faq) => this.serializeFaq(faq)),
+      settings: settings ? this.serializeSettings(settings) : null,
+      strings: (siteCopy?.data as Record<string, unknown>) || {},
+    };
+  }
+
   async getUniversityBySlug(slug: string) {
     const uni = await this.repository.findUniversityBySlug(slug);
     if (!uni) throw new NotFoundException(`University "${slug}" not found`);
@@ -251,7 +264,7 @@ export class CmsService {
     ipAddress?: string,
     userAgent?: string,
   ) {
-    const existing = await this.repository.findUniversityBySlug(slug);
+    const existing = await this.repository.findUniversityBySlug(slug, true);
     if (!existing)
       throw new NotFoundException(`University with slug "${slug}" not found`);
     const university = await this.repository.deleteUniversity(slug);

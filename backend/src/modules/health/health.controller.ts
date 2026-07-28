@@ -31,11 +31,10 @@ export class HealthController {
     try {
       await this.prisma.$queryRaw`SELECT 1`;
       return { ok: true, db: "connected" };
-    } catch (err: any) {
+    } catch {
       throw new ServiceUnavailableException({
         ok: false,
         db: "disconnected",
-        error: err.message,
       });
     }
   }

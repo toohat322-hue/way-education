@@ -6,9 +6,8 @@ import {
   Loader2,
   Plus,
   Sparkles,
-  Image as ImageIcon,
 } from "lucide-react";
-import { Label, TextInput, PrimaryButton } from "./ui";
+import { Label, TextInput } from "./ui";
 import {
   uploadImageFile,
   validateImageFile,

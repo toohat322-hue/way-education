@@ -82,6 +82,7 @@ model RefreshToken {
   user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([userId, revokedAt, expiresAt])
 }
 
 model PasswordResetToken {
@@ -96,6 +97,7 @@ model PasswordResetToken {
 
   @@index([userId])
   @@index([tokenPrefix])
+  @@index([userId, usedAt, expiresAt])
 }
 
 model EmailVerificationToken {
@@ -110,6 +112,7 @@ model EmailVerificationToken {
 
   @@index([userId])
   @@index([tokenPrefix])
+  @@index([userId, usedAt, expiresAt])
 }
 
 model AuditLog {
@@ -248,6 +251,8 @@ model BlogPost {
   publishedAt      DateTime?
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
+
+  @@index([status, publishedAt])
 }
 
 model DirectoryEntry {
@@ -419,6 +424,8 @@ model MediaAsset {
   url         String
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+
+  @@index([folder, createdAt])
 }
 
 model Lead {
@@ -455,6 +462,7 @@ model Lead {
 
   @@index([status, createdAt])
   @@index([assignedToId])
+  @@index([createdAt])
 }
 
 model LeadNote {

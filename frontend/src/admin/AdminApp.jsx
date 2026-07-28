@@ -1,6 +1,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import { useAdminAuth } from "./useAdminAuth";
+import { useData } from "./useData";
 import AdminLogin from "./AdminLogin";
 import AdminLayout from "./AdminLayout";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -15,6 +16,13 @@ import AdminSeo from "./pages/AdminSeo";
 
 export default function AdminApp() {
   const { unlocked, booting } = useAdminAuth();
+  const { refresh } = useData();
+
+  React.useEffect(() => {
+    if (unlocked) {
+      refresh({ admin: true });
+    }
+  }, [refresh, unlocked]);
 
   if (booting) {
     return (

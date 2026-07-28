@@ -149,9 +149,15 @@ export class CmsRepository {
 
   // ─── Existence finders (used by service for 404 checks) ─────────────
 
-  findUniversityBySlug(slug: string) {
+  findUniversityBySlug(slug: string, includeUnpublished = false) {
     return this.prisma.university.findFirst({
-      where: { slug, deletedAt: null },
+      where: {
+        slug,
+        deletedAt: null,
+        ...(includeUnpublished
+          ? {}
+          : { active: true, status: UniversityStatus.PUBLISHED }),
+      },
       include: {
         city: true,
         country: true,
@@ -197,9 +203,13 @@ export class CmsRepository {
   async getPublicStats() {
     const [partnerCount, directoryCount, majorsCount] = await Promise.all([
       this.prisma.university.count({
-        where: { active: true, deletedAt: null },
+        where: {
+          active: true,
+          status: UniversityStatus.PUBLISHED,
+          deletedAt: null,
+        },
       }),
-      this.prisma.directoryEntry.count(),
+      this.prisma.directoryEntry.count({ where: { isActive: true } }),
       this.prisma.major.count(),
     ]);
     return {
@@ -211,10 +221,15 @@ export class CmsRepository {
     };
   }
 
-  getBootstrap() {
+  getBootstrap(includeUnpublished = false) {
     return Promise.all([
       this.prisma.university.findMany({
-        where: { deletedAt: null },
+        where: {
+          deletedAt: null,
+          ...(includeUnpublished
+            ? {}
+            : { active: true, status: UniversityStatus.PUBLISHED }),
+        },
         include: {
           city: true,
           country: true,
@@ -227,6 +242,7 @@ export class CmsRepository {
         orderBy: [{ featured: "desc" }, { name: "asc" }],
       }),
       this.prisma.directoryEntry.findMany({
+        where: includeUnpublished ? undefined : { isActive: true },
         include: { city: true, country: true },
         orderBy: { name: "asc" },
       }),
@@ -237,11 +253,14 @@ export class CmsRepository {
     ]);
   }
 
-  listUniversities(options?: {
+  listUniversities(
+    options?: {
     page?: number;
     pageSize?: number;
     search?: string;
-  }) {
+    },
+    includeUnpublished = false,
+  ) {
     const page = options?.page || 1;
     const pageSize = options?.pageSize
       ? Math.min(options.pageSize, 100)
@@ -251,6 +270,9 @@ export class CmsRepository {
     return this.prisma.university.findMany({
       where: {
         deletedAt: null,
+        ...(includeUnpublished
+          ? {}
+          : { active: true, status: UniversityStatus.PUBLISHED }),
         OR: options?.search
           ? [
               { name: { contains: options.search, mode: "insensitive" } },
@@ -685,8 +707,9 @@ export class CmsRepository {
     return this.prisma.seoPage.delete({ where: { key } });
   }
 
-  listBlogPosts() {
+  listBlogPosts(includeUnpublished = false) {
     return this.prisma.blogPost.findMany({
+      where: includeUnpublished ? undefined : { status: BlogStatus.PUBLISHED },
       orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
     });
   }
