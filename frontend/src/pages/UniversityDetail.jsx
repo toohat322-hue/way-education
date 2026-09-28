@@ -28,6 +28,7 @@ import { useLanguage } from "../context/useLanguage";
 import { useData } from "../admin/useData";
 import { resolveIcon } from "../admin/iconRegistry";
 import { useAdminAuth } from "../admin/useAdminAuth";
+import { useDocumentMeta } from "../hooks/useDocumentMeta";
 
 // The editor form is admin-only code -- lazy-load it so it isn't part of the
 // bundle every regular site visitor downloads. Only fetched once an admin
@@ -169,6 +170,15 @@ export default function UniversityDetail() {
   const [editOpen, setEditOpen] = useState(false);
   const [activePhotoIndex, setActivePhotoIndex] = useState(null);
   const uni = getUniversityById(id);
+  useDocumentMeta({
+    title: uni ? `${uni.name} — Admission, Tuition & Programs | Way Education` : undefined,
+    description: uni?.aboutEn
+      ? uni.aboutEn.length > 155
+        ? `${uni.aboutEn.slice(0, 155).trimEnd()}…`
+        : uni.aboutEn
+      : undefined,
+    path: uni ? `/university/${uni.id}` : undefined,
+  });
 
   // Inactive universities are hidden from everyone except a logged-in admin
   // (who gets an "inactive" banner further down instead) -- same fallback UI

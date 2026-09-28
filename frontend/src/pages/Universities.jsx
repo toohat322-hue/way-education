@@ -8,12 +8,15 @@ import DirectoryCard from "../components/DirectoryCard";
 import RequestInfoModal from "../components/RequestInfoModal";
 import { useLanguage } from "../context/useLanguage";
 import { useData } from "../admin/useData";
+import { useDocumentMeta } from "../hooks/useDocumentMeta";
+import { PAGE_SEO } from "../data/seo";
 
 const PAGE_SIZE = 24;
 
 export default function Universities() {
   const { t, lang } = useLanguage();
   const { publicUniversities: universities, directory } = useData();
+  useDocumentMeta({ ...PAGE_SEO["/universities"], path: "/universities" });
   const [params, setParams] = useSearchParams();
   const [query, setQuery] = useState("");
   const [country, setCountry] = useState(params.get("country") || "");

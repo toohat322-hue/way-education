@@ -6,11 +6,14 @@ import GlassCard from "../components/GlassCard";
 import LeadForm from "../components/LeadForm";
 import { useLanguage } from "../context/useLanguage";
 import { useData } from "../admin/useData";
+import { useDocumentMeta } from "../hooks/useDocumentMeta";
+import { PAGE_SEO } from "../data/seo";
 
 export default function Contact() {
   const { t } = useLanguage();
   const { settings } = useData();
   const [searchParams] = useSearchParams();
+  useDocumentMeta({ ...PAGE_SEO["/contact"], path: "/contact" });
   return (
     <div className="max-w-4xl mx-auto px-5 sm:px-8 py-16 md:py-24">
       <h1

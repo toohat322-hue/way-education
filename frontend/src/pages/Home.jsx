@@ -9,9 +9,12 @@ import TestimonialsSection from "../components/TestimonialsSection";
 import StatsSection from "../components/StatsSection";
 import FaqSection from "../components/FaqSection";
 import CtaBanner from "../components/CtaBanner";
+import { useDocumentMeta } from "../hooks/useDocumentMeta";
+import { PAGE_SEO } from "../data/seo";
 
 export default function Home() {
   const location = useLocation();
+  useDocumentMeta({ ...PAGE_SEO["/"], path: "/" });
 
   useEffect(() => {
     let timerId;

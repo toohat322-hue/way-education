@@ -2,14 +2,15 @@ import fs from "node:fs";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import express from "express";
-import type { NextFunction, Request, Response } from "express";
 import helmet from "helmet";
 import path from "node:path";
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { ConfigService } from "@nestjs/config";
 import { AppModule } from "./app.module";
+import { PrismaService } from "./common/prisma/prisma.service";
 import { PrismaExceptionFilter } from "./common/filters/prisma-exception.filter";
+import { registerSpaFallback } from "./common/spa/serve-spa";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -65,24 +66,6 @@ async function bootstrap() {
       },
     }),
   );
-
-  // Serve static frontend assets in production if frontend-dist exists
-  const frontendDistPath = path.resolve(process.cwd(), "frontend-dist");
-  if (fs.existsSync(frontendDistPath)) {
-    app.use(express.static(frontendDistPath));
-    app.use((request: Request, response: Response, next: NextFunction) => {
-      const isAppRoute =
-        request.method === "GET" &&
-        !request.path.startsWith("/api") &&
-        !request.path.startsWith("/media") &&
-        request.accepts("html");
-      if (isAppRoute) {
-        response.sendFile(path.join(frontendDistPath, "index.html"));
-        return;
-      }
-      next();
-    });
-  }
   app.enableCors({
     origin: origins,
     credentials: true,
@@ -101,6 +84,8 @@ async function bootstrap() {
 
   app.enableShutdownHooks();
 
+  const prisma = app.get(PrismaService);
+  registerSpaFallback(app, prisma);
   const port = Number(config.get<number>("PORT") || 8000);
   await app.listen(port, "0.0.0.0");
 }

@@ -4,9 +4,12 @@ import { C } from "../theme/tokens";
 import GlassCard from "../components/GlassCard";
 import { Eyebrow } from "../components/SectionHeader";
 import { useLanguage } from "../context/useLanguage";
+import { useDocumentMeta } from "../hooks/useDocumentMeta";
+import { PAGE_SEO } from "../data/seo";
 
 export default function About() {
   const { t } = useLanguage();
+  useDocumentMeta({ ...PAGE_SEO["/about"], path: "/about" });
   const stats = [
     [Award, "100+", t.heroStat1],
     [Users, "5,000+", t.heroStat2],
