@@ -7,7 +7,7 @@
     "dev": "vite",
     "dev:api": "npm --prefix ../backend run start:dev",
     "dev:full": "concurrently \"npm run dev:api\" \"vite\"",
-    "build": "vite build",
+    "build": "vite build && node scripts/generate-seo.mjs",
     "build:backend": "npm --prefix ../backend run build",
     "lint": "oxlint",
     "test": "vitest run",

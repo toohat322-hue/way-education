@@ -171,7 +171,9 @@ export default function UniversityDetail() {
   const [activePhotoIndex, setActivePhotoIndex] = useState(null);
   const uni = getUniversityById(id);
   useDocumentMeta({
-    title: uni ? `${uni.name} — Admission, Tuition & Programs | Way Education` : undefined,
+    title: uni
+      ? `${uni.name} — Admission, Tuition & Programs | Way Education`
+      : undefined,
     description: uni?.aboutEn
       ? uni.aboutEn.length > 155
         ? `${uni.aboutEn.slice(0, 155).trimEnd()}…`

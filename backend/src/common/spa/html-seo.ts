@@ -27,7 +27,11 @@ function escapeHtml(value: string): string {
  * never run JS, like link-preview bots) see correct per-page metadata on
  * the very first response instead of the same site-wide defaults everywhere.
  */
-export function injectSeo(indexHtml: string, seo: PageSeo, image?: string): string {
+export function injectSeo(
+  indexHtml: string,
+  seo: PageSeo,
+  image?: string,
+): string {
   const title = escapeHtml(seo.title);
   const description = escapeHtml(seo.description);
   const canonical = `${SITE_ORIGIN}${seo.path}`;
@@ -35,14 +39,32 @@ export function injectSeo(indexHtml: string, seo: PageSeo, image?: string): stri
   const robots = seo.robots || DEFAULT_ROBOTS;
 
   let html = indexHtml;
-  html = html.replace(`<title>${DEFAULT_TITLE}</title>`, `<title>${title}</title>`);
+  html = html.replace(
+    `<title>${DEFAULT_TITLE}</title>`,
+    `<title>${title}</title>`,
+  );
   html = html.replaceAll(`content="${DEFAULT_TITLE}"`, `content="${title}"`);
-  html = html.replace(`content="${DEFAULT_DESCRIPTION}"`, `content="${description}"`);
-  html = html.replace(`content="${DEFAULT_OG_DESCRIPTION}"`, `content="${description}"`);
-  html = html.replace(`content="${DEFAULT_TWITTER_DESCRIPTION}"`, `content="${description}"`);
+  html = html.replace(
+    `content="${DEFAULT_DESCRIPTION}"`,
+    `content="${description}"`,
+  );
+  html = html.replace(
+    `content="${DEFAULT_OG_DESCRIPTION}"`,
+    `content="${description}"`,
+  );
+  html = html.replace(
+    `content="${DEFAULT_TWITTER_DESCRIPTION}"`,
+    `content="${description}"`,
+  );
   html = html.replace(`href="${DEFAULT_CANONICAL}"`, `href="${canonical}"`);
-  html = html.replace(`content="${DEFAULT_CANONICAL}"`, `content="${canonical}"`);
-  html = html.replaceAll(`content="${DEFAULT_IMAGE}"`, `content="${escapeHtml(imageUrl)}"`);
+  html = html.replace(
+    `content="${DEFAULT_CANONICAL}"`,
+    `content="${canonical}"`,
+  );
+  html = html.replaceAll(
+    `content="${DEFAULT_IMAGE}"`,
+    `content="${escapeHtml(imageUrl)}"`,
+  );
   html = html.replace(
     `<meta name="robots" content="${DEFAULT_ROBOTS}" />`,
     `<meta name="robots" content="${robots}" />`,

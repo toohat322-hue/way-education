@@ -20,11 +20,18 @@ function truncate(text: string | null | undefined, max: number): string {
 }
 
 function buildSitemapXml(
-  entries: { loc: string; changefreq: string; priority: string; lastmod?: string }[],
+  entries: {
+    loc: string;
+    changefreq: string;
+    priority: string;
+    lastmod?: string;
+  }[],
 ): string {
   const urls = entries
     .map((entry) => {
-      const lastmod = entry.lastmod ? `\n    <lastmod>${entry.lastmod}</lastmod>` : "";
+      const lastmod = entry.lastmod
+        ? `\n    <lastmod>${entry.lastmod}</lastmod>`
+        : "";
       return `  <url>\n    <loc>${SITE_ORIGIN}${entry.loc}</loc>${lastmod}\n    <changefreq>${entry.changefreq}</changefreq>\n    <priority>${entry.priority}</priority>\n  </url>`;
     })
     .join("\n");
@@ -43,7 +50,10 @@ function buildSitemapXml(
  * No-ops when frontend-dist isn't present (local dev, where Vite's own dev
  * server already serves the frontend on its own port with its own fallback).
  */
-export function registerSpaFallback(app: INestApplication, prisma: PrismaService): void {
+export function registerSpaFallback(
+  app: INestApplication,
+  prisma: PrismaService,
+): void {
   const frontendDist = path.resolve(process.cwd(), "frontend-dist");
   const indexPath = path.join(frontendDist, "index.html");
   if (!existsSync(indexPath)) {
@@ -57,7 +67,7 @@ export function registerSpaFallback(app: INestApplication, prisma: PrismaService
     try {
       const universities = await prisma.university.findMany({
         where: { deletedAt: null, active: true, status: "PUBLISHED" },
-        select: { id: true, updatedAt: true },
+        select: { slug: true, updatedAt: true },
         orderBy: { updatedAt: "desc" },
       });
       const entries = [
@@ -66,7 +76,7 @@ export function registerSpaFallback(app: INestApplication, prisma: PrismaService
         { loc: "/about", changefreq: "monthly", priority: "0.6" },
         { loc: "/contact", changefreq: "monthly", priority: "0.7" },
         ...universities.map((uni) => ({
-          loc: `/university/${uni.id}`,
+          loc: `/university/${uni.slug}`,
           changefreq: "weekly",
           priority: "0.8",
           lastmod: uni.updatedAt.toISOString().slice(0, 10),
@@ -91,12 +101,17 @@ export function registerSpaFallback(app: INestApplication, prisma: PrismaService
   app.use(express.static(frontendDist, { index: false, redirect: false }));
 
   app.use(async (req: Request, res: Response, next: NextFunction) => {
-    if (req.method !== "GET" || req.path.startsWith("/api") || req.path.startsWith("/media")) {
+    if (
+      req.method !== "GET" ||
+      req.path.startsWith("/api") ||
+      req.path.startsWith("/media")
+    ) {
       next();
       return;
     }
 
-    const routePath = req.path.length > 1 ? req.path.replace(/\/+$/, "") : req.path;
+    const routePath =
+      req.path.length > 1 ? req.path.replace(/\/+$/, "") : req.path;
 
     if (routePath.startsWith("/admin")) {
       res.status(200).type("html").send(injectSeo(indexHtml, ADMIN_SEO));
@@ -111,14 +126,22 @@ export function registerSpaFallback(app: INestApplication, prisma: PrismaService
 
     const uniMatch = routePath.match(UNIVERSITY_PATH);
     if (uniMatch) {
-      const id = uniMatch[1];
+      // The public API serializes a university's "id" as its slug (see
+      // cms.service.ts serializeUniversity), and the app builds
+      // /university/<id> links from that value -- so the URL segment here
+      // is a slug, not the Prisma cuid, even though the route param is
+      // still named :id in App.jsx.
+      const slug = uniMatch[1];
       try {
         const uni = await prisma.university.findUnique({
-          where: { id },
+          where: { slug },
           include: { city: true },
         });
         if (!uni || uni.deletedAt) {
-          res.status(404).type("html").send(injectSeo(indexHtml, NOT_FOUND_SEO));
+          res
+            .status(404)
+            .type("html")
+            .send(injectSeo(indexHtml, NOT_FOUND_SEO));
           return;
         }
         const isPublic = uni.active && uni.status === "PUBLISHED";
@@ -126,17 +149,21 @@ export function registerSpaFallback(app: INestApplication, prisma: PrismaService
           truncate(uni.aboutEn, 155) ||
           `${uni.name} in ${uni.city?.nameEn || "Türkiye"} — tuition, scholarships, and admission requirements. Apply with Way Education.`;
         const seo = {
-          path: `/university/${uni.id}`,
+          path: `/university/${uni.slug}`,
           title: `${uni.name} — Admission, Tuition & Programs | Way Education`,
           description,
           robots: isPublic ? undefined : "noindex, follow",
         };
-        const image = uni.image
-          ? uni.image.startsWith("http")
-            ? uni.image
-            : `${SITE_ORIGIN}${uni.image.startsWith("/") ? "" : "/"}${uni.image}`
-          : undefined;
-        res.status(200).type("html").send(injectSeo(indexHtml, seo, image));
+        // uni.image can be a data: URI (inline uploads) or a path on a
+        // different origin (the media API) -- only trust it as an OG image
+        // when it's already an absolute http(s) URL, otherwise fall back to
+        // the site default rather than emitting a broken/huge image value.
+        const image =
+          uni.image && /^https?:\/\//.test(uni.image) ? uni.image : undefined;
+        res
+          .status(200)
+          .type("html")
+          .send(injectSeo(indexHtml, seo, image));
       } catch {
         res.status(200).type("html").send(indexHtml);
       }
